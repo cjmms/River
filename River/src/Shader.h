@@ -6,19 +6,10 @@
 #include <vector>
 
 
-struct ShaderProgramSource
-{
-	std::string VertexSource;
-	std::string FragmentSource;
-	std::string GeometrySource;
-};
-
 
 class Shader
 {
 private:
-	std::string shaderFilePath;
-
 	// program ID of shader
 	unsigned int rendererID;
 	unsigned int textureUnit;
@@ -26,7 +17,7 @@ private:
 
 public:
 	Shader() :rendererID(0) {};
-	Shader(const std::string& path);
+	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	~Shader();
 	void Bind();
 	void unBind();
@@ -51,18 +42,10 @@ public:
 private:
 	// path: res/Shaders/basic.shader
 	// path is relative a path
-	// absolute path is ($SolutionDir)path
-	ShaderProgramSource parseShader(const std::string& path);
 
-	// type: GL_FRAGMENT_SHADER or GL_VERTEX_SHADER
-	// return shader program ID
-	unsigned int compileShader(unsigned int type, const std::string& shaderSource);
-	void shaderErrorInfo(unsigned int shader, unsigned int type);
+	// 1. retrieve the vertex/fragment source code from filePath
+	void ReadShaderFile(const std::string& filePath, std::string& code);
 
-	// vertexShader: shader source as a string
-	// fragmentShader: shader source as a string
-	// return shader ID
-	unsigned int createShader(const std::string& vertexShader,
-		const std::string& fragmentShader,
-		const std::string& geometryShader);
+	// 2. compile shaders
+	void CompileShader(unsigned int& shaderUnit, const std::string& shaderCode, int shaderType);
 };

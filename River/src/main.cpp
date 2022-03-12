@@ -71,52 +71,19 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-    Shader cubeShader("res/Shaders/basic.shader");
+    //Shader cubeShader("res/Shaders/basic.shader");
+    Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
+
 
     //////////////////////////////////////////////
 
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.f, -0.5f,
+         0.5f,  0.f, -0.5f,
+         0.5f,  0.f,  0.5f,
+         0.5f,  0.f,  0.5f,
+        -0.5f,  0.f,  0.5f,
+        -0.5f,  0.f, -0.5f,
     };
     // first, configure the cube's VAO (and VBO)
     unsigned int VBO, cubeVAO;
@@ -131,6 +98,8 @@ int main()
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     ///////////////////////////////////////////////
 
@@ -154,7 +123,11 @@ int main()
         // also draw the lamp object
         cubeShader.setMat4("projection", camera.getProjectionMatrix());
         cubeShader.setMat4("view", camera.getViewMatrix());
-        cubeShader.setMat4("model", glm::mat4(1.0f));
+
+        glm::mat4 model(1.0f);
+
+        // scale by 2
+        cubeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
 
         cubeShader.Bind();
         glBindVertexArray(cubeVAO);
