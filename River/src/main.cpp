@@ -1,12 +1,25 @@
 
 #include <GL/glew.h>
-
-#include <iostream>
 #include <GLFW/glfw3.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <vector>
+#include "Camera.h"
+
+#include <iostream>
+
+Camera camera;
+
+
+void processInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    camera.setCameraKey(window);
+}
+
+
+
+
 
 int main()
 {
@@ -22,7 +35,7 @@ int main()
     int window_height = 960;
 
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Not a mimic!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(window_width, window_height, "River", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -38,6 +51,28 @@ int main()
         return false;
     }
 
-    glm::vec3 v;
+
+
+    while (!glfwWindowShouldClose(window))
+    {
+        processInput(window);
+
+        camera.cameraUpdateFrameTime();
+
+
+
+         /* Swap front and back buffers */
+        glfwSwapBuffers(window);
+
+        /* Poll for and process events */
+        glfwPollEvents();
+
+
+    }
+
+
+
+
+    return 1;
 
 }
