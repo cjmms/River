@@ -18,6 +18,10 @@ private:
 public:
 	Shader() :rendererID(0) {};
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+	Shader(	const std::string& vertexPath,
+			const std::string& tcsPath,
+			const std::string& tesPath,
+			const std::string& fragmentPath);
 	~Shader();
 	void Bind();
 	void unBind();

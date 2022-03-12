@@ -37,13 +37,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Shaders\basic.shader">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="res\Shaders\basic.vs">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="res\Shaders\basic.fs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\Shaders\basic.tcs">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\Shaders\basic.tes">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

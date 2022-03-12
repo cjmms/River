@@ -91,7 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\basic.fs" />
-    <None Include="res\Shaders\basic.shader" />
+    <None Include="res\Shaders\basic.tcs" />
+    <None Include="res\Shaders\basic.tes" />
     <None Include="res\Shaders\basic.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

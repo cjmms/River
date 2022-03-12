@@ -1,0 +1,20 @@
+#version 450
+layout (vertices = 3) out;
+
+
+
+void main()
+{
+	float tessL = 7;
+
+	if (gl_InvocationID == 0)
+	{
+		gl_TessLevelInner[0] = tessL;
+		gl_TessLevelOuter[0] = tessL;
+		gl_TessLevelOuter[1] = tessL;
+		gl_TessLevelOuter[2] = tessL;		
+	}
+
+	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;
+	//outNormal[gl_InvocationID] = Normal[gl_InvocationID];
+}

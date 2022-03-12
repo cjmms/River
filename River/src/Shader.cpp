@@ -46,6 +46,61 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 
 
 
+
+Shader::Shader(const std::string& vertexPath,
+    const std::string& tcsPath,
+    const std::string& tesPath,
+    const std::string& fragmentPath)
+{
+    // 1. read and parse shaders
+    std::string vertexCode;
+    std::string tcsCode;
+    std::string tesCode;
+    std::string fragmentCode;
+
+    ReadShaderFile(vertexPath, vertexCode);
+    ReadShaderFile(tcsPath, tcsCode);
+    ReadShaderFile(tesPath, tesCode);
+    ReadShaderFile(fragmentPath, fragmentCode);
+
+    // 2. compile shaders
+    unsigned int vertex, tcs, tes, fragment;
+
+    CompileShader(vertex, vertexCode, GL_VERTEX_SHADER);
+    CompileShader(tcs, tcsCode, GL_TESS_CONTROL_SHADER);
+    CompileShader(tes, tesCode, GL_TESS_EVALUATION_SHADER);
+    CompileShader(fragment, fragmentCode, GL_FRAGMENT_SHADER);
+
+    // 3. link shaders
+    int success;
+    char infoLog[512];
+
+    // shader Program
+    rendererID = glCreateProgram();
+    glAttachShader(rendererID, vertex);
+    glAttachShader(rendererID, tcs);
+    glAttachShader(rendererID, tes);
+    glAttachShader(rendererID, fragment);
+    glLinkProgram(rendererID);
+    // print linking errors if any
+    glGetProgramiv(rendererID, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        glGetProgramInfoLog(rendererID, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    // delete the shaders as they're linked into our program now and no longer necessary
+    glDeleteShader(vertex);
+    glDeleteShader(tcs);
+    glDeleteShader(tes);
+    glDeleteShader(fragment);
+}
+
+
+
+
+
 Shader::~Shader()
 {
     glDeleteProgram(rendererID);

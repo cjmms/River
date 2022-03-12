@@ -42,6 +42,8 @@ int main()
         std::cout << "GLFW failed to init." << std::endl;
         return false;
     }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
     // default screen size
     int window_width = 1280;
@@ -71,8 +73,11 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-    //Shader cubeShader("res/Shaders/basic.shader");
-    Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
+    //Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
+    Shader planeShader( "res/Shaders/basic.vs",
+                        "res/Shaders/basic.tcs",
+                        "res/Shaders/basic.tes",
+                        "res/Shaders/basic.fs"  );
 
 
     //////////////////////////////////////////////
@@ -101,6 +106,8 @@ int main()
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
     ///////////////////////////////////////////////
 
 
@@ -121,18 +128,18 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // also draw the lamp object
-        cubeShader.setMat4("projection", camera.getProjectionMatrix());
-        cubeShader.setMat4("view", camera.getViewMatrix());
+        planeShader.setMat4("projection", camera.getProjectionMatrix());
+        planeShader.setMat4("view", camera.getViewMatrix());
 
         glm::mat4 model(1.0f);
 
         // scale by 2
-        cubeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
+        planeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
 
-        cubeShader.Bind();
+        planeShader.Bind();
         glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        cubeShader.unBind();
+        glDrawArrays(GL_PATCHES, 0, 6);
+        planeShader.unBind();
 
         /////////////////////////////////////////////////////
 
@@ -142,13 +149,8 @@ int main()
 
         /* Poll for and process events */
         glfwPollEvents();
-
-
     }
 
 
-
-
     return 1;
-
 }
