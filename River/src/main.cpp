@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Camera.h"
+#include "Shader.h"
 
 #include <iostream>
 
@@ -17,6 +18,18 @@ void processInput(GLFWwindow* window)
     camera.setCameraKey(window);
 }
 
+
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    camera.updateCameraDirection((float)xpos, (float)ypos);
+}
+
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
+{
+
+    camera.SetMouseStatus(button, action);
+}
 
 
 
@@ -52,6 +65,77 @@ int main()
     }
 
 
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
+    Shader cubeShader("res/Shaders/basic.shader");
+
+    //////////////////////////////////////////////
+
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+    };
+    // first, configure the cube's VAO (and VBO)
+    unsigned int VBO, cubeVAO;
+    glGenVertexArrays(1, &cubeVAO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(cubeVAO);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    ///////////////////////////////////////////////
+
+
+
 
     while (!glfwWindowShouldClose(window))
     {
@@ -59,6 +143,25 @@ int main()
 
         camera.cameraUpdateFrameTime();
 
+
+        ////////////////////////////////////////////////////
+
+        // render
+        // ------
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // also draw the lamp object
+        cubeShader.setMat4("projection", camera.getProjectionMatrix());
+        cubeShader.setMat4("view", camera.getViewMatrix());
+        cubeShader.setMat4("model", glm::mat4(1.0f));
+
+        cubeShader.Bind();
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cubeShader.unBind();
+
+        /////////////////////////////////////////////////////
 
 
          /* Swap front and back buffers */
