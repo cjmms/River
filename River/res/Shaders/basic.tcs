@@ -1,6 +1,7 @@
 #version 450
 layout (vertices = 3) out;
 
+uniform int tessellationFactor;
 
 
 void main()
@@ -9,10 +10,10 @@ void main()
 
 	if (gl_InvocationID == 0)
 	{
-		gl_TessLevelInner[0] = tessL;
-		gl_TessLevelOuter[0] = tessL;
-		gl_TessLevelOuter[1] = tessL;
-		gl_TessLevelOuter[2] = tessL;		
+		gl_TessLevelInner[0] = tessellationFactor;
+		gl_TessLevelOuter[0] = tessellationFactor;
+		gl_TessLevelOuter[1] = tessellationFactor;
+		gl_TessLevelOuter[2] = tessellationFactor;		
 	}
 
 	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;

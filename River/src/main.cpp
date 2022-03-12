@@ -7,7 +7,12 @@
 
 #include <iostream>
 
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_internal.h"
+
 Camera camera;
+int tessellationFactor = 1;
 
 
 void processInput(GLFWwindow* window)
@@ -67,11 +72,28 @@ int main()
     }
 
 
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetMouseButtonCallback(window, mouseButton_callback);
+   // glfwSetCursorPosCallback(window, mouse_callback);
+   // glfwSetMouseButtonCallback(window, mouseButton_callback);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    ////////////////////////////////////////////////////////////
+    // imgui setup
+
+    // imgui
+    const char* glsl_version = "#version 450";
+
+    // Setup Dear ImGui context
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    /////////////////////////////////////////////////////////////
 
     //Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
     Shader planeShader( "res/Shaders/basic.vs",
@@ -136,12 +158,36 @@ int main()
         // scale by 2
         planeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
 
+        planeShader.setInt("tessellationFactor", tessellationFactor);
+
         planeShader.Bind();
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_PATCHES, 0, 6);
         planeShader.unBind();
 
         /////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////
+        // UI
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        float f;
+
+        ImGui::Text("Hello, world %d", 123);
+        //if (ImGui::Button("Save"))
+          //  MySaveFunction();
+        //ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
+        ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 20);
+        
+
+        // Rendering UI
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        /////////////////////////////////////////////////////
+
 
 
          /* Swap front and back buffers */
@@ -150,6 +196,13 @@ int main()
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
 
     return 1;
