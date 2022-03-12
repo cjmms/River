@@ -1,0 +1,16 @@
+## Ignore Visual Studio temporary files, build results.
+
+# User-specific files
+*.user
+
+
+# Build results
+x64/
+x86/
+
+# Visual Studio cache/options directory
+.vs/
+Debug/
+Release/
+
+*.ini
