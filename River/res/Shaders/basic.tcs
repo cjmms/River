@@ -1,12 +1,19 @@
 #version 450
 layout (vertices = 3) out;
 
+// varying input from vertex shader
+in vec2 TexCoord[];
+in vec3 Pos[];
+
+// varying output to evaluation shader
+out vec2 TextureCoord[];
+out vec3 csPos[];
+
 uniform int tessellationFactor;
 
 
 void main()
 {
-	float tessL = 7;
 
 	if (gl_InvocationID == 0)
 	{
@@ -16,6 +23,6 @@ void main()
 		gl_TessLevelOuter[2] = tessellationFactor;		
 	}
 
-	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;
-	//outNormal[gl_InvocationID] = Normal[gl_InvocationID];
+	csPos[gl_InvocationID] = Pos[gl_InvocationID];
+	TextureCoord[gl_InvocationID] = TexCoord[gl_InvocationID];
 }

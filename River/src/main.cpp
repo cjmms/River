@@ -11,8 +11,65 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_internal.h"
 
+// These 2 lines should only be defined in this file
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 Camera camera;
-int tessellationFactor = 1;
+int tessellationFactor = 37;
+bool enableWireframeMode = false;
+
+
+
+unsigned int loadTexture(char const* path, bool gamma)
+{
+    stbi_set_flip_vertically_on_load(true);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum internalFormat;
+        GLenum dataFormat;
+        if (nrComponents == 1)
+        {
+            internalFormat = dataFormat = GL_RED;
+        }
+        else if (nrComponents == 3)
+        {
+            internalFormat = gamma ? GL_SRGB : GL_RGB;
+            dataFormat = GL_RGB;
+        }
+        else if (nrComponents == 4)
+        {
+            internalFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
+            dataFormat = GL_RGBA;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+        std::cout << path << " loaded successfully." << std::endl;
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+
+
 
 
 void processInput(GLFWwindow* window)
@@ -71,12 +128,12 @@ int main()
         return false;
     }
 
+    /*
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
 
-   // glfwSetCursorPosCallback(window, mouse_callback);
-   // glfwSetMouseButtonCallback(window, mouseButton_callback);
-
-   // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    */
     ////////////////////////////////////////////////////////////
     // imgui setup
 
@@ -101,16 +158,19 @@ int main()
                         "res/Shaders/basic.tes",
                         "res/Shaders/basic.fs"  );
 
+    unsigned int waveParticleTexture = loadTexture("res/wave.jpg", false);
+    planeShader.setTexture("waveParticle", waveParticleTexture);
 
     //////////////////////////////////////////////
 
     float vertices[] = {
-        -0.5f,  0.f, -0.5f,
-         0.5f,  0.f, -0.5f,
-         0.5f,  0.f,  0.5f,
-         0.5f,  0.f,  0.5f,
-        -0.5f,  0.f,  0.5f,
-        -0.5f,  0.f, -0.5f,
+        -0.5f,  0.f, -0.5f,  0, 1,
+         0.5f,  0.f, -0.5f,  1, 1,
+         0.5f,  0.f,  0.5f,  1, 0,
+
+         0.5f,  0.f,  0.5f,  1, 0,
+        -0.5f,  0.f,  0.5f,  0, 0,
+        -0.5f,  0.f, -0.5f,  0, 1
     };
     // first, configure the cube's VAO (and VBO)
     unsigned int VBO, cubeVAO;
@@ -123,10 +183,14 @@ int main()
     glBindVertexArray(cubeVAO);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // tex coord
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glPatchParameteri(GL_PATCH_VERTICES, 3);
 
@@ -141,6 +205,8 @@ int main()
 
         camera.cameraUpdateFrameTime();
 
+        if (enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         ////////////////////////////////////////////////////
 
@@ -160,6 +226,8 @@ int main()
 
         planeShader.setInt("tessellationFactor", tessellationFactor);
 
+
+
         planeShader.Bind();
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_PATCHES, 0, 6);
@@ -173,14 +241,9 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        float f;
 
-        ImGui::Text("Hello, world %d", 123);
-        //if (ImGui::Button("Save"))
-          //  MySaveFunction();
-        //ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
-        ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 20);
-        
+        ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 50);
+        ImGui::Checkbox("Wireframe Mode", &enableWireframeMode);
 
         // Rendering UI
         ImGui::Render();
