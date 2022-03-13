@@ -18,6 +18,7 @@
 Camera camera;
 int tessellationFactor = 37;
 bool enableWireframeMode = false;
+float heightFactor = 1.0f;
 
 
 
@@ -128,6 +129,8 @@ int main()
         return false;
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     /*
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
@@ -225,6 +228,7 @@ int main()
         planeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
 
         planeShader.setInt("tessellationFactor", tessellationFactor);
+        planeShader.setFloat("heightFactor", heightFactor);
 
 
 
@@ -243,6 +247,7 @@ int main()
 
 
         ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 50);
+        ImGui::SliderFloat("Height Factor", &heightFactor, 0.0, 2.0);
         ImGui::Checkbox("Wireframe Mode", &enableWireframeMode);
 
         // Rendering UI
