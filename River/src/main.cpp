@@ -11,6 +11,9 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_internal.h"
 
+#include "Mesh.h"
+#include "Render.h"
+
 // These 2 lines should only be defined in this file
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -153,6 +156,8 @@ int main()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+    /*
     /////////////////////////////////////////////////////////////
 
     //Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
@@ -195,24 +200,27 @@ int main()
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    glPatchParameteri(GL_PATCH_VERTICES, 3);
-
+    //glPatchParameteri(GL_PATCH_VERTICES, 3);
+    */
     ///////////////////////////////////////////////
 
+    Render renderer;
 
+    WaveParticleMesh waveParticleMesh{ 20 };
 
 
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
-        camera.cameraUpdateFrameTime();
+        //camera.cameraUpdateFrameTime();
 
-        if (enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //if (enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         ////////////////////////////////////////////////////
 
+        /*
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -236,6 +244,9 @@ int main()
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_PATCHES, 0, 6);
         planeShader.unBind();
+        */
+
+        renderer.RenderWaveParticle(waveParticleMesh);
 
         /////////////////////////////////////////////////////
 
