@@ -7,10 +7,10 @@
 struct WaveParticle
 {
 	glm::vec2 pos;
-	//glm::vec2 dir;
-	//float height;
-	//float speed;
-	//float radius;
+	glm::vec2 dir;
+	float height;
+	float speed;
+	float radius;
 };
 
 

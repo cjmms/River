@@ -2,6 +2,17 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+
+class FBO
+{
+public:
+	FBO(unsigned int width, unsigned int height);
+	unsigned int ID, DepthBuffer, ColorBuffer;
+};
+
+
+
+
 class Render
 {
 public:
@@ -9,7 +20,7 @@ public:
 
 
 
-	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh);
+	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, int pointSize, FBO &fbo);
 
 
 };

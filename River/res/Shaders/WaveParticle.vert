@@ -6,10 +6,6 @@ layout (location = 3) in float aSpeed;
 layout (location = 4) in float aRadius;
 
 
-//out vec2 TexCoord;
-//out vec3 Pos;
-
-
 void main()
 {
 	gl_Position = vec4(aPos, 0.1, 1);

@@ -3,7 +3,7 @@
 
 
 out vec4 FragColor;
-//out vec3 Pos;
+
 
 
 void main()

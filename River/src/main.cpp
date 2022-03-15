@@ -23,6 +23,10 @@ int tessellationFactor = 37;
 bool enableWireframeMode = false;
 float heightFactor = 1.0f;
 
+// default screen size
+const int window_width = 1280;
+const int window_height = 960;
+
 
 
 unsigned int loadTexture(char const* path, bool gamma)
@@ -98,6 +102,31 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 
+void setupGUI(GLFWwindow* window)
+{
+    // imgui
+    const char* glsl_version = "#version 450";
+
+    // Setup Dear ImGui context
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+}
+
+
+void destroyGUI()
+{
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
 
 
 int main()
@@ -110,10 +139,6 @@ int main()
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-
-    // default screen size
-    int window_width = 1280;
-    int window_height = 960;
 
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(window_width, window_height, "River", NULL, NULL);
@@ -143,19 +168,7 @@ int main()
     ////////////////////////////////////////////////////////////
     // imgui setup
 
-    // imgui
-    const char* glsl_version = "#version 450";
-
-    // Setup Dear ImGui context
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    setupGUI(window);
 
     /*
     /////////////////////////////////////////////////////////////
@@ -206,7 +219,9 @@ int main()
 
     Render renderer;
 
-    WaveParticleMesh waveParticleMesh{ 20 };
+    WaveParticleMesh waveParticleMesh{ 200 };
+
+    FBO waveParticleFBO{ window_width , window_height};
 
 
     while (!glfwWindowShouldClose(window))
@@ -246,7 +261,7 @@ int main()
         planeShader.unBind();
         */
 
-        renderer.RenderWaveParticle(waveParticleMesh);
+        renderer.RenderWaveParticle(waveParticleMesh, 5, waveParticleFBO);
 
         /////////////////////////////////////////////////////
 
@@ -277,12 +292,7 @@ int main()
     }
 
 
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
+    destroyGUI();
 
     return 1;
 }
