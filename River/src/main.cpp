@@ -261,7 +261,9 @@ int main()
         planeShader.unBind();
         */
 
-        renderer.RenderWaveParticle(waveParticleMesh, 5, waveParticleFBO);
+        renderer.RenderWaveParticle(waveParticleMesh, 1, waveParticleFBO.ID);
+
+        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer, 0);
 
         /////////////////////////////////////////////////////
 

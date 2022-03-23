@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Shaders\WaveParticle">
       <UniqueIdentifier>{a00a2911-84d2-4c5b-9c50-cabe16b78312}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Blur">
+      <UniqueIdentifier>{b315ea93-d5f5-403b-8774-ae77b6010781}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -117,6 +120,12 @@
     </None>
     <None Include="res\Shaders\WaveParticle.frag">
       <Filter>Resource Files\Shaders\WaveParticle</Filter>
+    </None>
+    <None Include="res\Shaders\Blur.vert">
+      <Filter>Resource Files\Shaders\Blur</Filter>
+    </None>
+    <None Include="res\Shaders\HorizontalBlur.frag">
+      <Filter>Resource Files\Shaders\Blur</Filter>
     </None>
   </ItemGroup>
 </Project>
