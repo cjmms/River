@@ -110,6 +110,9 @@ void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
     // pass input texture
     horozontalBlur.setTexture("inputTexture", inputTexture);
 
+    // blur radius
+    horozontalBlur.setInt("blurRadius", 18);
+
     // bind shader
     horozontalBlur.Bind();
 
