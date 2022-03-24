@@ -265,7 +265,7 @@ int main()
 
         renderer.HorizontalBlur(waveParticleFBO.ColorBuffer, 0);
 
-
+        //renderer.RenderWaveParticle(waveParticleMesh, 1, 0);
 
         /////////////////////////////////////////////////////
 

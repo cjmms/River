@@ -1,6 +1,8 @@
 #include "Render.h"
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
+
 
 FBO::FBO(unsigned int width, unsigned int height)
 {
@@ -88,6 +90,8 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, int pointSiz
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    waveParticleShader.setFloat("time", glfwGetTime());
+
 	waveParticleShader.Bind();
 
 	glBindVertexArray(waveParticleMesh.VAO);
@@ -111,7 +115,7 @@ void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
     horozontalBlur.setTexture("inputTexture", inputTexture);
 
     // blur radius
-    horozontalBlur.setInt("blurRadius", 18);
+    horozontalBlur.setInt("blurRadius", 50);
 
     // bind shader
     horozontalBlur.Bind();

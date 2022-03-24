@@ -45,7 +45,7 @@ void main()
         float ampSum = velAmpL.z + velAmpR.z;
         float ampDif = velAmpL.z - velAmpR.z;
 
-        vec3 f = GetFilter(i / float(blurRadius));
+        vec3 f = GetFilter(i / float(blurRadius)) ;
 
         f123.x += ampSum * f.x;
         f123.y += ampDif * f.y;
