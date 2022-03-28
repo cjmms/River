@@ -67,8 +67,29 @@ const glm::ivec2& FluidGrid::getGridResolution()
 /// PRIVATE FUNCTIONS ///
 #pragma region private
 
+void FluidGrid::destroyGrid()
+{
+	for (int r = 0; r < grid.size(); ++r)
+	{
+		grid[r].clear();
+	}
+	grid.clear();
+}
 
+void FluidGrid::buildGrid()
+{
+	// For now I'll just have this overwrite any existing grid...
+	if (isGridInitialized) destroyGrid;
 
+	grid.reserve(gridResolution.y); // Reserve the rows.
+	for (int r = 0; r < getGridWidth(); ++r)
+	{
+		auto& row = grid[r];
+		row.reserve(gridResolution.x); // Reserve the columns in this row.
+	}
+
+	isGridInitialized = true;
+}
 
 
 #pragma endregion

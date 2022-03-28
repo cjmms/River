@@ -1,6 +1,15 @@
 #pragma once
 
+// Project includes
+// ...
+
+// System includes:
+#include <vector>
+#include <memory>
+
+// Third party includes:
 #include <glm/glm.hpp>
+
 
 // TODO: Create an RNG helper class.
 
@@ -18,6 +27,12 @@ enum class FluidBoundryType
 	LOOP
 };
 
+struct FluidCell
+{
+	glm::vec2 velocity = glm::vec2(0.0f);
+	float density = 1.0f;
+};
+
 class FluidGrid
 {
 public:
@@ -25,7 +40,9 @@ public:
 	{}
 
 	~FluidGrid()
-	{}
+	{
+		destroyGrid();
+	}
 
 	void integrate(const float& dt);
 
@@ -45,14 +62,15 @@ public:
 	//void setB
 
 private: // Methods
-	
-	void recomputeContainer(); // I dont know if I'll need this.
-
+	void destroyGrid();
+	void buildGrid();
 	
 private: // Variables
 	glm::ivec2 gridResolution;
-
 	FluidBoundryType containerBoundry = FluidBoundryType::OPEN;
+
+	bool isGridInitialized = false;
+	std::vector<std::vector<std::shared_ptr<FluidCell>>> grid;
 
 };
 
