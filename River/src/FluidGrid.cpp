@@ -92,4 +92,13 @@ void FluidGrid::buildGrid()
 }
 
 
+/// <summary>
+/// Diffusion is the process of high density fluids
+/// expanding out into lower density fluids.
+/// </summary>
+void FluidGrid::diffuse(const float& dt)
+{
+
+}
+
 #pragma endregion

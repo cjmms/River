@@ -64,6 +64,8 @@ public:
 private: // Methods
 	void destroyGrid();
 	void buildGrid();
+
+	void diffuse(const float& dt);
 	
 private: // Variables
 	glm::ivec2 gridResolution;
