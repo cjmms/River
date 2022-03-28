@@ -1,6 +1,6 @@
 #pragma once
 
-// TODO: Import GLM
+#include <glm/glm.hpp>
 
 // TODO: Create an RNG helper class.
 
@@ -21,17 +21,38 @@ enum class FluidBoundryType
 class FluidGrid
 {
 public:
-	FluidGrid();
-	~FluidGrid();
+	FluidGrid(int width, int height) : gridResolution{width, height}
+	{}
 
-	void getVelocityAtPosition();
-	void getDensityAtPosition();
+	~FluidGrid()
+	{}
+
+	void integrate(const float& dt);
+
+	glm::vec2 getVelocityAtPosition();
+	float getDensityAtPosition();
+
+	void setContainerBoundry(const FluidBoundryType& type);
+	const FluidBoundryType& getContainerBoundry();
+
+	void setGridWidth(int width);
+	int getGridWidth();
+	void setGridHeight(int height);
+	int getGridHeight();
+	void setGridResolution(glm::ivec2 resolution);
+	const glm::ivec2& getGridResolution();
 
 	//void setB
 
-private:
-	float gridWidth;		// TODO: Getters and setters for this.
-	float gridHeight;
+private: // Methods
+	
+	void recomputeContainer(); // I dont know if I'll need this.
+
+	
+private: // Variables
+	glm::ivec2 gridResolution;
+
+	FluidBoundryType containerBoundry = FluidBoundryType::OPEN;
 
 };
 
