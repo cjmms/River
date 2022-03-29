@@ -33,13 +33,13 @@ struct FluidCell
 	float density = 1.0f;
 };
 
-class FluidGrid
+class FluidContainer
 {
 public:
-	FluidGrid(int width, int height) : gridResolution{width, height}
+	FluidContainer(int width, int height) : gridResolution{width, height}
 	{}
 
-	~FluidGrid()
+	~FluidContainer()
 	{
 		destroyGrid();
 	}

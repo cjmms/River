@@ -1,20 +1,20 @@
-#include "FluidGrid.h"
+#include "FluidContainer.h"
 
 
 /// PUBLIC FUNCTIONS ///
 #pragma region public
 
-void FluidGrid::integrate(const float& dt)
+void FluidContainer::integrate(const float& dt)
 {
 	// ...
 }
 
-glm::vec2 FluidGrid::getVelocityAtPosition()
+glm::vec2 FluidContainer::getVelocityAtPosition()
 {
 	// ...
 }
 
-float FluidGrid::getDensityAtPosition()
+float FluidContainer::getDensityAtPosition()
 {
 	// ...
 }
@@ -23,41 +23,41 @@ float FluidGrid::getDensityAtPosition()
 
 #pragma region setters/getters
 
-void FluidGrid::setContainerBoundry(const FluidBoundryType& type)
+void FluidContainer::setContainerBoundry(const FluidBoundryType& type)
 {
 	this->containerBoundry = type;
 }
-const FluidBoundryType& FluidGrid::getContainerBoundry()
+const FluidBoundryType& FluidContainer::getContainerBoundry()
 {
 	return this->containerBoundry;
 }
 
 // in the future, these below functions might need to call
 //		some kind of rebuild function.. --j
-void FluidGrid::setGridWidth(int width)
+void FluidContainer::setGridWidth(int width)
 {
 	this->gridResolution.x = width;
 }
-int FluidGrid::getGridWidth()
+int FluidContainer::getGridWidth()
 {
 	// might change this to return by const ref. --j
 	return this->gridResolution.x;
 }
 
-void FluidGrid::setGridHeight(int height)
+void FluidContainer::setGridHeight(int height)
 {
 	this->gridResolution.y = height;
 }
-int FluidGrid::getGridHeight()
+int FluidContainer::getGridHeight()
 {
 	return this->gridResolution.y;
 }
 
-void FluidGrid::setGridResolution(glm::ivec2 resolution)
+void FluidContainer::setGridResolution(glm::ivec2 resolution)
 {
 	this->gridResolution = resolution;
 }
-const glm::ivec2& FluidGrid::getGridResolution()
+const glm::ivec2& FluidContainer::getGridResolution()
 {
 	return this->gridResolution;
 }
@@ -67,7 +67,7 @@ const glm::ivec2& FluidGrid::getGridResolution()
 /// PRIVATE FUNCTIONS ///
 #pragma region private
 
-void FluidGrid::destroyGrid()
+void FluidContainer::destroyGrid()
 {
 	for (int r = 0; r < grid.size(); ++r)
 	{
@@ -76,7 +76,7 @@ void FluidGrid::destroyGrid()
 	grid.clear();
 }
 
-void FluidGrid::buildGrid()
+void FluidContainer::buildGrid()
 {
 	// For now I'll just have this overwrite any existing grid...
 	if (isGridInitialized) destroyGrid;
@@ -96,7 +96,7 @@ void FluidGrid::buildGrid()
 /// Diffusion is the process of high density fluids
 /// expanding out into lower density fluids.
 /// </summary>
-void FluidGrid::diffuse(const float& dt)
+void FluidContainer::diffuse(const float& dt)
 {
 
 }
