@@ -63,7 +63,7 @@
     <ClCompile Include="src\Render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FluidGrid.cpp">
+    <ClCompile Include="src\FluidContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,7 +104,7 @@
     <ClInclude Include="src\Render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FluidGrid.h">
+    <ClInclude Include="src\FluidContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
