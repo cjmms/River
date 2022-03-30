@@ -19,6 +19,18 @@ float FluidContainer::getDensityAtPosition()
 	// ...
 }
 
+void FluidContainer::addVelocityAtPosition(glm::ivec2& position, glm::vec2& vel)
+{
+	// Note: I'm not going to bother with validity checking.
+	grid[position.x][position.y]->velocity += vel;
+}
+
+void FluidContainer::addDensityAtPosition(glm::ivec2& position, float& density)
+{
+	grid[position.x][position.y]->density += density;
+}
+
+
 #pragma endregion
 
 #pragma region setters/getters
@@ -67,6 +79,12 @@ const glm::ivec2& FluidContainer::getGridResolution()
 /// PRIVATE FUNCTIONS ///
 #pragma region private
 
+
+/*
+	TODO: REWRITE THE GRID HELPER FUNCTIONS TO WORK
+	IN TERMS OF [X, Y] RATHER THAN [R, C]!!
+*/
+
 void FluidContainer::destroyGrid()
 {
 	for (int r = 0; r < grid.size(); ++r)
@@ -93,12 +111,46 @@ void FluidContainer::buildGrid()
 
 
 /// <summary>
-/// Diffusion is the process of high density fluids
-/// expanding out into lower density fluids.
+/// Things suspended in an incompressible fluid will
+///		diffuse into neighboring fluid cells.
+/// Uses the linear system solver from:
+///		https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf
 /// </summary>
 void FluidContainer::diffuse(const float& dt)
 {
+	const float& width = getGridWidth();
+	const float& height = getGridHeight();
+	
+	const float a = dt * fluidProperties.diffusionRate * width * height;
+	const float denominator = 1 + 4 + a;
+
+	// Applies the Gauss-Seidel linear approximator method to work backwards.
+	constexpr int ITR = 20;
+	for (int k = 0; k < ITR; ++k)
+	{
+		for (int x = 1; x < width; ++x) 
+		{
+			for (int y = 1; y < height; ++y) 
+			{
+				grid[x][y]->velocity;
+			}
+		}
+		// set bounds funct shoudl go here.
+		// ...
+	}
 
 }
+
+void FluidContainer::project() 
+{
+
+}
+
+void FluidContainer::advect() 
+{
+
+}
+
+
 
 #pragma endregion
