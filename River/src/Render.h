@@ -18,14 +18,14 @@ struct Setting
 {
 	int blurSize = 50;
 	int particleSize = 1;
-	float dx = 1;
-	float dz = 1;
+	float dx = 0.01;
+	float dz = 0.01;
 
 	int tessellationFactor = 37;
 	bool enableWireframeMode = false;
-	float heightFactor = 1.5f;
+	float heightFactor = 0.1f;
 
-	int seletectedRenderPass = 0;
+	int seletectedRenderPass = 5;
 };
 
 

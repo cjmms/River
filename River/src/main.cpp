@@ -232,11 +232,11 @@ int main()
 
         ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
 
-        ImGui::SliderFloat("dx scale", &setting.dx, 1.0f, 5.0f);
-        ImGui::SliderFloat("dz scale", &setting.dz, 1.0f, 5.0f);
+        ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
+        ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
 
         ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
-        ImGui::SliderFloat("Height Factor", &setting.heightFactor, 1.0, 10.0);
+        ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
         ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
 
 

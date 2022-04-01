@@ -246,7 +246,8 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     waveMeshShader.setInt("tessellationFactor", setting.tessellationFactor);
     waveMeshShader.setFloat("heightFactor", setting.heightFactor);
 
-    waveMeshShader.setTexture("waveParticle", gradient);
+    waveMeshShader.setTexture("gradientMap", gradient);
+    waveMeshShader.setTexture("deviationMap", deviation);
 
     waveMeshShader.setTexture("checkerBoard", checkerBoardTexture);
 
@@ -257,6 +258,7 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     waveMeshShader.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 
