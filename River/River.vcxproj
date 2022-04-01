@@ -115,6 +115,8 @@
     <None Include="res\Shaders\basic.vs" />
     <None Include="res\Shaders\Blur.vert" />
     <None Include="res\Shaders\HorizontalBlur.frag" />
+    <None Include="res\Shaders\Quad.frag" />
+    <None Include="res\Shaders\VerticalBlur.frag" />
     <None Include="res\Shaders\WaveParticle.frag" />
     <None Include="res\Shaders\WaveParticle.vert" />
   </ItemGroup>

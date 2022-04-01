@@ -127,5 +127,11 @@
     <None Include="res\Shaders\HorizontalBlur.frag">
       <Filter>Resource Files\Shaders\Blur</Filter>
     </None>
+    <None Include="res\Shaders\VerticalBlur.frag">
+      <Filter>Resource Files\Shaders\Blur</Filter>
+    </None>
+    <None Include="res\Shaders\Quad.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

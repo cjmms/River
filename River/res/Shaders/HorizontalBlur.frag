@@ -1,13 +1,14 @@
 #version 450 core
 
+layout (location = 0) out vec4 out1;
+layout (location = 1) out vec4 out2;
+
 uniform sampler2D inputTexture;
 uniform int blurRadius;
 
 in vec2 TexCoords;
-out vec4 FragColor;
 
 float PI = 3.14159265359f;
-
 
 
 // part of wave generation filtering
@@ -16,7 +17,7 @@ float PI = 3.14159265359f;
 vec3 GetFilter(float v)
 {
     float s = sin(PI * v);
-    float c = sin(PI * v);
+    float c = cos(PI * v);
 
     return vec3(
         0.5f * (c + 1.0f),              // 0.5 ( cos(v) + 1 )
@@ -24,7 +25,6 @@ vec3 GetFilter(float v)
         -0.25f * (c * c - s * s + c)    // cos(2v) + cos(v)
     );
 }
-
 
 
 void main()
@@ -58,11 +58,6 @@ void main()
         f45v.w += (sign(velAmpL.z) * velAmpL.y + sign(velAmpR.z) * velAmpR.y) * f.x;
     }
 
-    
-
-    FragColor = vec4(GetFilter(2.0f / float(blurRadius)), 1);
-
-    FragColor = texture(inputTexture, TexCoords);
-
-    FragColor = f123;
+    out1 = f123;
+    out2 = f45v;
 }

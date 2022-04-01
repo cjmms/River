@@ -7,9 +7,20 @@ class FBO
 {
 public:
 	FBO(unsigned int width, unsigned int height);
-	unsigned int ID, DepthBuffer, ColorBuffer;
+
+	void AddTarget(unsigned int width, unsigned int height);
+
+	unsigned int ID, DepthBuffer, ColorBuffer1, ColorBuffer2;
 };
 
+
+struct Setting
+{
+	int blurSize = 20;
+	int particleSize = 1;
+	float dx = 1;
+	float dz = 1;
+};
 
 
 
@@ -20,9 +31,16 @@ public:
     Shader waveParticleShader{ "res/Shaders/WaveParticle.vert", "res/Shaders/WaveParticle.frag"};
 
 	// horizontal blur, used to generate height map base on wave particles
-	// technical perspective, it is blurring.
-	// from the project perspective, it's one of two passes og height map generation base on wave equations
+	// technically, it is blurring.
+	// from the project perspective, it's one of two passes of height map reconstruction base on wave equations
 	Shader horozontalBlur{ "res/Shaders/Blur.vert", "res/Shaders/HorizontalBlur.frag" };
+
+	// vertical blur, used to generate height map base on wave particles
+	// the second pass of wave reconstruction
+	Shader verticalBlur{ "res/Shaders/Blur.vert", "res/Shaders/VerticalBlur.frag" };
+
+
+	Shader quadShader{ "res/Shaders/Blur.vert", "res/Shaders/Quad.frag" };
 
 	unsigned int quadVAO, quadVBO;
 
@@ -30,7 +48,10 @@ public:
 	Render();
 	~Render();
 
-	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, int pointSize, unsigned int fbo);
+	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
+	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
+
+	void DrawQuad(unsigned int inputTexture);
 };

@@ -4,14 +4,17 @@
 #include <iostream>
 
 
+Setting setting;
+
+
 FBO::FBO(unsigned int width, unsigned int height)
 {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
     // generate FBO color attachment, bind to current FBO
-    glGenTextures(1, &ColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, ColorBuffer);  // bind texture
+    glGenTextures(1, &ColorBuffer1);
+    glBindTexture(GL_TEXTURE_2D, ColorBuffer1);  // bind texture
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 
@@ -19,7 +22,7 @@ FBO::FBO(unsigned int width, unsigned int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);        // unbind texture
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ColorBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ColorBuffer1, 0);
 
     // depth
     glGenTextures(1, &DepthBuffer);
@@ -38,6 +41,33 @@ FBO::FBO(unsigned int width, unsigned int height)
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthBuffer, 0);
 
+
+    // check if framebuffer created successfullly
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
+void FBO::AddTarget(unsigned int width, unsigned int height)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, ID);
+
+    // generate FBO color attachment, bind to current FBO
+    glGenTextures(1, &ColorBuffer2);
+    glBindTexture(GL_TEXTURE_2D, ColorBuffer2);  // bind texture
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);        // unbind texture
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, ColorBuffer2, 0);
+
+    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, attachments);
 
     // check if framebuffer created successfullly
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -81,9 +111,9 @@ Render::Render()
 
 
 
-void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, int pointSize, unsigned int fbo)
+void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo)
 {
-	glPointSize(pointSize);
+	glPointSize(setting.particleSize);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -115,7 +145,7 @@ void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
     horozontalBlur.setTexture("inputTexture", inputTexture);
 
     // blur radius
-    horozontalBlur.setInt("blurRadius", 50);
+    horozontalBlur.setInt("blurRadius", setting.blurSize);
 
     // bind shader
     horozontalBlur.Bind();
@@ -129,6 +159,58 @@ void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+
+
+void Render::VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // pass input texture
+    verticalBlur.setTexture("tex1", f123);
+    verticalBlur.setTexture("tex2", f45v);
+
+    // blur radius
+    verticalBlur.setInt("blurRadius", setting.blurSize);
+
+    verticalBlur.setFloat("dxScale", setting.dx);
+    verticalBlur.setFloat("dzScale", setting.dz);
+
+    verticalBlur.Bind();
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    verticalBlur.unBind();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
+void Render::DrawQuad(unsigned int inputTexture)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // pass input texture
+    verticalBlur.setTexture("tex", inputTexture);
+
+    verticalBlur.Bind();
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    verticalBlur.unBind();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 
 
 

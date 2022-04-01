@@ -29,6 +29,10 @@ const int window_height = 960;
 
 
 
+
+extern Setting setting;
+
+
 unsigned int loadTexture(char const* path, bool gamma)
 {
     stbi_set_flip_vertically_on_load(true);
@@ -223,6 +227,13 @@ int main()
 
     FBO waveParticleFBO{ window_width , window_height};
 
+    // used as output for horizontal blur, multi target rendering
+    FBO f12345v{ window_width , window_height };
+    f12345v.AddTarget(window_width, window_height);
+
+    // used as output for vertical blur, multi target rendering
+    FBO deviationGradient{ window_width , window_height };
+    deviationGradient.AddTarget(window_width, window_height);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -261,9 +272,13 @@ int main()
         planeShader.unBind();
         */
 
-        renderer.RenderWaveParticle(waveParticleMesh, 1, waveParticleFBO.ID);
+        renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
-        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer, 0);
+        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
+
+        renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
+
+        renderer.DrawQuad(deviationGradient.ColorBuffer2);
 
         //renderer.RenderWaveParticle(waveParticleMesh, 1, 0);
 
@@ -276,9 +291,17 @@ int main()
         ImGui::NewFrame();
 
 
+        ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
+
+        ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
+
+        ImGui::SliderFloat("dx scale", &setting.dx, 1.0f, 5.0f);
+        ImGui::SliderFloat("dz scale", &setting.dz, 1.0f, 5.0f);
+
         ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 50);
         ImGui::SliderFloat("Height Factor", &heightFactor, 0.0, 2.0);
         ImGui::Checkbox("Wireframe Mode", &enableWireframeMode);
+
 
         // Rendering UI
         ImGui::Render();
