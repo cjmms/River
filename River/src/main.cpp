@@ -29,6 +29,13 @@ unsigned int checkerBoardTexture;
 
 extern Setting setting;
 
+static const char* RenderPassList[]{ "Particle Velocity", 
+                                     "Particle Amplitude", 
+                                     "Velocity after Horizontal Pass",
+                                     "Wave Height Map(Deviation)",
+                                     "Wave Height Map(Gradient)",
+                                     "Wave Mesh"};
+
 
 unsigned int loadTexture(char const* path, bool gamma)
 {
@@ -173,52 +180,6 @@ int main()
 
     checkerBoardTexture = loadTexture("res/checkerboard.jpg", false);
 
-    /*
-    /////////////////////////////////////////////////////////////
-
-    //Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
-    Shader planeShader( "res/Shaders/basic.vs",
-                        "res/Shaders/basic.tcs",
-                        "res/Shaders/basic.tes",
-                        "res/Shaders/basic.fs"  );
-
-    unsigned int waveParticleTexture = loadTexture("res/wave.jpg", false);
-    planeShader.setTexture("waveParticle", waveParticleTexture);
-
-    //////////////////////////////////////////////
-
-    float vertices[] = {
-        -0.5f,  0.f, -0.5f,  0, 1,
-         0.5f,  0.f, -0.5f,  1, 1,
-         0.5f,  0.f,  0.5f,  1, 0,
-
-         0.5f,  0.f,  0.5f,  1, 0,
-        -0.5f,  0.f,  0.5f,  0, 0,
-        -0.5f,  0.f, -0.5f,  0, 1
-    };
-    // first, configure the cube's VAO (and VBO)
-    unsigned int VBO, cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &VBO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindVertexArray(cubeVAO);
-
-    // position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-    // tex coord
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    //glPatchParameteri(GL_PATCH_VERTICES, 3);
-    */
-    ///////////////////////////////////////////////
 
     Render renderer;
 
@@ -234,41 +195,13 @@ int main()
     FBO deviationGradient{ window_width , window_height };
     deviationGradient.AddTarget(window_width, window_height);
 
+    FBO waveMesh{ window_width , window_height };
+
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
         camera.cameraUpdateFrameTime();
-
-        
-
-        ////////////////////////////////////////////////////
-
-        /*
-        // render
-        // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // also draw the lamp object
-        planeShader.setMat4("projection", camera.getProjectionMatrix());
-        planeShader.setMat4("view", camera.getViewMatrix());
-
-        glm::mat4 model(1.0f);
-
-        // scale by 2
-        planeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
-
-        planeShader.setInt("tessellationFactor", tessellationFactor);
-        planeShader.setFloat("heightFactor", heightFactor);
-
-
-
-        planeShader.Bind();
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_PATCHES, 0, 6);
-        planeShader.unBind();
-        */
 
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
@@ -276,13 +209,16 @@ int main()
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
-        renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, 0);
+        renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         //renderer.DrawQuad(deviationGradient.ColorBuffer2);
 
-        //renderer.RenderWaveParticle(waveParticleMesh, 1, 0);
+        renderer.DebugDraw(
+            waveParticleFBO.ColorBuffer1,
+            f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
+            deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
+            waveMesh.ColorBuffer1);
 
-        /////////////////////////////////////////////////////
 
         ////////////////////////////////////////////////////
         // UI
@@ -290,6 +226,7 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
 
         ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
 
@@ -303,13 +240,12 @@ int main()
         ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
 
 
+
         // Rendering UI
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         /////////////////////////////////////////////////////
-
-
 
          /* Swap front and back buffers */
         glfwSwapBuffers(window);

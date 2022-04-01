@@ -268,3 +268,39 @@ Render::~Render()
     glDeleteVertexArrays(1, &quadVAO);
     glDeleteBuffers(1, &quadVBO);
 }
+
+
+void Render::DebugDraw(
+    unsigned int particleMap,
+    unsigned int f123,
+    unsigned int f45v,
+    unsigned int deviation,
+    unsigned int gradient,
+    unsigned int waveMesh)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    quadShader.setInt("selectedRenderPass", setting.seletectedRenderPass);
+
+    // pass input texture
+    quadShader.setTexture("particleMap", particleMap);
+    quadShader.setTexture("f123", f123);
+    quadShader.setTexture("f45v", f45v);
+    quadShader.setTexture("deviation", deviation);
+    quadShader.setTexture("gradient", gradient);
+    quadShader.setTexture("waveMesh", waveMesh);
+
+    quadShader.Bind();
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    quadShader.unBind();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+}

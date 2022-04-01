@@ -24,6 +24,8 @@ struct Setting
 	int tessellationFactor = 37;
 	bool enableWireframeMode = false;
 	float heightFactor = 1.5f;
+
+	int seletectedRenderPass = 0;
 };
 
 
@@ -65,4 +67,11 @@ public:
 	void RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
+
+	void DebugDraw( unsigned int particleMap, 
+					unsigned int f123, 
+					unsigned int f45v, 
+					unsigned int deviation,
+					unsigned int gradient,
+					unsigned int waveMesh);
 };
