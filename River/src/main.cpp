@@ -19,15 +19,12 @@
 #include <stb_image.h>
 
 Camera camera;
-int tessellationFactor = 37;
-bool enableWireframeMode = false;
-float heightFactor = 1.0f;
 
 // default screen size
 const int window_width = 1280;
 const int window_height = 960;
 
-
+unsigned int checkerBoardTexture;
 
 
 extern Setting setting;
@@ -174,6 +171,8 @@ int main()
 
     setupGUI(window);
 
+    checkerBoardTexture = loadTexture("res/checkerboard.jpg", false);
+
     /*
     /////////////////////////////////////////////////////////////
 
@@ -239,10 +238,9 @@ int main()
     {
         processInput(window);
 
-        //camera.cameraUpdateFrameTime();
+        camera.cameraUpdateFrameTime();
 
-        //if (enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        
 
         ////////////////////////////////////////////////////
 
@@ -278,7 +276,9 @@ int main()
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
-        renderer.DrawQuad(deviationGradient.ColorBuffer2);
+        renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, 0);
+
+        //renderer.DrawQuad(deviationGradient.ColorBuffer2);
 
         //renderer.RenderWaveParticle(waveParticleMesh, 1, 0);
 
@@ -298,9 +298,9 @@ int main()
         ImGui::SliderFloat("dx scale", &setting.dx, 1.0f, 5.0f);
         ImGui::SliderFloat("dz scale", &setting.dz, 1.0f, 5.0f);
 
-        ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 50);
-        ImGui::SliderFloat("Height Factor", &heightFactor, 0.0, 2.0);
-        ImGui::Checkbox("Wireframe Mode", &enableWireframeMode);
+        ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
+        ImGui::SliderFloat("Height Factor", &setting.heightFactor, 1.0, 10.0);
+        ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
 
 
         // Rendering UI

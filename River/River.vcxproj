@@ -109,10 +109,10 @@
     <ClInclude Include="src\Shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Shaders\basic.fs" />
-    <None Include="res\Shaders\basic.tcs" />
-    <None Include="res\Shaders\basic.tes" />
-    <None Include="res\Shaders\basic.vs" />
+    <None Include="res\Shaders\wave.frag" />
+    <None Include="res\Shaders\wave.tesc" />
+    <None Include="res\Shaders\wave.tese" />
+    <None Include="res\Shaders\wave.vert" />
     <None Include="res\Shaders\Blur.vert" />
     <None Include="res\Shaders\HorizontalBlur.frag" />
     <None Include="res\Shaders\Quad.frag" />

@@ -16,10 +16,14 @@ public:
 
 struct Setting
 {
-	int blurSize = 20;
+	int blurSize = 50;
 	int particleSize = 1;
 	float dx = 1;
 	float dz = 1;
+
+	int tessellationFactor = 37;
+	bool enableWireframeMode = false;
+	float heightFactor = 1.5f;
 };
 
 
@@ -42,6 +46,11 @@ public:
 
 	Shader quadShader{ "res/Shaders/Blur.vert", "res/Shaders/Quad.frag" };
 
+	Shader waveMeshShader{  "res/Shaders/wave.vert",
+							"res/Shaders/wave.tesc",
+							"res/Shaders/wave.tese",
+							"res/Shaders/wave.frag" };
+
 	unsigned int quadVAO, quadVBO;
 
 public:
@@ -52,6 +61,8 @@ public:
 
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
 	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
+
+	void RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
 };

@@ -2,9 +2,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Camera.h"
 
+extern Camera camera;
 
 Setting setting;
+
+extern unsigned int checkerBoardTexture;
+
 
 
 FBO::FBO(unsigned int width, unsigned int height)
@@ -106,7 +111,6 @@ Render::Render()
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
-    
 }
 
 
@@ -207,6 +211,50 @@ void Render::DrawQuad(unsigned int inputTexture)
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     verticalBlur.unBind();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
+
+
+
+void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsigned int fbo)
+{
+    if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // also draw the lamp object
+    waveMeshShader.setMat4("projection", camera.getProjectionMatrix());
+    waveMeshShader.setMat4("view", camera.getViewMatrix());
+
+    glm::mat4 model(1.0f);
+    model = glm::scale(model, glm::vec3(2.0f));
+    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+    model = glm::translate(model, glm::vec3(0, -0.5, 0));
+
+    // scale by 2
+    waveMeshShader.setMat4("model", model);
+    
+
+    waveMeshShader.setInt("tessellationFactor", setting.tessellationFactor);
+    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
+
+    waveMeshShader.setTexture("waveParticle", gradient);
+
+    waveMeshShader.setTexture("checkerBoard", checkerBoardTexture);
+
+
+    waveMeshShader.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_PATCHES, 0, 6);
+    waveMeshShader.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

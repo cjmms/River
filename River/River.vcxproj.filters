@@ -25,6 +25,9 @@
     <Filter Include="Resource Files\Shaders\Blur">
       <UniqueIdentifier>{b315ea93-d5f5-403b-8774-ae77b6010781}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Wave">
+      <UniqueIdentifier>{ecc97c17-f296-423f-9476-ff6c30d113c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -103,18 +106,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Shaders\basic.vs">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shaders\basic.fs">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shaders\basic.tcs">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="res\Shaders\basic.tes">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="res\Shaders\WaveParticle.vert">
       <Filter>Resource Files\Shaders\WaveParticle</Filter>
     </None>
@@ -132,6 +123,18 @@
     </None>
     <None Include="res\Shaders\Quad.frag">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="res\Shaders\wave.vert">
+      <Filter>Resource Files\Shaders\Wave</Filter>
+    </None>
+    <None Include="res\Shaders\wave.frag">
+      <Filter>Resource Files\Shaders\Wave</Filter>
+    </None>
+    <None Include="res\Shaders\wave.tesc">
+      <Filter>Resource Files\Shaders\Wave</Filter>
+    </None>
+    <None Include="res\Shaders\wave.tese">
+      <Filter>Resource Files\Shaders\Wave</Filter>
     </None>
   </ItemGroup>
 </Project>
