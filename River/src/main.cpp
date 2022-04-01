@@ -183,7 +183,7 @@ int main()
 
     Render renderer;
 
-    WaveParticleMesh waveParticleMesh{ 200 };
+    WaveParticleMesh waveParticleMesh{ 600 };
 
     FBO waveParticleFBO{ window_width , window_height};
 

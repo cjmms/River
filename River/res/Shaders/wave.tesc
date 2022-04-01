@@ -1,5 +1,5 @@
 #version 450
-layout (vertices = 3) out;
+layout (vertices = 4) out;
 
 // varying input from vertex shader
 in vec2 TexCoord[];
@@ -18,9 +18,12 @@ void main()
 	if (gl_InvocationID == 0)
 	{
 		gl_TessLevelInner[0] = tessellationFactor;
+		gl_TessLevelInner[1] = tessellationFactor;
+
 		gl_TessLevelOuter[0] = tessellationFactor;
 		gl_TessLevelOuter[1] = tessellationFactor;
 		gl_TessLevelOuter[2] = tessellationFactor;		
+		gl_TessLevelOuter[3] = tessellationFactor;
 	}
 
 	csPos[gl_InvocationID] = Pos[gl_InvocationID];

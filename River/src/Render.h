@@ -53,7 +53,7 @@ public:
 							"res/Shaders/wave.tese",
 							"res/Shaders/wave.frag" };
 
-	unsigned int quadVAO, quadVBO;
+	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 public:
 	Render();

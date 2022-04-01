@@ -10,6 +10,8 @@ Setting setting;
 
 extern unsigned int checkerBoardTexture;
 
+const unsigned int NUM_PATCH_PTS = 4;
+
 
 
 FBO::FBO(unsigned int width, unsigned int height)
@@ -111,6 +113,41 @@ Render::Render()
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
+
+
+    // init quad
+    float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+        // positions   // texCoords
+        //-1.0f,  1.0f,  0.0f, 1.0f,
+        //1.0f,  1.0f,  1.0f, 1.0f,
+
+        -1.0f, -1.0f,  0.0f, 0.0f,
+        1.0f, -1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        1.0f,  1.0f,  1.0f, 1.0f,
+
+        
+    };
+
+    unsigned int quadPatchVBO;
+
+    glGenBuffers(1, &quadPatchVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadPatchVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
+
+    glGenVertexArrays(1, &quadPatchVAO);
+    glBindVertexArray(quadPatchVAO);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
+
+    glBindVertexArray(0);
+
 }
 
 
@@ -253,8 +290,9 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
 
     waveMeshShader.Bind();
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_PATCHES, 0, 6);
+    glBindVertexArray(quadPatchVAO);
+    glDrawArrays(GL_PATCHES, 0, 4);
+    glBindVertexArray(0);
     waveMeshShader.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
