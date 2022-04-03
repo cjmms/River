@@ -38,6 +38,8 @@ private:
 	T* data;
 
 public:
+	Array2D() : width{ 0 }, heigh{ 0 }, data{ nullptr } {}
+
 	Array2D(int w, int h) : width{ w }, height{ h }
 	{
 		data = new T[width * height];
@@ -47,6 +49,7 @@ public:
 		delete[width * height] data;
 	}
 
+	bool isInitialized() { return data == nulptr; } const;
 	const int& getWidth() { return width; } const;
 	const int& getHeight() { return height; } const;
 	glm::ivec2 getDim() { return { width, height }; } const;
@@ -82,22 +85,20 @@ struct FluidConstants
 class FluidContainer
 {
 public:
-	FluidContainer(int width, int height) : gridResolution{width, height},
-		v(width, height), v_prev(width, height), density(width, height), s(width, height)
-	{}
-
-	~FluidContainer()
+	FluidContainer(int width, int height) : gridResolution{width, height}
 	{
-		destroyGrid();
+		buildGrid();
 	}
+
+	~FluidContainer() {}
 
 	void integrate(const float& dt);
 
-	glm::vec2 getVelocityAtPosition();
-	float getDensityAtPosition();
+	glm::vec2 getVelocityAtPosition(const glm::ivec2& position) const;
+	float getDensityAtPosition(const glm::ivec2& position) const;
 
-	void addVelocityAtPosition(glm::ivec2& position, glm::vec2& vel);
-	void addDensityAtPosition(glm::ivec2& position, float& d);
+	void addVelocityAtPosition(const glm::ivec2& position, glm::vec2& vel);
+	void addDensityAtPosition(const glm::ivec2& position, float& d);
 
 	//void setContainerBoundry(const FluidBoundryType& type);
 	//const FluidBoundryType& getContainerBoundry();
@@ -115,7 +116,6 @@ public:
 private: // Methods
 
 	// Build/destroy helpers
-	void destroyGrid();
 	void buildGrid();
 
 	// Simulation functions

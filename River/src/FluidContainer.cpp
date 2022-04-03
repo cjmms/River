@@ -9,25 +9,26 @@ void FluidContainer::integrate(const float& dt)
 	// ...
 }
 
-glm::vec2 FluidContainer::getVelocityAtPosition()
+glm::vec2 FluidContainer::getVelocityAtPosition(const glm::ivec2& position) const
 {
-	// ...
+	return v.getData(position.x+1, position.y+1);
 }
 
-float FluidContainer::getDensityAtPosition()
+float FluidContainer::getDensityAtPosition(const glm::ivec2& position) const
 {
-	// ...
+	return density.getData(position.x+1, position.y+1);
 }
 
-void FluidContainer::addVelocityAtPosition(glm::ivec2& position, glm::vec2& vel)
+
+// Note: I'm not going to bother with validity checking.
+void FluidContainer::addVelocityAtPosition(const glm::ivec2& position, glm::vec2& vel)
 {
-	// Note: I'm not going to bother with validity checking.
-	v.getDataReference(position.x, position.y) += vel;
+	v.getDataReference(position.x+1, position.y+1) += vel;
 }
 
-void FluidContainer::addDensityAtPosition(glm::ivec2& position, float& d)
+void FluidContainer::addDensityAtPosition(const glm::ivec2& position, float& d)
 {
-	density.getDataReference(position.x, position.y) += d;
+	density.getDataReference(position.x+1, position.y+1) += d;
 }
 
 
@@ -82,8 +83,8 @@ const glm::ivec2& FluidContainer::getGridResolution()
 
 void FluidContainer::buildGrid()
 {
-	float w = getGridWidth();
-	float h = getGridHeight();
+	float w = getGridWidth() + 2;	// Add 2 for padding (borders)
+	float h = getGridHeight() + 2;	// Add 2 for padding (borders)
 	v		= Array2D<glm::vec2>(w, h);
 	v_prev  = Array2D<glm::vec2>(w, h);
 	density = Array2D<float>(w, h);
