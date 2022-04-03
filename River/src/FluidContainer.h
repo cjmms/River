@@ -4,7 +4,7 @@
 // ...
 
 // System includes:
-#include <vector>
+//#include <vector>
 #include <memory>
 
 // Third party includes:
@@ -20,19 +20,57 @@
 	 - Jarred Eagley, jarred.e@digipen.edu, 60001920
 */
 
-enum class FluidBoundryType
-{
-	OPEN,
-	CLOSED,
-	LOOP
-};
-
+/*
 struct FluidCell
 {
 	glm::vec2 velocity = glm::vec2(0.0f);
 	glm::vec2 v_prev = glm::vec2(0.0f);
 	float density = 1.0f;
 	float s;
+};
+*/
+
+template<typename T>
+class Array2D
+{
+private:
+	int width, height;
+	T* data;
+
+public:
+	Array2D(int w, int h) : width{ w }, height{ h }
+	{
+		data = new T[width * height];
+	}
+	~Array2D()
+	{
+		delete[width * height] data;
+	}
+
+	const int& getWidth() { return width; } const;
+	const int& getHeight() { return height; } const;
+	glm::ivec2 getDim() { return { width, height }; } const;
+
+	// Get a constant reference to dataat a position.
+	const T& getData(const int& x, const int& y) const
+	{
+		assert(x < width&& y < height);
+		return data[(y * width) + x];
+	}
+
+	// Get a modifyable reference.
+	T& getDataReference(const int& x, const int& y)
+	{
+		assert(x < width&& y < height);
+		return data[(y * width) + x];
+	}
+
+	// Set data at a position.
+	void setData(const T& input, const int& x, const int& y)
+	{
+		assert(x < width&& y < height);
+		data[(y * width) + x] = input;
+	}
 };
 
 struct FluidConstants
@@ -44,7 +82,8 @@ struct FluidConstants
 class FluidContainer
 {
 public:
-	FluidContainer(int width, int height) : gridResolution{width, height}
+	FluidContainer(int width, int height) : gridResolution{width, height},
+		v(width, height), v_prev(width, height), density(width, height), s(width, height)
 	{}
 
 	~FluidContainer()
@@ -58,10 +97,10 @@ public:
 	float getDensityAtPosition();
 
 	void addVelocityAtPosition(glm::ivec2& position, glm::vec2& vel);
-	void addDensityAtPosition(glm::ivec2& position, float& density);
+	void addDensityAtPosition(glm::ivec2& position, float& d);
 
-	void setContainerBoundry(const FluidBoundryType& type);
-	const FluidBoundryType& getContainerBoundry();
+	//void setContainerBoundry(const FluidBoundryType& type);
+	//const FluidBoundryType& getContainerBoundry();
 
 	void setGridWidth(int width);
 	int getGridWidth();
@@ -86,10 +125,13 @@ private: // Methods
 
 private: // Variables
 	glm::ivec2 gridResolution;
-	FluidBoundryType containerBoundry = FluidBoundryType::OPEN;
+	//bool isGridInitialized = false;
 
-	bool isGridInitialized = false;
-	std::vector<std::vector<std::shared_ptr<FluidCell>>> grid;
+	// Things that were previously inside fluidCell, now each gets its own array:
+	Array2D<glm::vec2> v;		// Velocity
+	Array2D<glm::vec2> v_prev;
+	Array2D<float> density;  // TODO: HANDLE BOUNDS
+	Array2D<float> s;
 
 };
 

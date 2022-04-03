@@ -22,12 +22,12 @@ float FluidContainer::getDensityAtPosition()
 void FluidContainer::addVelocityAtPosition(glm::ivec2& position, glm::vec2& vel)
 {
 	// Note: I'm not going to bother with validity checking.
-	grid[position.x][position.y]->velocity += vel;
+	v.getDataReference(position.x, position.y) += vel;
 }
 
-void FluidContainer::addDensityAtPosition(glm::ivec2& position, float& density)
+void FluidContainer::addDensityAtPosition(glm::ivec2& position, float& d)
 {
-	grid[position.x][position.y]->density += density;
+	density.getDataReference(position.x, position.y) += d;
 }
 
 
@@ -35,14 +35,14 @@ void FluidContainer::addDensityAtPosition(glm::ivec2& position, float& density)
 
 #pragma region setters/getters
 
-void FluidContainer::setContainerBoundry(const FluidBoundryType& type)
-{
-	this->containerBoundry = type;
-}
-const FluidBoundryType& FluidContainer::getContainerBoundry()
-{
-	return this->containerBoundry;
-}
+//void FluidContainer::setContainerBoundry(const FluidBoundryType& type)
+//{
+//	this->containerBoundry = type;
+//}
+//const FluidBoundryType& FluidContainer::getContainerBoundry()
+//{
+//	return this->containerBoundry;
+//}
 
 // in the future, these below functions might need to call
 //		some kind of rebuild function.. --j
@@ -80,33 +80,16 @@ const glm::ivec2& FluidContainer::getGridResolution()
 #pragma region private
 
 
-/*
-	TODO: REWRITE THE GRID HELPER FUNCTIONS TO WORK
-	IN TERMS OF [X, Y] RATHER THAN [R, C]!!
-*/
-
-void FluidContainer::destroyGrid()
-{
-	for (int r = 0; r < grid.size(); ++r)
-	{
-		grid[r].clear();
-	}
-	grid.clear();
-}
-
 void FluidContainer::buildGrid()
 {
-	// For now I'll just have this overwrite any existing grid...
-	if (isGridInitialized) destroyGrid;
+	float w = getGridWidth();
+	float h = getGridHeight();
+	v		= Array2D<glm::vec2>(w, h);
+	v_prev  = Array2D<glm::vec2>(w, h);
+	density = Array2D<float>(w, h);
+	s		= Array2D<float>(w, h);
 
-	grid.reserve(gridResolution.y); // Reserve the rows.
-	for (int r = 0; r < getGridWidth(); ++r)
-	{
-		auto& row = grid[r];
-		row.reserve(gridResolution.x); // Reserve the columns in this row.
-	}
-
-	isGridInitialized = true;
+	//isGridInitialized = true;
 }
 
 
