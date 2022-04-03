@@ -123,9 +123,11 @@ private: // Methods
 	void project();
 	void advect();
 
+	template<typename T>
+	void setBound(int b, Array2D<T>& x);
+
 private: // Variables
 	glm::ivec2 gridResolution;
-	//bool isGridInitialized = false;
 
 	// Things that were previously inside fluidCell, now each gets its own array:
 	Array2D<glm::vec2> v;		// Velocity

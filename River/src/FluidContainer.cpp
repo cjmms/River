@@ -89,8 +89,6 @@ void FluidContainer::buildGrid()
 	v_prev  = Array2D<glm::vec2>(w, h);
 	density = Array2D<float>(w, h);
 	s		= Array2D<float>(w, h);
-
-	//isGridInitialized = true;
 }
 
 
@@ -135,6 +133,37 @@ void FluidContainer::advect()
 
 }
 
+/// <summary>
+/// Sets the boundrycells on the outer edge of the grid such that
+///		they perfectly counteract their neighbors.
+/// </summary>
+template<typename T>
+void FluidContainer::setBound(int b, Array2D<T>& x)
+{
+	// TODO: Allow this to be set as open.
+	
+	// horizontal walls:
+	for (int i = 1; i <= gridResolution.x; ++i)
+	{
+		const int N = gridResolution.x;
+		x.getDataReference(i, 0)   = x.getData(i, 1) * (b==1 ? -1.0f : 1.0f);
+		x.getDataReference(i, N+1) = x.getData(i, N) * (b==1 ? -1.0f : 1.0f);
+	}
 
+	// Vertical walls:
+	for (int i = 1; i <= gridResolution.y; ++i)
+	{
+		const int N = gridResolution.y;
+		x.getDataReference(0, i)   = x.getData(1, i) * (b == 2 ? -1.0f : 1.0f);
+		x.getDataReference(N+1, i) = x.getData(N, i) * (b == 2 ? -1.0f : 1.0f);
+	}
+
+	// Corner cases:
+	const int N = gridResolution.x; const int M = gridResolution.y;
+	x.getDataReference(0, 0)     = 0.5f * x.getData(1, 0)   + x.getData(0, 1);
+	x.getDataReference(0, M+1)   = 0.5f * x.getData(1, M+1) + x.getData(0, M);
+	x.getDataReference(N+1, 0)   = 0.5f * x.getData(N, 0)   + x.getData(N+1, 1);
+	x.getDataReference(N+1, M+1) = 0.5f * x.getData(N, M+1) + x.getData(N+1, M);
+}
 
 #pragma endregion
