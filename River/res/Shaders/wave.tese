@@ -9,10 +9,10 @@ in vec3 csPos[];
 
 out vec2 TexCoord;
 out float Height;
+out vec3 Normal;
 
 uniform sampler2D gradientMap;
 uniform sampler2D deviationMap;
-uniform float heightFactor;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -56,11 +56,22 @@ void main()
 
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
-	gl_Position.x += deviation.x;
-	gl_Position.y += deviation.y * heightFactor;
-	gl_Position.z += deviation.z;
+    gl_Position += vec4(deviation.xyz, 0);
 
 	gl_Position = projection * view * gl_Position;
 
 	Height = deviation.y;
+
+    //float textureWidth = textureSize(deviationMap, 0).x;
+    //float textureHeight = textureSize(deviationMap, 0).y;
+
+    //float left  = texture(deviationMap, TexCoord + vec2(-textureWidth, 0.0)).y * 2.0 - 1.0;
+    //float right = texture(deviationMap, TexCoord + vec2( textureWidth, 0.0)).y * 2.0 - 1.0;
+    //float up    = texture(deviationMap, TexCoord + vec2(0.0,  textureHeight)).y * 2.0 - 1.0;
+    //float down  = texture(deviationMap, TexCoord + vec2(0.0, -textureHeight)).y * 2.0 - 1.0;
+    //vec3 normal = normalize(vec3(down - up, 2.0, left - right));
+
+    //Normal = vec3(model * vec4(normal, 0));     // normal in world space
+    //Normal = normal;
+    //Normal =  vec3(deviation.x, deviation.y * heightFactor, deviation.z);
 }

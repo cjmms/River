@@ -1,9 +1,8 @@
-
-
 #version 410 core
 
 in vec2 TexCoord;
 in float Height;
+in vec3 Normal;
 
 out vec4 FragColor;
 
@@ -16,4 +15,5 @@ void main()
 
     float h = Height;	// shift and scale the height in to a grayscale value
     FragColor = texture(checkerBoard, TexCoord);
+    //FragColor = vec4(normalize(Normal), 1);
 }

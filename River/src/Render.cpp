@@ -115,18 +115,13 @@ Render::Render()
     glBindVertexArray(0);
 
 
-    // init quad
+    // init quad patch
     float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        //-1.0f,  1.0f,  0.0f, 1.0f,
-        //1.0f,  1.0f,  1.0f, 1.0f,
-
-        -1.0f, -1.0f,  0.0f, 0.0f,
-        1.0f, -1.0f,  1.0f, 0.0f,
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        1.0f,  1.0f,  1.0f, 1.0f,
-
-        
+        // positions   // texCoords    
+        -1.0f, -1.0f,     0.0f, 0.0f,   
+        -1.0f,  1.0f,     0.0f, 1.0f,  
+         1.0f, -1.0f,     1.0f, 0.0f,  
+         1.0f,  1.0f,     1.0f, 1.0f
     };
 
     unsigned int quadPatchVBO;
@@ -147,7 +142,6 @@ Render::Render()
     glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 
     glBindVertexArray(0);
-
 }
 
 
@@ -220,6 +214,8 @@ void Render::VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo
     verticalBlur.setFloat("dxScale", setting.dx);
     verticalBlur.setFloat("dzScale", setting.dz);
 
+    verticalBlur.setFloat("heightFactor", setting.heightFactor);
+
     verticalBlur.Bind();
 
     glBindVertexArray(quadVAO);
@@ -281,7 +277,6 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     
 
     waveMeshShader.setInt("tessellationFactor", setting.tessellationFactor);
-    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
 
     waveMeshShader.setTexture("gradientMap", gradient);
     waveMeshShader.setTexture("deviationMap", deviation);
