@@ -14,6 +14,10 @@ out vec3 Normal;
 uniform sampler2D gradientMap;
 uniform sampler2D deviationMap;
 
+uniform float dxScale;
+uniform float dzScale;
+uniform float heightFactor;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -56,19 +60,31 @@ void main()
 
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
-    gl_Position += vec4(deviation.xyz, 0);
+    gl_Position += vec4(deviation.x , deviation.y , deviation.z  , 0);
 
 	gl_Position = projection * view * gl_Position;
 
 	Height = deviation.y;
 
-    //float textureWidth = textureSize(deviationMap, 0).x;
-    //float textureHeight = textureSize(deviationMap, 0).y;
+    float offsetU = 1 / float(textureSize(deviationMap, 0).x);     // width of one texel
+    float offsetV = 1 / float(textureSize(deviationMap, 0).y);     // height of one texel
 
-    //float left  = texture(deviationMap, TexCoord + vec2(-textureWidth, 0.0)).y * 2.0 - 1.0;
-    //float right = texture(deviationMap, TexCoord + vec2( textureWidth, 0.0)).y * 2.0 - 1.0;
-    //float up    = texture(deviationMap, TexCoord + vec2(0.0,  textureHeight)).y * 2.0 - 1.0;
-    //float down  = texture(deviationMap, TexCoord + vec2(0.0, -textureHeight)).y * 2.0 - 1.0;
+    // access 4 near deviations
+    vec3 left  = texture(deviationMap, TexCoord + vec2(-offsetU, 0.0)).xyz;
+    vec3 right = texture(deviationMap, TexCoord + vec2( offsetU, 0.0)).xyz;
+    vec3 up    = texture(deviationMap, TexCoord + vec2(0.0,  offsetV)).xyz;
+    vec3 down  = texture(deviationMap, TexCoord + vec2(0.0, -offsetV)).xyz;
+
+    vec3 ddu = right - left;    // difference of deviation in horizontal direction
+    vec3 ddv = up - down;       // difference of deviation in vertical direction
+
+    ddu += vec3(2 * offsetU, 0, 0);
+    ddv += vec3(0, 0, 2 * offsetV);
+
+    Normal = normalize(cross(normalize(ddv), normalize(ddu)));
+    //Normal = normalize(ddu);
+    //Normal = normalize(right) - normalize(left);
+
     //vec3 normal = normalize(vec3(down - up, 2.0, left - right));
 
     //Normal = vec3(model * vec4(normal, 0));     // normal in world space

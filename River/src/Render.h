@@ -26,6 +26,8 @@ struct Setting
 	float heightFactor = 0.1f;
 
 	int seletectedRenderPass = 5;
+	float timeScale = 1;
+	bool enableNormalMap = false;
 };
 
 

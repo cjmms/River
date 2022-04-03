@@ -156,6 +156,7 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     waveParticleShader.setFloat("time", glfwGetTime());
+    waveParticleShader.setFloat("timeScale", setting.timeScale);
 
 	waveParticleShader.Bind();
 
@@ -269,7 +270,7 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     glm::mat4 model(1.0f);
     model = glm::scale(model, glm::vec3(2.0f));
-    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(100.f), glm::vec3(1, 0, 0));
     model = glm::translate(model, glm::vec3(0, -0.5, 0));
 
     // scale by 2
@@ -283,6 +284,11 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     waveMeshShader.setTexture("checkerBoard", checkerBoardTexture);
 
+    waveMeshShader.setFloat("dxScale", setting.dx);
+    waveMeshShader.setFloat("dzScale", setting.dz);
+
+    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
+    waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
     waveMeshShader.Bind();
     glBindVertexArray(quadPatchVAO);

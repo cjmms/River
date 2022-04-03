@@ -229,6 +229,7 @@ int main()
         ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
 
         ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
+        ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 1.0);
 
         ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
 
@@ -239,7 +240,7 @@ int main()
         ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
         ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
 
-
+        ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
 
         // Rendering UI
         ImGui::Render();

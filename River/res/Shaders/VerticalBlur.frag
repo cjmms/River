@@ -73,5 +73,6 @@ void main()
 
    
     out1 = vec4(deviation.x * dxScale, deviation.y * heightFactor, deviation.z * dzScale, deviation.w);
+    //out1 = deviation;
     out2 = gradient;
 }

@@ -8,6 +8,7 @@ out vec4 FragColor;
 
 uniform sampler2D waveParticle;
 uniform sampler2D checkerBoard;
+uniform bool enableNormalMap;
 
 void main()
 {
@@ -15,5 +16,9 @@ void main()
 
     float h = Height;	// shift and scale the height in to a grayscale value
     FragColor = texture(checkerBoard, TexCoord);
-    //FragColor = vec4(normalize(Normal), 1);
+
+    if (enableNormalMap)
+    {
+        FragColor = vec4(abs(Normal), 1);
+    }
 }
