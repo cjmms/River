@@ -11,7 +11,9 @@ void FluidContainer::integrate(const float& dt)
 
 glm::vec2 FluidContainer::getVelocityAtPosition(const glm::ivec2& position) const
 {
-	return v.getData(position.x+1, position.y+1);
+	return glm::vec2(
+		vx->getData(position.x+1, position.y+1), vy->getData(position.x+1, position.y+1)
+		);
 }
 
 float FluidContainer::getDensityAtPosition(const glm::ivec2& position) const
@@ -23,7 +25,8 @@ float FluidContainer::getDensityAtPosition(const glm::ivec2& position) const
 // Note: I'm not going to bother with validity checking.
 void FluidContainer::addVelocityAtPosition(const glm::ivec2& position, glm::vec2& vel)
 {
-	v.getDataReference(position.x+1, position.y+1) += vel;
+	vx->getDataReference(position.x+1, position.y+1) += vel.x;
+	vy->getDataReference(position.x+1, position.y+1) += vel.y;
 }
 
 void FluidContainer::addDensityAtPosition(const glm::ivec2& position, float& d)
@@ -85,8 +88,10 @@ void FluidContainer::buildGrid()
 {
 	float w = getGridWidth() + 2;	// Add 2 for padding (borders)
 	float h = getGridHeight() + 2;	// Add 2 for padding (borders)
-	v		= Array2D<glm::vec2>(w, h);
-	v_prev  = Array2D<glm::vec2>(w, h);
+	vx		= new Array2D<float>(w, h);
+	vy		= new Array2D<float>(w, h);
+	vx_prev = new Array2D<float>(w, h);
+	vy_prev = new Array2D<float>(w, h);
 	density = Array2D<float>(w, h);
 	s		= Array2D<float>(w, h);
 }
@@ -110,11 +115,12 @@ void FluidContainer::diffuse(const float& dt)
 	constexpr int ITR = 20;
 	for (int k = 0; k < ITR; ++k)
 	{
-		for (int x = 1; x < width; ++x) 
+		// Excludes boundries, only processes main cells.
+		for (int x = 1; x <= width; ++x) 
 		{
-			for (int y = 1; y < height; ++y) 
+			for (int y = 1; y <= height; ++y) 
 			{
-				grid[x][y]->velocity;
+
 			}
 		}
 		// set bounds funct shoudl go here.

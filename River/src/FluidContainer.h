@@ -90,7 +90,13 @@ public:
 		buildGrid();
 	}
 
-	~FluidContainer() {}
+	~FluidContainer() 
+	{
+		delete vx;
+		delete vy;
+		delete vx_prev;
+		delete vy_prev;
+	}
 
 	void integrate(const float& dt);
 
@@ -118,6 +124,15 @@ private: // Methods
 	// Build/destroy helpers
 	void buildGrid();
 
+	// Private utility function for swapping arrays around.
+	template<typename T>
+	void swapPtr(T* a, T* b)
+	{
+		T* tmp = a;
+		a = b;
+		b = tmp;
+	}
+
 	// Simulation functions
 	void diffuse(const float& dt);
 	void project();
@@ -130,8 +145,11 @@ private: // Variables
 	glm::ivec2 gridResolution;
 
 	// Things that were previously inside fluidCell, now each gets its own array:
-	Array2D<glm::vec2> v;		// Velocity
-	Array2D<glm::vec2> v_prev;
+	// To cut down on templating, velocities are stored as floats rather than vectors...
+	Array2D<float>* vx;
+	Array2D<float>* vy;
+	Array2D<float>* vx_prev;
+	Array2D<float>* vy_prev;
 	Array2D<float> density;  // TODO: HANDLE BOUNDS
 	Array2D<float> s;
 
