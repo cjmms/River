@@ -100,6 +100,7 @@ public:
 	FluidContainer(int width, int height) : gridResolution{width, height}
 	{
 		buildGrid();
+		printf("Fluid Container built.\n");
 	}
 
 	~FluidContainer() 
@@ -108,6 +109,9 @@ public:
 		delete vy;
 		delete vx_prev;
 		delete vy_prev;
+		delete density;
+		delete s;
+		printf("Fluid Container deleted.\n");
 	}
 
 	void integrate(const float& dt);
@@ -147,10 +151,14 @@ private: // Methods
 
 	// Simulation functions:
 
+	void densityStep();
+	void VelocityStep();
+
 	template<typename T>
 	void addSource(Array2D<T>* x, Array2D<T>* s, const float& dt);
 	
-	void diffuse(const float& dt);
+	template<typename T>
+	void diffuse(Array2D<T>* x, Array2D<T>* x0, const int& b, const float& dt);
 	
 	void project();
 	
@@ -168,8 +176,8 @@ private: // Variables
 	Array2D<float>* vy;
 	Array2D<float>* vx_prev;
 	Array2D<float>* vy_prev;
-	Array2D<float> density;  // TODO: HANDLE BOUNDS
-	Array2D<float> s;
+	Array2D<float>* density;
+	Array2D<float>* s;
 
 };
 

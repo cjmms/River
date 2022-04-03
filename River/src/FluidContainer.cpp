@@ -6,7 +6,8 @@
 
 void FluidContainer::integrate(const float& dt)
 {
-	// ...
+	VelocityStep(); // TODO
+	densityStep(); // TODO
 }
 
 glm::vec2 FluidContainer::getVelocityAtPosition(const glm::ivec2& position) const
@@ -18,7 +19,7 @@ glm::vec2 FluidContainer::getVelocityAtPosition(const glm::ivec2& position) cons
 
 float FluidContainer::getDensityAtPosition(const glm::ivec2& position) const
 {
-	return density.getData(position.x+1, position.y+1);
+	return density->getData(position.x+1, position.y+1);
 }
 
 
@@ -31,7 +32,7 @@ void FluidContainer::addVelocityAtPosition(const glm::ivec2& position, glm::vec2
 
 void FluidContainer::addDensityAtPosition(const glm::ivec2& position, float& d)
 {
-	density.getDataReference(position.x+1, position.y+1) += d;
+	density->getDataReference(position.x+1, position.y+1) += d;
 }
 
 
@@ -92,8 +93,8 @@ void FluidContainer::buildGrid()
 	vy		= new Array2D<float>(w, h);
 	vx_prev = new Array2D<float>(w, h);
 	vy_prev = new Array2D<float>(w, h);
-	density = Array2D<float>(w, h);
-	s		= Array2D<float>(w, h);
+	density = new Array2D<float>(w, h);
+	s		= new Array2D<float>(w, h);
 }
 
 
@@ -109,12 +110,14 @@ void FluidContainer::addSource(Array2D<T>* x, Array2D<T>* s, const float& dt)
 }
 
 /// <summary>
-/// Things suspended in an incompressible fluid will
+/// Properties in an incompressible fluid will
 ///		diffuse into neighboring fluid cells.
 /// Uses the linear system solver from:
 ///		https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/GDC03.pdf
+/// Note: The 'b' parameter is related to boundry handling.
 /// </summary>
-void FluidContainer::diffuse(const float& dt)
+template<typename T>
+void FluidContainer::diffuse(Array2D<T>* x, Array2D<T>* x0, const int& b, const float& dt)
 {
 	const float& width = getGridWidth();
 	const float& height = getGridHeight();
@@ -127,17 +130,21 @@ void FluidContainer::diffuse(const float& dt)
 	for (int k = 0; k < ITR; ++k)
 	{
 		// Excludes boundries, only processes main cells.
-		for (int x = 1; x <= width; ++x) 
+		for (int i = 1; i <= width; ++i) 
 		{
-			for (int y = 1; y <= height; ++y) 
+			for (int j = 1; j <= height; ++j) 
 			{
-
+				const T val 
+					= (x0->getData(i,j) 
+					+ a*( x->getData(i-1, j) + x->getData(i+1, j) + x->getData(i, j-1) + x->getData(i, j+1) ))
+					/ (5*a);
+				x->setData(val);
 			}
 		}
-		// set bounds funct shoudl go here.
-		// ...
-	}
 
+		// Handle boundries.
+		setBound(b, x);
+	}
 }
 
 void FluidContainer::project() 
