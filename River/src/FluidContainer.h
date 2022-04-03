@@ -160,7 +160,8 @@ private: // Methods
 	template<typename T>
 	void diffuse(Array2D<T>* x, Array2D<T>* x0, const int& b, const float& dt);
 	
-	void project();
+	template<typename T>
+	void project(Array2D<T>* u, Array2D<T>* v, Array2D<T>* p, Array2D<T>* div);
 	
 	template <typename T>
 	void advect(Array2D<T>* d, Array2D<T>* d0, Array2D<T>* u, Array2D<T>* v, const int& b, const float dt);

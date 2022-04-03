@@ -147,8 +147,28 @@ void FluidContainer::diffuse(Array2D<T>* x, Array2D<T>* x0, const int& b, const 
 	}
 }
 
-void FluidContainer::project() 
+template<typename T>
+void FluidContainer::project(Array2D<T>* u, Array2D<T>* v, Array2D<T>* p, Array2D<T>* div)
 {
+	constexpr int ITR = 20;
+
+	const int N = gridResolution.x;
+	const int M = gridResolution.y;
+
+	const float hx = 1.0f / N;
+	const float hy = 1.0f / M;
+
+	for (int i = 1; i <= N; ++i)
+	{
+		for (int j = 1; j <= M; ++j)
+		{ 
+			 // TODO!!
+			// ...
+			
+			const T val = -0.5f * h;
+			div->setData();
+		}
+	}
 
 }
 
