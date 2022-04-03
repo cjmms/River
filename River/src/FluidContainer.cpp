@@ -152,9 +152,43 @@ void FluidContainer::project()
 
 }
 
-void FluidContainer::advect() 
+template<typename T>
+void FluidContainer::advect(Array2D<T>* d, Array2D<T>* d0, Array2D<T>* u, Array2D<T>* v, const int& b, const float dt)
 {
+	const float N = getGridWidth();
+	const float M = getGridHeight();
+	for (int i = 1; i <= N; ++i) 
+	{
+		for (int j = 1; j <= M; ++j) 
+		{
+			const float x = i - dt * N * u->getData(i, j);
+			const float y = j - dt * M * v->getData(i, j);
+			if (x < 0.5f)
+				x = 0.5f;
+			else if (x > N + 0.5f)
+				x = N + 0.5f;
+			if (y < 0.5f)
+				y = 0.5f;
+			else if (y > M + 0.5f)
+				y = M + 0.5f;
+			
+			const int i0 = (int)x;
+			const int i1 = i0+1;
+			const int j0 = (int)y;
+			const int j1 = j0+1;
+			
+			const float s1 = x - i0;	// should these really be floats?
+			const float s0 = 1.0f - s1;
+			const float t1 = y - j0;
+			const float t0 = 1.0f - t1;
 
+			const T val 
+				= s0 * ( t0*d0->getData(i0, j0) + t1*d0->getData(i0, j1) )
+				+ s1 * ( t0*d0->getData(i1, j0) + t1*d0->getData(i1, j1));
+			d->setData(val, i, j);
+		}
+	}
+	setbound(b, d);
 }
 
 /// <summary>
@@ -162,7 +196,7 @@ void FluidContainer::advect()
 ///		they perfectly counteract their neighbors.
 /// </summary>
 template<typename T>
-void FluidContainer::setBound(int b, Array2D<T>* x)
+void FluidContainer::setBound(const int& b, Array2D<T>* x)
 {
 	// TODO: Allow this to be set as open.
 	

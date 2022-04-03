@@ -162,10 +162,11 @@ private: // Methods
 	
 	void project();
 	
-	void advect();
+	template <typename T>
+	void advect(Array2D<T>* d, Array2D<T>* d0, Array2D<T>* u, Array2D<T>* v, const int& b, const float dt);
 
 	template<typename T>
-	void setBound(int b, Array2D<T>* x);
+	void setBound(const int& b, Array2D<T>* x);
 
 private: // Variables
 	glm::ivec2 gridResolution;
