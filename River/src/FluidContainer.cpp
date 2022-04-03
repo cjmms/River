@@ -97,6 +97,17 @@ void FluidContainer::buildGrid()
 }
 
 
+template<typename T>
+void FluidContainer::addSource(Array2D<T>* x, Array2D<T>* s, const float& dt)
+{
+	// Total size of the grid, including boundries:
+	const int size = (gridResolution.x + 2) * (gridResolution.y + 2);
+	for (int i = 0; i < size; ++i)
+	{
+		x->getDataReference(i) += dt * s->getData(i);
+	}
+}
+
 /// <summary>
 /// Things suspended in an incompressible fluid will
 ///		diffuse into neighboring fluid cells.
@@ -144,7 +155,7 @@ void FluidContainer::advect()
 ///		they perfectly counteract their neighbors.
 /// </summary>
 template<typename T>
-void FluidContainer::setBound(int b, Array2D<T>& x)
+void FluidContainer::setBound(int b, Array2D<T>* x)
 {
 	// TODO: Allow this to be set as open.
 	

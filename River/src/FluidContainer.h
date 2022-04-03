@@ -55,10 +55,16 @@ public:
 	glm::ivec2 getDim() { return { width, height }; } const;
 
 	// Get a constant reference to dataat a position.
-	const T& getData(const int& x, const int& y) const
+	const T getData(const int& x, const int& y) const
 	{
 		assert(x < width&& y < height);
 		return data[(y * width) + x];
+	}
+
+	// Indexed rather than by coordinate. Use with caution.
+	const T getData(const int& i) const
+	{
+		return data[i];
 	}
 
 	// Get a modifyable reference.
@@ -66,6 +72,12 @@ public:
 	{
 		assert(x < width&& y < height);
 		return data[(y * width) + x];
+	}
+
+	// Use with caution; directly accesses data.
+	T& getDataReference(const int& i)
+	{
+		return data[i];
 	}
 
 	// Set data at a position.
@@ -133,13 +145,19 @@ private: // Methods
 		b = tmp;
 	}
 
-	// Simulation functions
+	// Simulation functions:
+
+	template<typename T>
+	void addSource(Array2D<T>* x, Array2D<T>* s, const float& dt);
+	
 	void diffuse(const float& dt);
+	
 	void project();
+	
 	void advect();
 
 	template<typename T>
-	void setBound(int b, Array2D<T>& x);
+	void setBound(int b, Array2D<T>* x);
 
 private: // Variables
 	glm::ivec2 gridResolution;
