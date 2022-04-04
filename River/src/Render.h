@@ -26,6 +26,11 @@ struct Setting
 	float heightFactor = 0.1f;
 
 	int seletectedRenderPass = 5;
+
+	// lighting
+	float waterDepth = 5.0f;
+	float extinctionCoeff  = 0.1f;
+	glm::vec3 waterBedColor = glm::vec3(0.5);
 };
 
 

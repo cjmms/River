@@ -288,6 +288,10 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     waveMeshShader.setTexture("checkerBoard", checkerBoardTexture);
 
+    waveMeshShader.setFloat("waterDepth", setting.waterDepth);
+    waveMeshShader.setFloat("extinctionCoeff", setting.extinctionCoeff);
+    waveMeshShader.setVec3("waterBedColor", setting.waterBedColor);
+
 
     waveMeshShader.Bind();
     glBindVertexArray(quadPatchVAO);

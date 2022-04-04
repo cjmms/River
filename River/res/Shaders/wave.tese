@@ -8,7 +8,7 @@ in vec2 TextureCoord[];
 in vec3 csPos[];
 
 out vec2 TexCoord;
-out float Height;
+out vec3 worldPos;
 
 uniform sampler2D gradientMap;
 uniform sampler2D deviationMap;
@@ -60,7 +60,7 @@ void main()
 	gl_Position.y += deviation.y * heightFactor;
 	gl_Position.z += deviation.z;
 
-	gl_Position = projection * view * gl_Position;
+    worldPos = gl_Position.xyz;
 
-	Height = deviation.y;
+	gl_Position = projection * view * gl_Position;   
 }
