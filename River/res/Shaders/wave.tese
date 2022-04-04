@@ -60,7 +60,7 @@ void main()
 
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
-    gl_Position += vec4(deviation.x , deviation.y , deviation.z  , 0);
+    gl_Position += vec4(deviation, 0);
 
 	gl_Position = projection * view * gl_Position;
 
@@ -82,12 +82,4 @@ void main()
     ddv += vec3(0, 0, 2 * offsetV);
 
     Normal = normalize(cross(normalize(ddv), normalize(ddu)));
-    //Normal = normalize(ddu);
-    //Normal = normalize(right) - normalize(left);
-
-    //vec3 normal = normalize(vec3(down - up, 2.0, left - right));
-
-    //Normal = vec3(model * vec4(normal, 0));     // normal in world space
-    //Normal = normal;
-    //Normal =  vec3(deviation.x, deviation.y * heightFactor, deviation.z);
 }
