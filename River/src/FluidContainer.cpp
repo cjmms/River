@@ -6,8 +6,8 @@
 
 void FluidContainer::integrate(const float& dt)
 {
-	VelocityStep(); // TODO
-	densityStep(); // TODO
+	VelocityStep(dt); 
+	densityStep(dt); 
 }
 
 glm::vec2 FluidContainer::getVelocityAtPosition(const glm::ivec2& position) const
@@ -39,15 +39,6 @@ void FluidContainer::addDensityAtPosition(const glm::ivec2& position, float& d)
 #pragma endregion
 
 #pragma region setters/getters
-
-//void FluidContainer::setContainerBoundry(const FluidBoundryType& type)
-//{
-//	this->containerBoundry = type;
-//}
-//const FluidBoundryType& FluidContainer::getContainerBoundry()
-//{
-//	return this->containerBoundry;
-//}
 
 // in the future, these below functions might need to call
 //		some kind of rebuild function.. --j

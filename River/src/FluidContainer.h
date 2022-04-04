@@ -151,8 +151,32 @@ private: // Methods
 
 	// Simulation functions:
 
-	void densityStep();
-	void VelocityStep();
+	void densityStep(const float& dt)
+	{
+		// Note: 's' is prev density, I think.
+		addSource(s, density, dt);
+		swapPtr(density, s);
+		diffuse(s, density, 0, dt);
+		swapPtr(density, s);
+		advect(s, density, vx, vy, 0, dt);
+	}
+	void VelocityStep(const float& dt)
+	{
+		addSource(vx, vx_prev, dt); 
+		addSource(vy, vy_prev, dt); 
+		swapPtr(vx, vx_prev);
+		swapPtr(vy, vy_prev);
+
+		diffuse(vx, vx_prev, 1, dt);
+		diffuse(vy, vy_prev, 2, dt);
+		swapPtr(vx, vx_prev);
+		swapPtr(vy, vy_prev);
+
+		// project(); NOT DONE YET!
+		advect(vx, vx_prev, vx_prev, vy_prev, 1, dt);
+		advect(vy, vy_prev, vx_prev, vy_prev, 2, dt);
+		// project(); NOT DONE YET!
+	}
 
 	template<typename T>
 	void addSource(Array2D<T>* x, Array2D<T>* s, const float& dt);
