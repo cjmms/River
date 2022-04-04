@@ -13,20 +13,29 @@
 
 #include "Mesh.h"
 #include "Render.h"
+#include "IBL.h"
 
 // These 2 lines should only be defined in this file
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 Camera camera;
-int tessellationFactor = 37;
-bool enableWireframeMode = false;
-float heightFactor = 1.0f;
 
 // default screen size
 const int window_width = 1280;
 const int window_height = 960;
 
+unsigned int checkerBoardTexture;
+
+
+extern Setting setting;
+
+static const char* RenderPassList[]{ "Particle Velocity", 
+                                     "Particle Amplitude", 
+                                     "Velocity after Horizontal Pass",
+                                     "Wave Height Map(Deviation)",
+                                     "Wave Height Map(Gradient)",
+                                     "Wave Mesh"};
 
 
 unsigned int loadTexture(char const* path, bool gamma)
@@ -78,6 +87,33 @@ unsigned int loadTexture(char const* path, bool gamma)
 }
 
 
+void RenderUI()
+{
+    // UI
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
+
+    ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
+    ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 1.0);
+
+    ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
+
+    ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
+    ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
+
+    ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
+    ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
+    ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
+
+    ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
+
+    // Rendering UI
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
 
 void processInput(GLFWwindow* window)
@@ -158,6 +194,7 @@ int main()
     }
 
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     /*
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -170,123 +207,61 @@ int main()
 
     setupGUI(window);
 
-    /*
-    /////////////////////////////////////////////////////////////
+    checkerBoardTexture = loadTexture("res/checkerboard.jpg", false);
 
-    //Shader cubeShader("res/Shaders/basic.vs", "res/Shaders/basic.fs");
-    Shader planeShader( "res/Shaders/basic.vs",
-                        "res/Shaders/basic.tcs",
-                        "res/Shaders/basic.tes",
-                        "res/Shaders/basic.fs"  );
-
-    unsigned int waveParticleTexture = loadTexture("res/wave.jpg", false);
-    planeShader.setTexture("waveParticle", waveParticleTexture);
-
-    //////////////////////////////////////////////
-
-    float vertices[] = {
-        -0.5f,  0.f, -0.5f,  0, 1,
-         0.5f,  0.f, -0.5f,  1, 1,
-         0.5f,  0.f,  0.5f,  1, 0,
-
-         0.5f,  0.f,  0.5f,  1, 0,
-        -0.5f,  0.f,  0.5f,  0, 0,
-        -0.5f,  0.f, -0.5f,  0, 1
-    };
-    // first, configure the cube's VAO (and VBO)
-    unsigned int VBO, cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &VBO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindVertexArray(cubeVAO);
-
-    // position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-
-    // tex coord
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    //glPatchParameteri(GL_PATCH_VERTICES, 3);
-    */
-    ///////////////////////////////////////////////
+    Skybox skybox;
+    skybox.GenerateCubemap(LoadHDR("res/Arches_E_PineTree/Arches_E_PineTree_3k.hdr"));
 
     Render renderer;
 
-    WaveParticleMesh waveParticleMesh{ 200 };
+    WaveParticleMesh waveParticleMesh{ 600 };
 
     FBO waveParticleFBO{ window_width , window_height};
 
+    // used as output for horizontal blur, multi target rendering
+    FBO f12345v{ window_width , window_height };
+    f12345v.AddTarget(window_width, window_height);
+
+    // used as output for vertical blur, multi target rendering
+    FBO deviationGradient{ window_width , window_height };
+    deviationGradient.AddTarget(window_width, window_height);
+
+    FBO waveMesh{ window_width , window_height };
+
+    glViewport(0, 0, window_width, window_height);
 
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
-        //camera.cameraUpdateFrameTime();
+        camera.cameraUpdateFrameTime();
+        
+        renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
-        //if (enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
+
+        renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
+
+        renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
+
+        // render skybox into the same FBO contains wave mesh
+        glBindFramebuffer(GL_FRAMEBUFFER, waveMesh.ID);
+        skybox.Render();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        //renderer.DrawQuad(deviationGradient.ColorBuffer2);
+        
+        renderer.DebugDraw(
+            waveParticleFBO.ColorBuffer1,
+            f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
+            deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
+            waveMesh.ColorBuffer1);
+
 
         ////////////////////////////////////////////////////
-
-        /*
-        // render
-        // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // also draw the lamp object
-        planeShader.setMat4("projection", camera.getProjectionMatrix());
-        planeShader.setMat4("view", camera.getViewMatrix());
-
-        glm::mat4 model(1.0f);
-
-        // scale by 2
-        planeShader.setMat4("model", glm::scale(model, glm::vec3(2.0f)));
-
-        planeShader.setInt("tessellationFactor", tessellationFactor);
-        planeShader.setFloat("heightFactor", heightFactor);
-
-
-
-        planeShader.Bind();
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_PATCHES, 0, 6);
-        planeShader.unBind();
-        */
-
-        renderer.RenderWaveParticle(waveParticleMesh, 1, waveParticleFBO.ID);
-
-        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer, 0);
-
-        //renderer.RenderWaveParticle(waveParticleMesh, 1, 0);
+        RenderUI();
 
         /////////////////////////////////////////////////////
-
-        ////////////////////////////////////////////////////
-        // UI
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-
-        ImGui::SliderInt("Tessellation Factor", &tessellationFactor, 1, 50);
-        ImGui::SliderFloat("Height Factor", &heightFactor, 0.0, 2.0);
-        ImGui::Checkbox("Wireframe Mode", &enableWireframeMode);
-
-        // Rendering UI
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        /////////////////////////////////////////////////////
-
-
 
          /* Swap front and back buffers */
         glfwSwapBuffers(window);

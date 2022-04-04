@@ -9,12 +9,13 @@ out vec2 velocity;
 out float amplitude;
 
 uniform float time;
+uniform float timeScale;
 
 void main()
 {
 
 	vec2 direction = normalize(aDir);
-	vec2 pos = aPos + aSpeed * float(time) * direction;	// update position base on wave particle velocity
+	vec2 pos = aPos + aSpeed * float(time) * float(timeScale) * direction;	// update position base on wave particle velocity
 
 	vec2 newPos = abs(pos);
 
