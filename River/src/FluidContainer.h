@@ -122,8 +122,7 @@ public:
 	void addVelocityAtPosition(const glm::ivec2& position, glm::vec2& vel);
 	void addDensityAtPosition(const glm::ivec2& position, float& d);
 
-	//void setContainerBoundry(const FluidBoundryType& type);
-	//const FluidBoundryType& getContainerBoundry();
+	void createFlowMap(); // TODO!!!
 
 	void setGridWidth(int width);
 	int getGridWidth();
