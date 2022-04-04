@@ -20,15 +20,6 @@
 	 - Jarred Eagley, jarred.e@digipen.edu, 60001920
 */
 
-/*
-struct FluidCell
-{
-	glm::vec2 velocity = glm::vec2(0.0f);
-	glm::vec2 v_prev = glm::vec2(0.0f);
-	float density = 1.0f;
-	float s;
-};
-*/
 
 template<typename T>
 class Array2D
