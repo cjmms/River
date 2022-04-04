@@ -45,6 +45,9 @@ public:
 	const int& getHeight() const { return height; } 
 	glm::ivec2 getDim()    const { return { width, height }; } 
 
+	// Can be dangeorus, but needed for flow field generation.
+	T* getDataArrayPtr() { return data; };
+
 	// Get a constant reference to dataat a position.
 	const T getData(const int& x, const int& y) const
 	{
