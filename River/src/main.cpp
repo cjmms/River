@@ -13,6 +13,7 @@
 
 #include "Mesh.h"
 #include "Render.h"
+#include "IBL.h"
 
 // These 2 lines should only be defined in this file
 #define STB_IMAGE_IMPLEMENTATION
@@ -86,6 +87,33 @@ unsigned int loadTexture(char const* path, bool gamma)
 }
 
 
+void RenderUI()
+{
+    // UI
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
+
+    ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
+    ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 1.0);
+
+    ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
+
+    ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
+    ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
+
+    ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
+    ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
+    ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
+
+    ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
+
+    // Rendering UI
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
 
 void processInput(GLFWwindow* window)
@@ -166,6 +194,7 @@ int main()
     }
 
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     /*
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -180,6 +209,8 @@ int main()
 
     checkerBoardTexture = loadTexture("res/checkerboard.jpg", false);
 
+    Skybox skybox;
+    skybox.GenerateCubemap(LoadHDR("res/Arches_E_PineTree/Arches_E_PineTree_3k.hdr"));
 
     Render renderer;
 
@@ -197,12 +228,14 @@ int main()
 
     FBO waveMesh{ window_width , window_height };
 
+    glViewport(0, 0, window_width, window_height);
+
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
         camera.cameraUpdateFrameTime();
-
+        
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
         renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
@@ -211,8 +244,13 @@ int main()
 
         renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
-        //renderer.DrawQuad(deviationGradient.ColorBuffer2);
+        // render skybox into the same FBO contains wave mesh
+        glBindFramebuffer(GL_FRAMEBUFFER, waveMesh.ID);
+        skybox.Render();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        //renderer.DrawQuad(deviationGradient.ColorBuffer2);
+        
         renderer.DebugDraw(
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
@@ -221,29 +259,7 @@ int main()
 
 
         ////////////////////////////////////////////////////
-        // UI
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
-
-        ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
-
-        ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
-
-        ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
-        ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
-
-        ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
-        ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
-        ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
-
-
-
-        // Rendering UI
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        RenderUI();
 
         /////////////////////////////////////////////////////
 

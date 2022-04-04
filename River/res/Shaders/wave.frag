@@ -2,6 +2,7 @@
 
 in vec2 TexCoord;
 in vec3 worldPos;
+in vec3 Normal;
 
 out vec4 FragColor;
 
@@ -10,6 +11,7 @@ uniform sampler2D checkerBoard;
 uniform float waterDepth;
 uniform float extinctionCoeff;
 uniform vec3 waterBedColor;
+uniform bool enableNormalMap;
 
 
 // Exponential Integral
@@ -44,6 +46,7 @@ vec3 ComputeAmbientColor (  vec3 _Position, float _ExtinctionCoeff,
 }
 
 
+
 void main()
 {
     //FragColor = texture(waveParticle, TexCoord);
@@ -65,4 +68,8 @@ void main()
                                             VolumeTop, VolumeBottom, IsotropicLightTop, IsotropicLightBottom);
 
     FragColor = vec4(AmbientColor, 1);
+    if (enableNormalMap)
+    {
+        FragColor = vec4(abs(Normal), 1);
+    }
 }

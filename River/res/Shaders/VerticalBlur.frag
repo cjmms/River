@@ -10,6 +10,7 @@ uniform sampler2D tex2;     // x:f_4 y:f_5 z:velX w:vel
 
 uniform float dxScale;
 uniform float dzScale;
+uniform float heightFactor;
 
 in vec2 TexCoords;
 
@@ -70,10 +71,8 @@ void main()
     gradCorr *= PI / blurRadius;
     gradient.xy *= (PI / blurRadius) / (1 + gradCorr);
 
-    
-    deviation.x *= dxScale;
-    deviation.y *= dzScale;  
-
-    out1 = vec4(-deviation.x, deviation.z, -deviation.y, deviation.w);
+   
+    out1 = vec4(deviation.x * dxScale, deviation.y * heightFactor, deviation.z * dzScale, deviation.w);
+    //out1 = deviation;
     out2 = gradient;
 }

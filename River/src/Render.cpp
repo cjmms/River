@@ -115,18 +115,13 @@ Render::Render()
     glBindVertexArray(0);
 
 
-    // init quad
+    // init quad patch
     float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        //-1.0f,  1.0f,  0.0f, 1.0f,
-        //1.0f,  1.0f,  1.0f, 1.0f,
-
-        -1.0f, -1.0f,  0.0f, 0.0f,
-        1.0f, -1.0f,  1.0f, 0.0f,
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        1.0f,  1.0f,  1.0f, 1.0f,
-
-        
+        // positions   // texCoords    
+        -1.0f, -1.0f,     0.0f, 0.0f,   
+        -1.0f,  1.0f,     0.0f, 1.0f,  
+         1.0f, -1.0f,     1.0f, 0.0f,  
+         1.0f,  1.0f,     1.0f, 1.0f
     };
 
     unsigned int quadPatchVBO;
@@ -147,7 +142,6 @@ Render::Render()
     glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 
     glBindVertexArray(0);
-
 }
 
 
@@ -162,6 +156,7 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     waveParticleShader.setFloat("time", glfwGetTime());
+    waveParticleShader.setFloat("timeScale", setting.timeScale);
 
 	waveParticleShader.Bind();
 
@@ -220,6 +215,8 @@ void Render::VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo
     verticalBlur.setFloat("dxScale", setting.dx);
     verticalBlur.setFloat("dzScale", setting.dz);
 
+    verticalBlur.setFloat("heightFactor", setting.heightFactor);
+
     verticalBlur.Bind();
 
     glBindVertexArray(quadVAO);
@@ -273,7 +270,7 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     glm::mat4 model(1.0f);
     model = glm::scale(model, glm::vec3(2.0f));
-    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(100.f), glm::vec3(1, 0, 0));
     model = glm::translate(model, glm::vec3(0, -0.5, 0));
 
     // scale by 2
@@ -281,7 +278,6 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     
 
     waveMeshShader.setInt("tessellationFactor", setting.tessellationFactor);
-    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
 
     waveMeshShader.setTexture("gradientMap", gradient);
     waveMeshShader.setTexture("deviationMap", deviation);
@@ -292,6 +288,11 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     waveMeshShader.setFloat("extinctionCoeff", setting.extinctionCoeff);
     waveMeshShader.setVec3("waterBedColor", setting.waterBedColor);
 
+    waveMeshShader.setFloat("dxScale", setting.dx);
+    waveMeshShader.setFloat("dzScale", setting.dz);
+
+    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
+    waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
     waveMeshShader.Bind();
     glBindVertexArray(quadPatchVAO);

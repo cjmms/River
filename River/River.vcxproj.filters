@@ -28,6 +28,9 @@
     <Filter Include="Resource Files\Shaders\Wave">
       <UniqueIdentifier>{ecc97c17-f296-423f-9476-ff6c30d113c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\IBL">
+      <UniqueIdentifier>{8230c101-1230-4b67-af49-8e23bf8fd3bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -64,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IBL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,6 +110,9 @@
     <ClInclude Include="src\Render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\IBL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\WaveParticle.vert">
@@ -135,6 +144,18 @@
     </None>
     <None Include="res\Shaders\wave.tese">
       <Filter>Resource Files\Shaders\Wave</Filter>
+    </None>
+    <None Include="res\Shaders\Skybox.vert">
+      <Filter>Resource Files\Shaders\IBL</Filter>
+    </None>
+    <None Include="res\Shaders\Skybox.frag">
+      <Filter>Resource Files\Shaders\IBL</Filter>
+    </None>
+    <None Include="res\Shaders\GenerateCubemap.vert">
+      <Filter>Resource Files\Shaders\IBL</Filter>
+    </None>
+    <None Include="res\Shaders\GenerateCubemap.frag">
+      <Filter>Resource Files\Shaders\IBL</Filter>
     </None>
   </ItemGroup>
 </Project>

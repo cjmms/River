@@ -31,6 +31,8 @@ struct Setting
 	float waterDepth = 5.0f;
 	float extinctionCoeff  = 0.1f;
 	glm::vec3 waterBedColor = glm::vec3(0.5);
+	float timeScale = 1;
+	bool enableNormalMap = false;
 };
 
 
