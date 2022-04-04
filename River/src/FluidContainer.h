@@ -38,7 +38,7 @@ private:
 	T* data;
 
 public:
-	Array2D() : width{ 0 }, heigh{ 0 }, data{ nullptr } {}
+	Array2D() : width{ 0 }, height{ 0 }, data{ nullptr } {}
 
 	Array2D(int w, int h) : width{ w }, height{ h }
 	{
@@ -46,13 +46,13 @@ public:
 	}
 	~Array2D()
 	{
-		delete[width * height] data;
+		delete[] data;
 	}
 
-	bool isInitialized() { return data == nulptr; } const;
-	const int& getWidth() { return width; } const;
-	const int& getHeight() { return height; } const;
-	glm::ivec2 getDim() { return { width, height }; } const;
+	bool isInitialized()   const { return (data == nullptr); }
+	const int& getWidth()  const { return width; } 
+	const int& getHeight() const { return height; } 
+	glm::ivec2 getDim()    const { return { width, height }; } 
 
 	// Get a constant reference to dataat a position.
 	const T getData(const int& x, const int& y) const

@@ -129,7 +129,7 @@ void FluidContainer::diffuse(Array2D<T>* x, Array2D<T>* x0, const int& b, const 
 					= (x0->getData(i,j) 
 					+ a*( x->getData(i-1, j) + x->getData(i+1, j) + x->getData(i, j-1) + x->getData(i, j+1) ))
 					/ (5*a);
-				x->setData(val);
+				x->setData(val, i, j);
 			}
 		}
 
@@ -142,7 +142,7 @@ template<typename T>
 void FluidContainer::project(Array2D<T>* u, Array2D<T>* v, Array2D<T>* p, Array2D<T>* div)
 {
 	constexpr int ITR = 20;
-
+	/*
 	const int N = gridResolution.x;
 	const int M = gridResolution.y;
 
@@ -160,6 +160,7 @@ void FluidContainer::project(Array2D<T>* u, Array2D<T>* v, Array2D<T>* p, Array2
 			div->setData();
 		}
 	}
+	*/
 
 }
 
@@ -172,8 +173,8 @@ void FluidContainer::advect(Array2D<T>* d, Array2D<T>* d0, Array2D<T>* u, Array2
 	{
 		for (int j = 1; j <= M; ++j) 
 		{
-			const float x = i - dt * N * u->getData(i, j);
-			const float y = j - dt * M * v->getData(i, j);
+			float x = i - dt * N * u->getData(i, j);
+			float y = j - dt * M * v->getData(i, j);
 			if (x < 0.5f)
 				x = 0.5f;
 			else if (x > N + 0.5f)
@@ -199,7 +200,7 @@ void FluidContainer::advect(Array2D<T>* d, Array2D<T>* d0, Array2D<T>* u, Array2
 			d->setData(val, i, j);
 		}
 	}
-	setbound(b, d);
+	setBound(b, d);
 }
 
 /// <summary>
@@ -215,24 +216,24 @@ void FluidContainer::setBound(const int& b, Array2D<T>* x)
 	for (int i = 1; i <= gridResolution.x; ++i)
 	{
 		const int N = gridResolution.x;
-		x.getDataReference(i, 0)   = x.getData(i, 1) * (b==1 ? -1.0f : 1.0f);
-		x.getDataReference(i, N+1) = x.getData(i, N) * (b==1 ? -1.0f : 1.0f);
+		x->getDataReference(i, 0)   = x->getData(i, 1) * (b==1 ? -1.0f : 1.0f);
+		x->getDataReference(i, N+1) = x->getData(i, N) * (b==1 ? -1.0f : 1.0f);
 	}
 
 	// Vertical walls:
 	for (int i = 1; i <= gridResolution.y; ++i)
 	{
 		const int N = gridResolution.y;
-		x.getDataReference(0, i)   = x.getData(1, i) * (b == 2 ? -1.0f : 1.0f);
-		x.getDataReference(N+1, i) = x.getData(N, i) * (b == 2 ? -1.0f : 1.0f);
+		x->getDataReference(0, i)   = x->getData(1, i) * (b == 2 ? -1.0f : 1.0f);
+		x->getDataReference(N+1, i) = x->getData(N, i) * (b == 2 ? -1.0f : 1.0f);
 	}
 
 	// Corner cases:
 	const int N = gridResolution.x; const int M = gridResolution.y;
-	x.getDataReference(0, 0)     = 0.5f * x.getData(1, 0)   + x.getData(0, 1);
-	x.getDataReference(0, M+1)   = 0.5f * x.getData(1, M+1) + x.getData(0, M);
-	x.getDataReference(N+1, 0)   = 0.5f * x.getData(N, 0)   + x.getData(N+1, 1);
-	x.getDataReference(N+1, M+1) = 0.5f * x.getData(N, M+1) + x.getData(N+1, M);
+	x->getDataReference(0, 0)     = 0.5f * x->getData(1, 0)   + x->getData(0, 1);
+	x->getDataReference(0, M+1)   = 0.5f * x->getData(1, M+1) + x->getData(0, M);
+	x->getDataReference(N+1, 0)   = 0.5f * x->getData(N, 0)   + x->getData(N+1, 1);
+	x->getDataReference(N+1, M+1) = 0.5f * x->getData(N, M+1) + x->getData(N+1, M);
 }
 
 #pragma endregion
