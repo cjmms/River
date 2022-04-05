@@ -270,8 +270,8 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     glm::mat4 model(1.0f);
     model = glm::scale(model, glm::vec3(2.0f));
-    model = glm::rotate(model, glm::radians(100.f), glm::vec3(1, 0, 0));
-    model = glm::translate(model, glm::vec3(0, -0.5, 0));
+    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+    //model = glm::translate(model, glm::vec3(0, -0.5, 0));
 
     // scale by 2
     waveMeshShader.setMat4("model", model);

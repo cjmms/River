@@ -28,9 +28,11 @@ struct Setting
 	int seletectedRenderPass = 5;
 
 	// lighting
-	float waterDepth = 5.0f;
-	float extinctionCoeff  = 0.1f;
-	glm::vec3 waterBedColor = glm::vec3(0.5);
+	float waterDepth = 5.3f;
+	float extinctionCoeff  = 0.27f;
+	glm::vec3 waterBedColor = glm::vec3(0.4, 0.3, 0.2);
+	float FoamTurbulance = 0.3;
+
 	float timeScale = 1;
 	bool enableNormalMap = false;
 };

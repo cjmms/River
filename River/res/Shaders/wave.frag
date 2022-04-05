@@ -12,6 +12,7 @@ uniform float waterDepth;
 uniform float extinctionCoeff;
 uniform vec3 waterBedColor;
 uniform bool enableNormalMap;
+uniform float FoamTurbulance;
 
 
 // Exponential Integral
@@ -51,23 +52,26 @@ void main()
 {
     //FragColor = texture(waveParticle, TexCoord);
     vec3 sunLight = vec3(1, 1, 1);
+    vec3 waterColor = vec3(0, 0.3, 0.4);
   
     FragColor = texture(checkerBoard, TexCoord);
 
-    float ratio = 0.5;
+    vec3 RiverBedPos = vec3(worldPos.x, waterDepth, worldPos.z);
+
+    vec3 waterTop = vec3(worldPos.x, -worldPos.y, worldPos.z);
 
     // for now, let's choose mid point as _Position
-    vec3 position = vec3(worldPos.x, worldPos.y - ratio * waterDepth, worldPos.z);
-    float VolumeTop = ratio * waterDepth;
-    float VolumeBottom = waterDepth - VolumeTop;
+    vec3 HalfPoint = mix(RiverBedPos, waterTop, 0.5f + FoamTurbulance);
 
-    vec3 IsotropicLightBottom = waterBedColor * exp(-waterDepth* extinctionCoeff);
-    vec3 IsotropicLightTop = sunLight;
+    vec3 IsotropicLightBottom = waterBedColor * exp(waterTop.y * extinctionCoeff);
+    vec3 IsotropicLightTop = sunLight * waterColor;
 
-    vec3 AmbientColor = ComputeAmbientColor(position, extinctionCoeff, 
-                                            VolumeTop, VolumeBottom, IsotropicLightTop, IsotropicLightBottom);
+    vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
+                                            waterTop.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
 
     FragColor = vec4(AmbientColor, 1);
+
+
     if (enableNormalMap)
     {
         FragColor = vec4(abs(Normal), 1);
