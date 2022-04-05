@@ -61,17 +61,16 @@ void main()
 
     vec3 RiverBedPos = vec3(worldPos.x, waterDepth, worldPos.z);
 
-    vec3 waterTop = vec3(worldPos.x, -worldPos.y, worldPos.z);
-
     // for now, let's choose mid point as _Position
-    vec3 HalfPoint = mix(RiverBedPos, waterTop, 0.5f + float(FoamTurbulance));
+    vec3 HalfPoint = mix(RiverBedPos, worldPos, 0.5f + float(FoamTurbulance));
 
     vec3 IsotropicLightBottom = waterBedColor * exp((waterDepth - HalfPoint.y) * extinctionCoeff);
     //vec3 IsotropicLightTop = sunLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
-    vec3 IsotropicLightTop = 0.3 * ambientLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
+    //vec3 IsotropicLightTop = 0.3 * ambientLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
+    vec3 IsotropicLightTop = waterColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff);
 
     vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
-                                            waterTop.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
+                                            worldPos.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
 
     FragColor = vec4(AmbientColor, 1);
 
