@@ -13,6 +13,7 @@ uniform float extinctionCoeff;
 uniform vec3 waterBedColor;
 uniform bool enableNormalMap;
 uniform float FoamTurbulance;
+uniform samplerCube  IrradianceMap;
 
 
 // Exponential Integral
@@ -50,6 +51,8 @@ vec3 ComputeAmbientColor (  vec3 _Position, float _ExtinctionCoeff,
 
 void main()
 {
+    vec3 ambientLight = texture(IrradianceMap, Normal).rgb;
+
     //FragColor = texture(waveParticle, TexCoord);
     vec3 sunLight = vec3(1, 1, 1);
     vec3 waterColor = vec3(0, 0.3, 0.4);
@@ -63,8 +66,9 @@ void main()
     // for now, let's choose mid point as _Position
     vec3 HalfPoint = mix(RiverBedPos, waterTop, 0.5f + float(FoamTurbulance));
 
-    vec3 IsotropicLightBottom = waterBedColor * exp(waterTop.y * extinctionCoeff);
-    vec3 IsotropicLightTop = sunLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
+    vec3 IsotropicLightBottom = waterBedColor * exp((waterDepth - HalfPoint.y) * extinctionCoeff);
+    //vec3 IsotropicLightTop = sunLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
+    vec3 IsotropicLightTop = 0.3 * ambientLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
 
     vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
                                             waterTop.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);

@@ -216,6 +216,9 @@ int main()
     Skybox skybox;
     skybox.GenerateCubemap(LoadHDR("res/Arches_E_PineTree/Arches_E_PineTree_3k.hdr"));
 
+    Skybox irradianceMap;
+    irradianceMap.GenerateCubemap(LoadHDR("res/Arches_E_PineTree/Arches_E_PineTree_Env.hdr"));
+
     Render renderer;
 
     WaveParticleMesh waveParticleMesh{ 600 };
@@ -246,11 +249,13 @@ int main()
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
-        renderer.RenderWaveMesh(deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
+        renderer.RenderWaveMesh(irradianceMap.ID(),
+            deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         // render skybox into the same FBO contains wave mesh
         glBindFramebuffer(GL_FRAMEBUFFER, waveMesh.ID);
         skybox.Render();
+        //irradianceMap.Render();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         //renderer.DrawQuad(deviationGradient.ColorBuffer2);

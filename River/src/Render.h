@@ -73,7 +73,7 @@ public:
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
 	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
 
-	void RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsigned int fbo);
+	void RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
 

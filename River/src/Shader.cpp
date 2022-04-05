@@ -259,7 +259,7 @@ void Shader::setInt(const std::string& name, int value)
 }
 
 
-void Shader::setTexture(const char* name, unsigned int texture)
+void Shader::setTexture(const char* name, unsigned int texture, int Type)
 {
 
     auto it = std::find(textures.begin(), textures.end(), name);
@@ -274,7 +274,7 @@ void Shader::setTexture(const char* name, unsigned int texture)
 
         this->Bind();
         glActiveTexture(GL_TEXTURE0 + index);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(Type, texture);
         this->unBind();
     }
     else {
@@ -285,7 +285,7 @@ void Shader::setTexture(const char* name, unsigned int texture)
 
         this->Bind();
         glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(Type, texture);
         this->unBind();
 
         textureUnit++;
@@ -294,7 +294,7 @@ void Shader::setTexture(const char* name, unsigned int texture)
 }
 
 
-void Shader::setTexture(const std::string& name, unsigned int texture, int index)
+void Shader::setTexture(const std::string& name, unsigned int texture, int index, int Type)
 {
-    setTexture(name.c_str(), texture, index);
+    setTexture(name.c_str(), texture, index, Type);
 }

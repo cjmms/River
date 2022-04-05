@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 
-
+#include <GL/glew.h>
 
 class Shader
 {
@@ -40,8 +40,8 @@ public:
 	void setInt(const char* name, int value);
 	void setInt(const std::string& name, int value);
 
-	void setTexture(const char* name, unsigned int texture);
-	void setTexture(const std::string& name, unsigned int texture, int index = -1);
+	void setTexture(const char* name, unsigned int texture, int Type = GL_TEXTURE_2D);
+	void setTexture(const std::string& name, unsigned int texture, int index = -1, int Type = GL_TEXTURE_2D);
 
 private:
 	// path: res/Shaders/basic.shader

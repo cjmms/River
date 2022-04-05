@@ -21,6 +21,8 @@ public:
 
 	void Render();
 
+	inline unsigned int ID() const { return envCubemap; }
+
 private:
 	unsigned int envCubemap;
 	unsigned int captureFBO;

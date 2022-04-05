@@ -254,7 +254,7 @@ void Render::DrawQuad(unsigned int inputTexture)
 
 
 
-void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -294,6 +294,8 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
 
     waveMeshShader.setFloat("heightFactor", setting.heightFactor);
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
+
+    waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
 
     waveMeshShader.Bind();
     glBindVertexArray(quadPatchVAO);
