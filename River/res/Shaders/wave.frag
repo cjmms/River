@@ -64,10 +64,8 @@ void main()
     // for now, let's choose mid point as _Position
     vec3 HalfPoint = mix(RiverBedPos, worldPos, 0.5f + float(FoamTurbulance));
 
-    vec3 IsotropicLightBottom = waterBedColor * exp((waterDepth - HalfPoint.y) * extinctionCoeff);
-    //vec3 IsotropicLightTop = sunLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
-    //vec3 IsotropicLightTop = 0.3 * ambientLight * waterColor * exp((HalfPoint.y - waterTop.y) * extinctionCoeff);
-    vec3 IsotropicLightTop = waterColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff);
+    vec3 IsotropicLightBottom = sunLight * waterBedColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff);
+    vec3 IsotropicLightTop = sunLight * waterColor;
 
     vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
                                             worldPos.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
