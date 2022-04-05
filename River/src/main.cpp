@@ -112,7 +112,7 @@ void RenderUI()
 
     ImGui::SliderFloat("water depth", &setting.waterDepth, 1, 20);
     ImGui::SliderFloat("extinction Coeff", &setting.extinctionCoeff, 0, 1);
-    ImGui::SliderFloat("FoamTurbulance", &setting.FoamTurbulance, 0, 1);
+    ImGui::SliderFloat("FoamTurbulance", &setting.FoamTurbulance, -0.1, 0.1);
 
     // Rendering UI
     ImGui::Render();

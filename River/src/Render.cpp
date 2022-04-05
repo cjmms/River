@@ -287,6 +287,7 @@ void Render::RenderWaveMesh(unsigned int deviation, unsigned int gradient, unsig
     waveMeshShader.setFloat("waterDepth", setting.waterDepth);
     waveMeshShader.setFloat("extinctionCoeff", setting.extinctionCoeff);
     waveMeshShader.setVec3("waterBedColor", setting.waterBedColor);
+    waveMeshShader.setFloat("FoamTurbulance", setting.FoamTurbulance);
 
     waveMeshShader.setFloat("dxScale", setting.dx);
     waveMeshShader.setFloat("dzScale", setting.dz);
