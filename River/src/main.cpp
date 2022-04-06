@@ -4,6 +4,7 @@
 
 #include "Camera.h"
 #include "Shader.h"
+#include "FluidContainer.h"
 
 #include <iostream>
 
@@ -36,7 +37,6 @@ static const char* RenderPassList[]{ "Particle Velocity",
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
                                      "Wave Mesh"};
-
 
 unsigned int loadTexture(char const* path, bool gamma)
 {
@@ -214,6 +214,8 @@ int main()
 
     Render renderer;
 
+    FluidContainer fluidContainer(20, 20);
+
     WaveParticleMesh waveParticleMesh{ 600 };
 
     FBO waveParticleFBO{ window_width , window_height};
@@ -233,6 +235,9 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
+
+        const float dt = 0.01f; // TODO!!!!
+        fluidContainer.integrate(dt);
 
         camera.cameraUpdateFrameTime();
         

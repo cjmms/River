@@ -10,6 +10,8 @@
 // Third party includes:
 #include <glm/glm.hpp>
 
+#include <GL/GL.h>
+
 
 // TODO: Create an RNG helper class.
 
@@ -116,7 +118,39 @@ public:
 	void addVelocityAtPosition(const glm::ivec2& position, glm::vec2& vel);
 	void addDensityAtPosition(const glm::ivec2& position, float& d);
 
-	void createFlowMap(); // TODO!!!
+	// Creates a flow map and stores it at the provided texture ID.
+	unsigned int createFlowMap() 
+	{
+		unsigned int texID;
+		glGenTextures(1, &texID);
+		glBindTexture(GL_TEXTURE_2D, texID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, getGridWidth(), getGridHeight(), 0, GL_RG, GL_FLOAT, 0);
+		updateFlowMap(texID);
+	}
+
+	void updateFlowMap(unsigned int textureId)
+	{
+		float* dataVelX = this->vx_prev->getDataArrayPtr();
+		float* dataVelY = this->vy_prev->getDataArrayPtr();
+
+		// Concatenate the x and y velocity into a single data array tha can be used.
+		int totalsize = getGridWidth() * getGridHeight() * 2;
+		float* totalDataArray = new float[totalsize];
+		for (int i = 0; i < totalsize; ++i)
+		{
+			totalDataArray[i * 2] = dataVelX[i];
+			totalDataArray[i * 2 + 1] = dataVelY[i];
+		}
+
+		// Bind the texture.
+		glBindTexture(GL_TEXTURE_2D, textureId);
+
+		// Sub data.
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, getGridWidth(), getGridHeight(), GL_RG, GL_FLOAT, totalDataArray);
+
+		// Deallocate.
+		delete totalDataArray;
+	}
 
 	void setGridWidth(int width);
 	int getGridWidth();
