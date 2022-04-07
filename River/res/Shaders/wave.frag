@@ -72,19 +72,6 @@ void main()
     vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
                                             worldPos.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
 
-    // blinn phong specular
-    // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
-    vec3 halfwayDir = normalize(sunDir + viewDir);
-
-    float shininess = 32;
-    float specular = pow(max(dot(Normal, halfwayDir), 0.0), shininess);
-
-    vec3 SpecularColor = vec3(specular);
-
-    //FragColor = vec4(SpecularColor, 1);
-
-    //FragColor = vec4(AmbientColor + SpecularColor, 1);
-
     //FragColor = texture(checkerBoard, TexCoord);
 
     FragColor = vec4(AmbientColor, 1);

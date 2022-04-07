@@ -119,7 +119,6 @@ Render::Render()
     float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // positions   // texCoords    
         -1.0f, -1.0f,     0.0f, 0.0f,  
-       // -1.0f,  1.0f,     0.0f, 1.0f,
         1.0f, -1.0f,     1.0f, 0.0f,
         -1.0f,  1.0f,     0.0f, 1.0f,    
          1.0f,  1.0f,     1.0f, 1.0f
@@ -291,10 +290,6 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
     waveMeshShader.setVec3("waterBedColor", setting.waterBedColor);
     waveMeshShader.setFloat("FoamTurbulance", setting.FoamTurbulance);
 
-    waveMeshShader.setFloat("dxScale", setting.dx);
-    waveMeshShader.setFloat("dzScale", setting.dz);
-
-    waveMeshShader.setFloat("heightFactor", setting.heightFactor);
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);

@@ -96,23 +96,42 @@ void RenderUI()
 
     ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
 
-    ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
-    ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 2.0);
+    if (ImGui::TreeNode("Wave Particle"))
+    {
+        ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
+        ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 2.0);
+        ImGui::TreePop();
+    }
 
-    ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
 
-    ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
-    ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
+    if (ImGui::TreeNode("Two Pass Wave Construction"))
+    {
+        ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
 
-    ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
-    ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
-    ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
+        ImGui::SliderFloat("dx scale", &setting.dx, 0.0f, 1.0f);
+        ImGui::SliderFloat("dz scale", &setting.dz, 0.0f, 1.0f);
+        ImGui::SliderFloat("Height Factor", &setting.heightFactor, 0.001, 1.0);
+        ImGui::TreePop();
+    }
 
-    ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
+    if (ImGui::TreeNode("Tessellation"))
+    {
+        ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
+        ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
+        ImGui::TreePop();
+    }
 
-    ImGui::SliderFloat("water depth", &setting.waterDepth, 1, 20);
-    ImGui::SliderFloat("extinction Coeff", &setting.extinctionCoeff, 0, 1);
-    ImGui::SliderFloat("FoamTurbulance", &setting.FoamTurbulance, -0.1, 0.1);
+
+    if (ImGui::TreeNode("Lighting"))
+    {
+        ImGui::SliderFloat("water depth", &setting.waterDepth, 1, 20);
+        ImGui::SliderFloat("extinction Coeff", &setting.extinctionCoeff, 0, 1);
+        ImGui::SliderFloat("FoamTurbulance", &setting.FoamTurbulance, -0.1, 0.1);
+        ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
+        ImGui::TreePop();
+    }
+
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
     // Rendering UI
     ImGui::Render();
@@ -200,6 +219,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
+    
+
     /*
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
@@ -249,8 +270,12 @@ int main()
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
+        glEnable(GL_CULL_FACE);
+
         renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
+
+        glDisable(GL_CULL_FACE);
 
         // render skybox into the same FBO contains wave mesh
         glBindFramebuffer(GL_FRAMEBUFFER, waveMesh.ID);
