@@ -97,7 +97,7 @@ void RenderUI()
     ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
 
     ImGui::SliderInt("Particle Size", &setting.particleSize, 1, 10);
-    ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 1.0);
+    ImGui::SliderFloat("Time scale", &setting.timeScale, 0.0, 2.0);
 
     ImGui::SliderInt("Blur Size", &setting.blurSize, 20, 80);
 

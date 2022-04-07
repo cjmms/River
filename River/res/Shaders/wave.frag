@@ -14,6 +14,7 @@ uniform vec3 waterBedColor;
 uniform bool enableNormalMap;
 uniform float FoamTurbulance;
 uniform samplerCube  IrradianceMap;
+uniform vec3 ViewPos;
 
 
 // Exponential Integral
@@ -51,27 +52,46 @@ vec3 ComputeAmbientColor (  vec3 _Position, float _ExtinctionCoeff,
 
 void main()
 {
-    vec3 ambientLight = texture(IrradianceMap, Normal).rgb;
+    vec3 sunPos = vec3(10, 10, 10);
+    vec3 sunDir = normalize(sunPos - worldPos);
+    vec3 viewDir = normalize(ViewPos - worldPos);
 
-    //FragColor = texture(waveParticle, TexCoord);
     vec3 sunLight = vec3(1, 1, 1);
     vec3 waterColor = vec3(0, 0.3, 0.4);
   
-    FragColor = texture(checkerBoard, TexCoord);
-
     vec3 RiverBedPos = vec3(worldPos.x, waterDepth, worldPos.z);
 
     // for now, let's choose mid point as _Position
     vec3 HalfPoint = mix(RiverBedPos, worldPos, 0.5f + float(FoamTurbulance));
 
-    vec3 IsotropicLightBottom = sunLight * waterBedColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff);
-    vec3 IsotropicLightTop = sunLight * waterColor;
+    vec3 IsotropicLightBottom = sunLight * waterBedColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff) * dot(sunDir, vec3(0, 1, 0));
+    vec3 IsotropicLightTop = sunLight * waterColor * dot(sunDir, vec3(0, 1, 0));
 
+    // scattering caused by sun light
     vec3 AmbientColor = ComputeAmbientColor(HalfPoint, extinctionCoeff, 
                                             worldPos.y, RiverBedPos.y, IsotropicLightTop, IsotropicLightBottom);
 
+    // blinn phong specular
+    // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
+    vec3 halfwayDir = normalize(sunDir + viewDir);
+
+    float shininess = 32;
+    float specular = pow(max(dot(Normal, halfwayDir), 0.0), shininess);
+
+    vec3 SpecularColor = vec3(specular);
+
+    //FragColor = vec4(SpecularColor, 1);
+
+    //FragColor = vec4(AmbientColor + SpecularColor, 1);
+
+    //FragColor = texture(checkerBoard, TexCoord);
+
     FragColor = vec4(AmbientColor, 1);
 
+    // color from irradiance map
+    vec3 IrradianceColor = vec3(texture(IrradianceMap, Normal)) * waterColor * 0.1;
+
+    FragColor = vec4(AmbientColor + IrradianceColor, 1);
 
     if (enableNormalMap)
     {

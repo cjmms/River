@@ -23,15 +23,15 @@ struct Setting
 
 	int tessellationFactor = 37;
 	bool enableWireframeMode = false;
-	float heightFactor = 0.1f;
+	float heightFactor = 0.15f;
 
 	int seletectedRenderPass = 5;
 
 	// lighting
-	float waterDepth = 19.3f;
-	float extinctionCoeff  = 0.13f;
+	float waterDepth = 9.3f;
+	float extinctionCoeff  = 0.242f;
 	glm::vec3 waterBedColor = glm::vec3(0.4, 0.3, 0.2);
-	float FoamTurbulance = 0.0;
+	float FoamTurbulance = 0.043;
 
 	float timeScale = 1;
 	bool enableNormalMap = false;

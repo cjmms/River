@@ -118,9 +118,10 @@ Render::Render()
     // init quad patch
     float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // positions   // texCoords    
-        -1.0f, -1.0f,     0.0f, 0.0f,   
-        -1.0f,  1.0f,     0.0f, 1.0f,  
-         1.0f, -1.0f,     1.0f, 0.0f,  
+        -1.0f, -1.0f,     0.0f, 0.0f,  
+       // -1.0f,  1.0f,     0.0f, 1.0f,
+        1.0f, -1.0f,     1.0f, 0.0f,
+        -1.0f,  1.0f,     0.0f, 1.0f,    
          1.0f,  1.0f,     1.0f, 1.0f
     };
 
@@ -157,6 +158,7 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 
     waveParticleShader.setFloat("time", glfwGetTime());
     waveParticleShader.setFloat("timeScale", setting.timeScale);
+    waveParticleShader.setFloat("heightScale", setting.heightFactor);
 
 	waveParticleShader.Bind();
 
@@ -296,6 +298,8 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, 
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
+
+    waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 
     waveMeshShader.Bind();
     glBindVertexArray(quadPatchVAO);

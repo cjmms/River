@@ -1,11 +1,11 @@
 #version 450
-layout(quads, fractional_odd_spacing, ccw) in;
+layout(quads, equal_spacing, cw) in;
 
 
 
 // received from Tessellation Control Shader - all texture coordinates for the patch vertices
 in vec2 TextureCoord[];
-in vec3 csPos[];
+
 
 out vec2 TexCoord;
 out vec3 worldPos;
@@ -26,34 +26,18 @@ uniform mat4 projection;
 
 void main()
 {
-	// get patch coordinate
-    float u = gl_TessCoord.x;
-    float v = gl_TessCoord.y;
-
 	// ----------------------------------------------------------------------
-    // retrieve control point texture coordinates
-    vec2 t00 = TextureCoord[0];
-    vec2 t01 = TextureCoord[1];
-    vec2 t10 = TextureCoord[2];
-    vec2 t11 = TextureCoord[3];
-
 	// bilinearly interpolate texture coordinate across patch
-    vec2 t0 = (t01 - t00) * u + t00;
-    vec2 t1 = (t11 - t10) * u + t10;
-    TexCoord = (t1 - t0) * v + t0;	    // interpolated UV
+    vec2 t0 = mix(TextureCoord[0], TextureCoord[1], gl_TessCoord.x);
+    vec2 t1 = mix(TextureCoord[2], TextureCoord[3], gl_TessCoord.x);
+    TexCoord = mix(t0, t1, gl_TessCoord.y);
 	//-----------------------------------------------------------------------
 
 	// ----------------------------------------------------------------------
-    // retrieve control point position coordinates
-    vec3 p00 = csPos[0];
-    vec3 p01 = csPos[1];
-    vec3 p10 = csPos[2];
-    vec3 p11 = csPos[3];
-
-    // bilinearly interpolate position coordinate across patch
-    vec3 p0 = (p01 - p00) * u + p00;
-    vec3 p1 = (p11 - p10) * u + p10;
-    vec3 pos = (p1 - p0) * v + p0;      // interpolated UV
+     //bilinearly interpolate position coordinate across patch
+    vec4 p0 = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_TessCoord.x);
+    vec4 p1 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, gl_TessCoord.x);
+    vec3 pos = mix(p0, p1, gl_TessCoord.y).xyz;
     //------------------------------------------------------------------------
 
 	vec3 deviation = texture(deviationMap, TexCoord).xyz;
@@ -81,5 +65,5 @@ void main()
     ddu += vec3(2 * offsetU, 0, 0);
     ddv += vec3(0, 0, 2 * offsetV);
 
-    Normal = normalize(cross(normalize(ddv), normalize(ddu)));
+    Normal =  normalize(cross(normalize(ddv), normalize(ddu)));
 }

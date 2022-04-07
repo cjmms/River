@@ -10,6 +10,7 @@ out float amplitude;
 
 uniform float time;
 uniform float timeScale;
+uniform float heightScale;
 
 void main()
 {
@@ -47,5 +48,5 @@ void main()
 	gl_Position = vec4(pos, 0.1, 1);
 
 	velocity = direction * aSpeed;
-	amplitude = aHeight * 2;
+	amplitude = aHeight * heightScale;
 }

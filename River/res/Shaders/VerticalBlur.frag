@@ -72,7 +72,13 @@ void main()
     gradient.xy *= (PI / blurRadius) / (1 + gradCorr);
 
    
-    out1 = vec4(deviation.x * dxScale, deviation.y * heightFactor, deviation.z * dzScale, deviation.w);
+    //out1 = vec4(deviation.x * dxScale, deviation.y * heightFactor, deviation.z * dzScale, deviation.w);
+
+    deviation.x *= dxScale;
+    deviation.y *= dzScale;
+    out1 = vec4(-deviation.x, deviation.z, -deviation.y, deviation.w);
+
+    //out1 = vec4(deviation.x * dxScale, deviation.y * heightFactor, deviation.z * dzScale, deviation.w);
     //out1 = deviation;
     out2 = gradient;
 }
