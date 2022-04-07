@@ -33,7 +33,7 @@ struct Setting
 	glm::vec3 waterBedColor = glm::vec3(0.4, 0.3, 0.2);
 	float FoamTurbulance = 0.043;
 
-	float timeScale = 1;
+	float timeScale = 2;
 	bool enableNormalMap = false;
 };
 
@@ -73,7 +73,7 @@ public:
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
 	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
 
-	void RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, unsigned int gradient, unsigned int fbo);
+	void RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
 

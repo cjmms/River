@@ -256,7 +256,7 @@ void Render::DrawQuad(unsigned int inputTexture)
 
 
 
-void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -298,6 +298,7 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int deviation, 
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
+    waveMeshShader.setTexture("skybox", skybox, GL_TEXTURE_CUBE_MAP);
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 

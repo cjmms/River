@@ -14,6 +14,7 @@ uniform vec3 waterBedColor;
 uniform bool enableNormalMap;
 uniform float FoamTurbulance;
 uniform samplerCube  IrradianceMap;
+uniform samplerCube  skybox;
 uniform vec3 ViewPos;
 
 
@@ -89,9 +90,13 @@ void main()
     FragColor = vec4(AmbientColor, 1);
 
     // color from irradiance map
-    vec3 IrradianceColor = vec3(texture(IrradianceMap, Normal)) * waterColor * 0.1;
+    vec3 IrradianceColor = vec3(texture(IrradianceMap, Normal)) * waterColor * 0.05;
 
-    FragColor = vec4(AmbientColor + IrradianceColor, 1);
+
+    vec3 R = reflect(-viewDir, normalize(Normal));
+    vec3 Reflection = 0.015 * texture(skybox, R).rgb;
+
+    FragColor = vec4(AmbientColor + IrradianceColor + Reflection, 1);
 
     if (enableNormalMap)
     {

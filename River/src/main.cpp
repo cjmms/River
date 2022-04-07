@@ -249,7 +249,7 @@ int main()
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
-        renderer.RenderWaveMesh(irradianceMap.ID(),
+        renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         // render skybox into the same FBO contains wave mesh
