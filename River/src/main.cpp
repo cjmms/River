@@ -153,13 +153,12 @@ void processInput(GLFWwindow* window)
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    camera.updateCameraDirection((float)xpos, (float)ypos);
+    //camera.updateCameraDirection((float)xpos, (float)ypos);
     camera.updataRayDir((float)xpos, (float)ypos, window_width, window_height);
 }
 
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 {
-
     camera.SetMouseStatus(button, action);
 }
 
@@ -226,10 +225,10 @@ int main()
 
     
 
-    /*
+    
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
-
+    /*
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     */
     ////////////////////////////////////////////////////////////
@@ -268,7 +267,14 @@ int main()
         processInput(window);
 
         camera.cameraUpdateFrameTime();
+
+        std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
         
+        float t = -1;
+        RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
+
+        std::cout << "t: " << t << std::endl;
+
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
         renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);

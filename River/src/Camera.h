@@ -81,6 +81,9 @@ public:
 	void SetMouseStatus(int button, int action);
 
 
+	glm::vec3 worldRayDir;
+	glm::vec3 worldRayOrigin;
+
 private:
 	// calculate and normalize camera front vector base on yaw and pitch
 	void calculateCameraFront();

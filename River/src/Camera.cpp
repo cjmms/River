@@ -65,20 +65,23 @@ void Camera::updateCameraDirection(float currentX, float currentY)
 }
 
 // Idea: 
-// Find NDC base on input currentX and currentY
+// 1. Find NDC base on input currentX and currentY
 // z values are based on near plane and far plane
+// 2. Applying inverse projection matrix, transfrom from NDC to view space
+// 3. Applying inverse view matrix, transfrom from view space to world space
+// http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-a-physics-library/
 void Camera::updataRayDir(float currentX, float currentY, float screenWidth, float screenHeight)
 {
 	glm::vec4 lRayStart_NDC(
 		((float)currentX / (float)screenWidth - 0.5f) * 2.0f, // [0,1024] -> [-1,1]
 		((float)currentY / (float)screenHeight - 0.5f) * 2.0f, // [0, 768] -> [-1,1]
-		-1.0, // The near plane maps to Z=-1 in Normalized Device Coordinates
+		1.0, // The near plane maps to Z=1 in Normalized Device Coordinates in opengl
 		1.0f
 	);
 	glm::vec4 lRayEnd_NDC(
 		((float)currentX / (float)screenWidth - 0.5f) * 2.0f,
 		((float)currentY / (float)screenHeight - 0.5f) * 2.0f,
-		0.0,
+		-1.0,
 		1.0f
 	);
 
@@ -97,7 +100,8 @@ void Camera::updataRayDir(float currentX, float currentY, float screenWidth, flo
 	glm::vec4 lRayEnd_world = InverseViewMatrix * lRayEnd_camera;   lRayEnd_world /= lRayEnd_world.w;
 
 
-	glm::vec3 worldRayDir = glm::normalize(lRayEnd_world - lRayStart_world);
+	worldRayDir = glm::normalize(lRayEnd_world - lRayStart_world);
+	worldRayOrigin = lRayStart_world;
 }
 
 
