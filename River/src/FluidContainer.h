@@ -135,9 +135,10 @@ public:
 		float* dataVelY = this->vy_prev->getDataArrayPtr();
 
 		// Concatenate the x and y velocity into a single data array tha can be used.
-		int totalsize = getGridWidth() * getGridHeight() * 2;
-		float* totalDataArray = new float[totalsize];
-		for (int i = 0; i < totalsize-1; ++i)
+		const int arrSize = getGridWidth() * getGridHeight();
+		const int finalArrSize = arrSize * 2;
+		float* totalDataArray = new float[finalArrSize];
+		for (int i = 0; i < arrSize; ++i)
 		{
 			totalDataArray[i * 2] = dataVelX[i];
 			totalDataArray[i * 2 + 1] = dataVelY[i];
@@ -150,7 +151,7 @@ public:
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, getGridWidth(), getGridHeight(), GL_RG, GL_FLOAT, totalDataArray);
 
 		// Deallocate.
-		delete[] totalDataArray;
+		delete[finalArrSize] totalDataArray;
 	}
 
 	void setGridWidth(int width);
