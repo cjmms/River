@@ -111,7 +111,7 @@ void RenderUI()
     ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
 
     ImGui::Begin("flow map debug");
-    ImGui::Image((ImTextureID)flowMapTexture, ImVec2(100, 100) );
+    ImGui::Image((ImTextureID)flowMapTexture, ImVec2(500, 500) );
     ImGui::End();
 
     // Rendering UI
