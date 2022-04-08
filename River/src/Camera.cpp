@@ -75,7 +75,7 @@ void Camera::updataRayDir(float currentX, float currentY, float screenWidth, flo
 	glm::vec4 lRayStart_NDC(
 		((float)currentX / (float)screenWidth - 0.5f) * 2.0f, // [0,1024] -> [-1,1]
 		((float)currentY / (float)screenHeight - 0.5f) * 2.0f, // [0, 768] -> [-1,1]
-		1.0, // The near plane maps to Z=1 in Normalized Device Coordinates in opengl
+		1.0, // The near plane maps to Z=-1 in Normalized Device Coordinates in opengl
 		1.0f
 	);
 	glm::vec4 lRayEnd_NDC(
@@ -101,7 +101,7 @@ void Camera::updataRayDir(float currentX, float currentY, float screenWidth, flo
 
 
 	worldRayDir = glm::normalize(lRayEnd_world - lRayStart_world);
-	worldRayOrigin = lRayStart_world;
+	worldRayOrigin = lRayEnd_world;
 }
 
 
