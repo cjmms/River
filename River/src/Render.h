@@ -83,4 +83,13 @@ public:
 					unsigned int deviation,
 					unsigned int gradient,
 					unsigned int waveMesh);
+
+	
 };
+
+// normal: normal of plane
+// center: any point on the plane
+// rayDir: direction of ray
+// rayOrigin: ray starting position
+// t: rayOrigin + rayDir * t  is the intersection point, if it exists
+bool RayPlaneIntersection(glm::vec3 normal, glm::vec3 center, glm::vec3 rayDir, glm::vec3 rayOrigin, float &t);

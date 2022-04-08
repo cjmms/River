@@ -352,3 +352,22 @@ void Render::DebugDraw(
 
 
 }
+
+
+
+
+// normal: normal of plane
+// center: any point on the plane
+// rayDir: direction of ray
+// rayOrigin: ray starting position
+// https://stackoverflow.com/questions/23975555/how-to-do-ray-plane-intersection
+bool RayPlaneIntersection(glm::vec3 normal, glm::vec3 center, glm::vec3 rayDir, glm::vec3 rayOrigin, float& t)
+{
+    float denom = glm::dot(normal, rayDir);
+    if (abs(denom) > 0.0001f) // your favorite epsilon
+    {
+        t = glm::dot(center - rayOrigin, normal) / denom;
+        if (t >= 0) return true; // you might want to allow an epsilon here too
+    }
+    return false;
+}
