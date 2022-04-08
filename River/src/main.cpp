@@ -27,7 +27,7 @@ const int window_width = 1280;
 const int window_height = 960;
 
 unsigned int checkerBoardTexture;
-
+unsigned int flowMapTexture;
 
 extern Setting setting;
 
@@ -109,6 +109,10 @@ void RenderUI()
     ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
 
     ImGui::Checkbox("Normal Map", &setting.enableNormalMap);
+
+    ImGui::Begin("flow map debug");
+    ImGui::Image((ImTextureID)flowMapTexture, ImVec2(100, 100) );
+    ImGui::End();
 
     // Rendering UI
     ImGui::Render();
@@ -215,6 +219,7 @@ int main()
     Render renderer;
 
     FluidContainer fluidContainer(20, 20);
+    flowMapTexture = fluidContainer.createFlowMap();
 
     WaveParticleMesh waveParticleMesh{ 600 };
 

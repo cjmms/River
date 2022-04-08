@@ -10,7 +10,7 @@
 // Third party includes:
 #include <glm/glm.hpp>
 
-#include <GL/GL.h>
+#include <GL/glew.h>
 
 
 // TODO: Create an RNG helper class.
@@ -126,6 +126,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texID);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, getGridWidth(), getGridHeight(), 0, GL_RG, GL_FLOAT, 0);
 		updateFlowMap(texID);
+		return texID;
 	}
 
 	void updateFlowMap(unsigned int textureId)
@@ -136,7 +137,7 @@ public:
 		// Concatenate the x and y velocity into a single data array tha can be used.
 		int totalsize = getGridWidth() * getGridHeight() * 2;
 		float* totalDataArray = new float[totalsize];
-		for (int i = 0; i < totalsize; ++i)
+		for (int i = 0; i < totalsize-1; ++i)
 		{
 			totalDataArray[i * 2] = dataVelX[i];
 			totalDataArray[i * 2 + 1] = dataVelY[i];
@@ -149,7 +150,7 @@ public:
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, getGridWidth(), getGridHeight(), GL_RG, GL_FLOAT, totalDataArray);
 
 		// Deallocate.
-		delete totalDataArray;
+		delete[] totalDataArray;
 	}
 
 	void setGridWidth(int width);
