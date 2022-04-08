@@ -173,7 +173,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 {
     camera.SetMouseStatus(button, action);
 
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_RIGHT)
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT) {
             if (GLFW_PRESS == action)
