@@ -136,19 +136,20 @@ public:
 
 		// Concatenate the x and y velocity into a single data array tha can be used.
 		const int arrSize = getGridWidth() * getGridHeight();
-		const int finalArrSize = arrSize * 2;
+		const int finalArrSize = arrSize * 3;
 		float* totalDataArray = new float[finalArrSize];
-		for (int i = 0; i < arrSize; ++i)
-		{
-			totalDataArray[i * 2] = dataVelX[i];
-			totalDataArray[i * 2 + 1] = dataVelY[i];
-		}
+		//for (int i = 0; i < arrSize-1; ++i)
+		//{
+		//	totalDataArray[i * 2] = 1.0f; // dataVelX[i];
+		//	totalDataArray[i * 2 + 1] = 1.0f; // dataVelY[i];
+		//}
+		for (int i = 0; i < finalArrSize; ++i) totalDataArray[i] = 1.0f;
 
 		// Bind the texture.
 		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		// Sub data.
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, getGridWidth(), getGridHeight(), GL_RG, GL_FLOAT, totalDataArray);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, getGridWidth(), getGridHeight(), GL_RGB, GL_FLOAT, (void*)totalDataArray);
 
 		// Deallocate.
 		delete[finalArrSize] totalDataArray;

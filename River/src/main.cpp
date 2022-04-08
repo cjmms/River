@@ -218,9 +218,6 @@ int main()
 
     Render renderer;
 
-    FluidContainer fluidContainer(20, 20);
-    flowMapTexture = fluidContainer.createFlowMap();
-
     WaveParticleMesh waveParticleMesh{ 600 };
 
     FBO waveParticleFBO{ window_width , window_height};
@@ -235,6 +232,17 @@ int main()
 
     FBO waveMesh{ window_width , window_height };
 
+
+    FluidContainer fluidContainer(20, 20);
+    //flowMapTexture = fluidContainer.createFlowMap();
+    glGenTextures(1, &flowMapTexture);
+    glBindTexture(GL_TEXTURE_2D, flowMapTexture);
+    float testArr[30000];
+    for (int i = 0; i < 30000; ++i) testArr[i] = 1.0f;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, 1000, 1000, 0, GL_RGB32F, GL_FLOAT, &testArr[0]);
+
+
+
     glViewport(0, 0, window_width, window_height);
 
     while (!glfwWindowShouldClose(window))
@@ -242,7 +250,7 @@ int main()
         processInput(window);
 
         const float dt = 0.01f; // TODO!!!!
-        fluidContainer.integrate(dt);
+        //fluidContainer.integrate(dt);
 
         camera.cameraUpdateFrameTime();
         
