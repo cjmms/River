@@ -50,6 +50,9 @@ public:
 	// update cameraFrontS base on current x and y
 	void updateCameraDirection(float currentX, float currentY);
 
+
+	void updataRayDir(float currentX, float currentY, float screenWidth, float screenHeight);
+
 	// WASD 
 	// W: forward
 	// S: backward

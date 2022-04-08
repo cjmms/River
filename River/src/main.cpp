@@ -149,9 +149,12 @@ void processInput(GLFWwindow* window)
 
 
 
+
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     camera.updateCameraDirection((float)xpos, (float)ypos);
+    camera.updataRayDir((float)xpos, (float)ypos, window_width, window_height);
 }
 
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
@@ -159,6 +162,8 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 
     camera.SetMouseStatus(button, action);
 }
+
+
 
 
 void setupGUI(GLFWwindow* window)
