@@ -30,13 +30,18 @@ unsigned int checkerBoardTexture;
 
 extern Setting setting;
 
-static const char* RenderPassList[]{ "Particle Velocity", 
+static const char* RenderPassList[]{ 
+                                     "Particle Velocity", 
                                      "Particle Amplitude", 
                                      "Velocity after Horizontal Pass",
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
-                                     "Wave Mesh"};
+                                     "Wave Mesh",
+                                     "Obstacle Map" };
 
+ObstacleMesh obstacleMesh;
+
+bool rightMouseClick = false;
 
 unsigned int loadTexture(char const* path, bool gamma)
 {
@@ -95,6 +100,12 @@ void RenderUI()
     ImGui::NewFrame();
 
     ImGui::Combo("Render Pass", &setting.seletectedRenderPass, RenderPassList, IM_ARRAYSIZE(RenderPassList));
+
+    if (ImGui::TreeNode("Obstacle Creatation"))
+    {
+        ImGui::SliderInt("Obstacle Particle Size", &setting.obstacleParticleSize, 1, 10);
+        ImGui::TreePop();
+    }
 
     if (ImGui::TreeNode("Wave Particle"))
     {
@@ -157,9 +168,22 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     camera.updataRayDir((float)xpos, (float)ypos, window_width, window_height);
 }
 
+
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 {
     camera.SetMouseStatus(button, action);
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    {
+        if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+            if (GLFW_PRESS == action)
+                rightMouseClick = true;
+            else if (GLFW_RELEASE == action)
+                rightMouseClick = false;
+        }
+    }
+
+    
 }
 
 
@@ -248,6 +272,8 @@ int main()
 
     WaveParticleMesh waveParticleMesh{ 600 };
 
+    
+
     FBO waveParticleFBO{ window_width , window_height};
 
     // used as output for horizontal blur, multi target rendering
@@ -260,6 +286,8 @@ int main()
 
     FBO waveMesh{ window_width , window_height };
 
+    FBO createObstacleFBO{ window_width , window_height };
+
     glViewport(0, 0, window_width, window_height);
 
     while (!glfwWindowShouldClose(window))
@@ -268,15 +296,26 @@ int main()
 
         camera.cameraUpdateFrameTime();
 
+        if (rightMouseClick) {
+
+            float t = -1;
+
+            RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
+
+            if (t > 0) obstacleMesh.AddObstacle(camera.worldRayOrigin + camera.worldRayDir * t);
+        }
+
         //std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
         //std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
 
-        float t = -1;
+        //float t = -1;
         
 
-        RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
+        //RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
 
         //std::cout << "t: " << t << std::endl;
+
+        renderer.RenderObstacles(createObstacleFBO.ID);
 
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
@@ -297,13 +336,15 @@ int main()
         //irradianceMap.Render();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        //renderer.DrawQuad(deviationGradient.ColorBuffer2);
+        
         
         renderer.DebugDraw(
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
-            waveMesh.ColorBuffer1);
+            waveMesh.ColorBuffer1, 
+            createObstacleFBO.ColorBuffer1);
+            
 
 
         ////////////////////////////////////////////////////

@@ -6,6 +6,7 @@ uniform sampler2D f45v;
 uniform sampler2D deviation;
 uniform sampler2D gradient;
 uniform sampler2D waveMesh;
+uniform sampler2D ObstacleMap;
 
 uniform int selectedRenderPass;
 
@@ -38,6 +39,10 @@ void main()
     else if (selectedRenderPass == 5)   // "Wave Mesh"
     {
         FragColor = texture(waveMesh, TexCoords);
+    }
+    else if (selectedRenderPass == 6)
+    {
+        FragColor = texture(ObstacleMap, TexCoords);
     }
 
 

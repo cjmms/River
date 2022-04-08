@@ -35,6 +35,8 @@ struct Setting
 
 	float timeScale = 2;
 	bool enableNormalMap = false;
+
+	int obstacleParticleSize = 3;
 };
 
 
@@ -62,6 +64,8 @@ public:
 							"res/Shaders/wave.tese",
 							"res/Shaders/wave.frag" };
 
+	Shader createObstacleShader{ "res/Shaders/CreateObstacle.vert", "res/Shaders/CreateObstacle.frag" };
+
 	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 public:
@@ -75,6 +79,8 @@ public:
 
 	void RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
+	void RenderObstacles(unsigned int fbo);
+
 	void DrawQuad(unsigned int inputTexture);
 
 	void DebugDraw( unsigned int particleMap, 
@@ -82,7 +88,8 @@ public:
 					unsigned int f45v, 
 					unsigned int deviation,
 					unsigned int gradient,
-					unsigned int waveMesh);
+					unsigned int waveMesh,	
+					unsigned int obstacleMap);
 
 	
 };

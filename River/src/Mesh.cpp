@@ -50,3 +50,28 @@ WaveParticleMesh::WaveParticleMesh(int numberOfParticles)
 	
 	glBindVertexArray(0);
 }
+
+
+
+
+void ObstacleMesh::AddObstacle(glm::vec3 pos)
+{
+	obstacleList.push_back(Obstacle{pos});
+}
+
+
+
+void ObstacleMesh::Bind()
+{
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, obstacleList.size() * sizeof(Obstacle), obstacleList.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(VAO);
+
+	// position attribute
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Obstacle), (void*)0);
+}

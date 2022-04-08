@@ -113,6 +113,8 @@
     <ClInclude Include="src\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shaders\CreateObstacle.frag" />
+    <None Include="res\Shaders\CreateObstacle.vert" />
     <None Include="res\Shaders\GenerateCubemap.frag" />
     <None Include="res\Shaders\GenerateCubemap.vert" />
     <None Include="res\Shaders\Skybox.vert" />

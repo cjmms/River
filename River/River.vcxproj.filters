@@ -31,6 +31,9 @@
     <Filter Include="Resource Files\Shaders\IBL">
       <UniqueIdentifier>{8230c101-1230-4b67-af49-8e23bf8fd3bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Obstacle">
+      <UniqueIdentifier>{a7af4024-2bb5-4e78-9ef7-f7f229364d23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -72,6 +75,9 @@
     <ClCompile Include="src\IBL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FluidContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -111,6 +117,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\IBL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FluidContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -156,6 +165,12 @@
     </None>
     <None Include="res\Shaders\GenerateCubemap.frag">
       <Filter>Resource Files\Shaders\IBL</Filter>
+    </None>
+    <None Include="res\Shaders\CreateObstacle.vert">
+      <Filter>Resource Files\Shaders\Obstacle</Filter>
+    </None>
+    <None Include="res\Shaders\CreateObstacle.frag">
+      <Filter>Resource Files\Shaders\Obstacle</Filter>
     </None>
   </ItemGroup>
 </Project>

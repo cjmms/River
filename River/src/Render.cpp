@@ -12,7 +12,10 @@ extern unsigned int checkerBoardTexture;
 
 const unsigned int NUM_PATCH_PTS = 4;
 
+extern ObstacleMesh obstacleMesh;
 
+// model matrix for plane
+glm::mat4 model(1.0f);
 
 FBO::FBO(unsigned int width, unsigned int height)
 {
@@ -142,6 +145,10 @@ Render::Render()
     glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 
     glBindVertexArray(0);
+
+    // model matrix for river plane
+    model = glm::scale(model, glm::vec3(2.0f));
+    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
 }
 
 
@@ -167,6 +174,9 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 	waveParticleShader.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // set point size to default
+    glPointSize(1);
 }
 
 
@@ -268,13 +278,6 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
     // also draw the lamp object
     waveMeshShader.setMat4("projection", camera.getProjectionMatrix());
     waveMeshShader.setMat4("view", camera.getViewMatrix());
-
-    glm::mat4 model(1.0f);
-    model = glm::scale(model, glm::vec3(2.0f));
-    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
-    //model = glm::translate(model, glm::vec3(0, -0.5, 0));
-
-    // scale by 2
     waveMeshShader.setMat4("model", model);
     
 
@@ -309,6 +312,35 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
 
 
+void Render::RenderObstacles(unsigned int fbo)
+{
+    // check if obstacle exists
+    if (obstacleMesh.size() == 0) return;
+
+    // set VBO and VAO
+    obstacleMesh.Bind();
+
+    glPointSize(setting.obstacleParticleSize);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    createObstacleShader.setMat4("inverseModel", glm::inverse(model));
+
+    createObstacleShader.Bind();
+
+    glBindVertexArray(obstacleMesh.VAO);
+    glDrawArrays(GL_POINTS, 0, obstacleMesh.size());
+
+    createObstacleShader.unBind();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
 
 Render::~Render()
 {
@@ -324,7 +356,8 @@ void Render::DebugDraw(
     unsigned int f45v,
     unsigned int deviation,
     unsigned int gradient,
-    unsigned int waveMesh)
+    unsigned int waveMesh,
+    unsigned int obstacleMap)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -340,6 +373,7 @@ void Render::DebugDraw(
     quadShader.setTexture("deviation", deviation);
     quadShader.setTexture("gradient", gradient);
     quadShader.setTexture("waveMesh", waveMesh);
+    quadShader.setTexture("ObstacleMap", obstacleMap);
 
     quadShader.Bind();
 
