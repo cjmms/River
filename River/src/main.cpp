@@ -268,18 +268,15 @@ int main()
 
         camera.cameraUpdateFrameTime();
 
-        std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
-        
-
-        std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
-
+        //std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
+        //std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
 
         float t = -1;
         
 
         RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
 
-        std::cout << "t: " << t << std::endl;
+        //std::cout << "t: " << t << std::endl;
 
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 

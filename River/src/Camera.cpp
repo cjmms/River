@@ -74,34 +74,29 @@ void Camera::updataRayDir(float currentX, float currentY, float screenWidth, flo
 {
 	glm::vec4 lRayStart_NDC(
 		((float)currentX / (float)screenWidth - 0.5f) * 2.0f, // [0,1024] -> [-1,1]
-		((float)currentY / (float)screenHeight - 0.5f) * 2.0f, // [0, 768] -> [-1,1]
-		1.0, // The near plane maps to Z=-1 in Normalized Device Coordinates in opengl
+		( 1 - (float)currentY / (float)screenHeight - 0.5f) * 2.0f, // [0, 768] -> [-1,1]
+		-1.0, // The near plane maps to Z=-1 in Normalized Device Coordinates in opengl
 		1.0f
 	);
 	glm::vec4 lRayEnd_NDC(
 		((float)currentX / (float)screenWidth - 0.5f) * 2.0f,
-		((float)currentY / (float)screenHeight - 0.5f) * 2.0f,
-		-1.0,
+		(1 - (float)currentY / (float)screenHeight - 0.5f) * 2.0f,
+		1.0,
 		1.0f
 	);
 
 
-	// The Projection matrix goes from Camera Space to NDC.
-	// So inverse(ProjectionMatrix) goes from NDC to Camera Space.
-	glm::mat4 InverseProjectionMatrix = getInverseProjectionMatrix();
+	glm::mat4 InverseViewProjection = glm::inverse(getProjectionMatrix() * getViewMatrix());
 
-	// The View Matrix goes from World Space to Camera Space.
-	// So inverse(ViewMatrix) goes from Camera Space to World Space.
-	glm::mat4 InverseViewMatrix = getInverseViewMatrix();
+	glm::vec4 rayStart = InverseViewProjection * lRayStart_NDC;
+	glm::vec4 rayEnd = InverseViewProjection * lRayEnd_NDC;
 
-	glm::vec4 lRayStart_camera = InverseProjectionMatrix * lRayStart_NDC;    lRayStart_camera /= lRayStart_camera.w;
-	glm::vec4 lRayStart_world = InverseViewMatrix * lRayStart_camera; lRayStart_world /= lRayStart_world.w;
-	glm::vec4 lRayEnd_camera = InverseProjectionMatrix * lRayEnd_NDC;      lRayEnd_camera /= lRayEnd_camera.w;
-	glm::vec4 lRayEnd_world = InverseViewMatrix * lRayEnd_camera;   lRayEnd_world /= lRayEnd_world.w;
+	rayStart /= rayStart.w;
+	rayEnd /= rayEnd.w;
 
 
-	worldRayDir = glm::normalize(lRayEnd_world - lRayStart_world);
-	worldRayOrigin = lRayEnd_world;
+	worldRayDir = glm::normalize(rayEnd - rayStart);
+	worldRayOrigin = glm::vec3(rayStart);
 }
 
 
