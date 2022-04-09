@@ -44,6 +44,9 @@ void main()
     {
         FragColor = texture(ObstacleMap, TexCoords);
     }
-
+    else if (selectedRenderPass == 7)
+    {
+        // TODO: Flow map.
+    }
 
 }

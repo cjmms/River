@@ -34,6 +34,9 @@
     <Filter Include="Resource Files\Shaders\Obstacle">
       <UniqueIdentifier>{a7af4024-2bb5-4e78-9ef7-f7f229364d23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\FlowMap">
+      <UniqueIdentifier>{2746f702-b809-466d-9dc7-182cb51db3a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
