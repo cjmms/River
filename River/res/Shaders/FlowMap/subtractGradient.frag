@@ -25,7 +25,7 @@ void main()
 	}
 
 	// Fetch the pressure of neighboring pixels:
-	float pUp		= texelFetchOffset(uPressure, T, 0, ivec2(0,  1)).x;
+	float pUp	  = texelFetchOffset(uPressure, T, 0, ivec2(0,  1)).x;
 	float pDown   = texelFetchOffset(uPressure, T, 0, ivec2(0, -1)).x;
 	float pRight  = texelFetchOffset(uPressure, T, 0, ivec2( 1, 0)).x;
 	float pLeft   = texelFetchOffset(uPressure, T, 0, ivec2(-1, 0)).x;
