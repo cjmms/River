@@ -59,7 +59,6 @@ FBO::FBO(unsigned int width, unsigned int height)
 }
 
 
-
 void FBO::AddTarget(unsigned int width, unsigned int height)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -86,10 +85,8 @@ void FBO::AddTarget(unsigned int width, unsigned int height)
 }
 
 
-
 Render::Render()
 {
-    
     // init quad
     float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // positions   // texCoords
@@ -151,14 +148,21 @@ Render::Render()
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
 }
 
-void Render::UpdateFlowMap(unsigned int fbo)
+void Render::UpdateFlowMap(const FBO& fboVeloctiyPressure, const FBO& fboObstacle, const FBO& fboDivergence)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // TODO: Where do I put vorticity step?
 
-    // STEP 1: VELOCITY ADVECTION
+    // STEP 1: ADVECTION STEP
+    flowAdvect.Bind();
+    // Perform advection on the velocity:
+
+
+    // Perform advection on the density:
+
+
 
     // STEP 2: PRESSURE ADVECTION
 
