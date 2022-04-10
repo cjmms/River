@@ -77,6 +77,28 @@ public:
 	Render();
 	~Render();
 
+	void InitFlowMapBindings(const FBO& fboVeloctiyPressure, const FBO& fboObstacle, const FBO& fboDivergence )
+	{
+		// Pre-emptive bindings for the flow shaders:
+		flowAdvect.Bind();
+		glUniform1i(0, fboObstacle.ColorBuffer1);
+		glUniform1i(1, fboVeloctiyPressure.ColorBuffer1); // vel
+
+		flowComputeDivergence.Bind();
+		glUniform1i(0, fboObstacle.ColorBuffer1);
+		glUniform1i(1, fboVeloctiyPressure.ColorBuffer1); // vel
+
+		flowJacobi.Bind();
+		glUniform1i(0, fboObstacle.ColorBuffer1);
+		glUniform1i(2, fboVeloctiyPressure.ColorBuffer2); // pressure
+		glUniform1i(3, fboDivergence.ColorBuffer1);
+
+		flowSubtractGradient.Bind();
+		glUniform1i(0, fboObstacle.ColorBuffer1);
+		glUniform1i(1, fboVeloctiyPressure.ColorBuffer1); // vel
+		glUniform1i(2, fboVeloctiyPressure.ColorBuffer2); // pressure
+	}
+
 	void UpdateFlowMap(unsigned int fbo);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
