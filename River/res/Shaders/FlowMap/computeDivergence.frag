@@ -8,8 +8,8 @@ out float fragColor; // Interesting note; outputs a single float.
 
 // uniforms
 layout(location = 0) uniform sampler2D uObstacleMap;
-// layout(location = 1) uniform sampler2D uPressure;
-layout(location = 2) uniform sampler2D uVelocity;
+layout(location = 1) uniform sampler2D uVelocity;
+// layout(location = 2) uniform sampler2D uPressure;
 // layout(location = 3) uniform sampler2D uDivergence;
 
 uniform float uHalfInvCellSize; // This seems oddly specific

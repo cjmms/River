@@ -20,8 +20,8 @@ out vec4 fragColor;
 
 // uniforms
 layout(location = 0) uniform sampler2D uObstacleMap;
-// layout(location = 1) uniform sampler2D uPressure;
-layout(location = 2) uniform sampler2D uVelocity;
+layout(location = 1) uniform sampler2D uVelocity;
+// layout(location = 2) uniform sampler2D uPressure;
 //layout(location = 3) uniform sampler2D uDivergence;
 
 uniform sampler2D uSoureTexture; // Advection is a generalized step ran on each parameter, so this is a generalized uniform location.

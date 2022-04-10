@@ -12,7 +12,7 @@
 out vec4 fragColor; 
 
 // uniforms
-uniform sampler2D uPressure;
+uniform sampler2D uPressure; // TODO
 uniform sampler2D uDivergence;
 uniform sampler2D uObstacleMap;
 
