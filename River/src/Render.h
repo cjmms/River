@@ -66,6 +66,11 @@ public:
 
 	Shader createObstacleShader{ "res/Shaders/CreateObstacle.vert", "res/Shaders/CreateObstacle.frag" };
 
+	Shader flowAdvect			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/advect.frag"};
+	Shader flowComputeDivergence{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/computeDivergence.frag"};
+	Shader flowJacobi			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/jacobi.frag"};
+	Shader flowSubtractGradient {"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag"};
+
 	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 public:
