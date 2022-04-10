@@ -19,9 +19,13 @@
 out vec4 fragColor;
 
 // uniforms
-uniform sampler2D uVelocityTexture;
-uniform sampler2D uSoureTexture;
-uniform sampler2D uObstacleMap;
+layout(location = 0) uniform sampler2D uObstacleMap;
+// layout(location = 1) uniform sampler2D uPressure;
+layout(location = 2) uniform sampler2D uVelocity;
+//layout(location = 3) uniform sampler2D uDivergence;
+
+uniform sampler2D uSoureTexture; // Advection is a generalized step ran on each parameter, so this is a generalized uniform location.
+
 
 uniform vec2 uInverseSize;
 uniform float uDeltaTime;
@@ -39,7 +43,7 @@ void main()
 	}
 
 	// Compute the advection at this pixel:
-	const vec2 u = texture(uVelocityTexture, uInverseSize * gl_FragCoord.xy).xy;
+	const vec2 u = texture(uVelocity, uInverseSize * gl_FragCoord.xy).xy;
 	const vec2 coord = uInverseSize * (gl_FragCoord.xy - (uDeltaTime * u));
 
 	fragColor = uDissipation * texture(uSoureTexture, coord);
