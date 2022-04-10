@@ -175,9 +175,6 @@
     <None Include="res\Shaders\CreateObstacle.frag">
       <Filter>Resource Files\Shaders\Obstacle</Filter>
     </None>
-    <None Include="res\Shaders\FlowMap\diffuse.frag">
-      <Filter>Resource Files\Shaders\FlowMap</Filter>
-    </None>
     <None Include="res\Shaders\FlowMap\jacobi.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
@@ -188,6 +185,9 @@
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
     <None Include="res\Shaders\FlowMap\computeDivergence.frag">
+      <Filter>Resource Files\Shaders\FlowMap</Filter>
+    </None>
+    <None Include="res\Shaders\FlowMap\vorticity.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
   </ItemGroup>
