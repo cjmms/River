@@ -270,8 +270,9 @@ int main()
 
     // FBO's:
 
-    FBO flowMapFBO(512, 512);
-    flowMapFBO.AddTarget(200, 200);
+    constexpr glm::ivec2 flowMapScale = {512, 512};
+    FBO flowMapFBO(flowMapScale.x, flowMapScale.y);
+    flowMapFBO.AddTarget(flowMapScale.x, flowMapScale.y);
     
     FBO waveParticleFBO{ window_width , window_height};
 
