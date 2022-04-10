@@ -270,10 +270,6 @@ int main()
 
     // FBO's:
 
-    constexpr glm::ivec2 flowMapScale = {512, 512};
-    FBO flowMapFBO(flowMapScale.x, flowMapScale.y);
-    flowMapFBO.AddTarget(flowMapScale.x, flowMapScale.y);
-    
     FBO waveParticleFBO{ window_width , window_height};
 
     // used as output for horizontal blur, multi target rendering
@@ -286,7 +282,15 @@ int main()
 
     FBO waveMesh{ window_width , window_height };
 
-    FBO createObstacleFBO{ window_width , window_height };
+    FBO createObstacleFBO{ window_width , window_height };  // I'm using this as the obstacles fbo right now, no idea if that's right. --jarred
+
+
+    constexpr glm::ivec2 flowMapScale = { 512, 512 };
+    FBO flowFBOVelocityPressure(flowMapScale.x, flowMapScale.y);
+    flowFBOVelocityPressure.AddTarget(flowMapScale.x, flowMapScale.y);
+    FBO flowFBODivergence(flowMapScale.x, flowMapScale.y);
+    renderer.InitFlowMapBindings(flowFBOVelocityPressure, createObstacleFBO, flowFBODivergence);
+
 
     glViewport(0, 0, window_width, window_height);
 
