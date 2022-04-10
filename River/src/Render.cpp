@@ -151,6 +151,31 @@ Render::Render()
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
 }
 
+void Render::UpdateFlowMap(unsigned int fbo)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // TODO: Where do I put vorticity step?
+
+    // STEP 1: VELOCITY ADVECTION
+
+    // STEP 2: PRESSURE ADVECTION
+
+    // ...
+
+    // ...
+
+    // STEP X: PERFORM JACOBI ITERATIONS
+    constexpr int ITR = 40;
+    for (int i = 0; i < ITR; ++i)
+    {
+        // ...
+
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 
 void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo)
@@ -357,7 +382,9 @@ void Render::DebugDraw(
     unsigned int deviation,
     unsigned int gradient,
     unsigned int waveMesh,
-    unsigned int obstacleMap)
+    unsigned int obstacleMap,
+    unsigned int flowVelocity,  // ...
+    unsigned int flowPressure)  // ...
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

@@ -72,6 +72,8 @@ public:
 	Render();
 	~Render();
 
+	void UpdateFlowMap(unsigned int fbo);
+
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
@@ -89,7 +91,9 @@ public:
 					unsigned int deviation,
 					unsigned int gradient,
 					unsigned int waveMesh,	
-					unsigned int obstacleMap);
+					unsigned int obstacleMap,
+					unsigned int flowVelocity,
+					unsigned int flowPressure);
 
 	
 };

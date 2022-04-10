@@ -37,7 +37,9 @@ static const char* RenderPassList[]{
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
                                      "Wave Mesh",
-                                     "Obstacle Map" };
+                                     "Obstacle Map",
+                                     "Flow Velocity",
+                                     "Flow Pressure"};
 
 ObstacleMesh obstacleMesh;
 
@@ -159,9 +161,6 @@ void processInput(GLFWwindow* window)
 }
 
 
-
-
-
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     //camera.updateCameraDirection((float)xpos, (float)ypos);
@@ -185,8 +184,6 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 
     
 }
-
-
 
 
 void setupGUI(GLFWwindow* window)
@@ -248,8 +245,6 @@ int main()
     glDepthFunc(GL_LEQUAL);
 
     
-
-    
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
     /*
@@ -272,8 +267,12 @@ int main()
 
     WaveParticleMesh waveParticleMesh{ 600 };
 
-    
 
+    // FBO's:
+
+    FBO flowMapFBO(512, 512);
+    flowMapFBO.AddTarget(200, 200);
+    
     FBO waveParticleFBO{ window_width , window_height};
 
     // used as output for horizontal blur, multi target rendering
@@ -292,6 +291,8 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        // UPDATING //
+
         processInput(window);
 
         camera.cameraUpdateFrameTime();
@@ -305,6 +306,10 @@ int main()
             if (t > 0) obstacleMesh.AddObstacle(camera.worldRayOrigin + camera.worldRayDir * t);
         }
 
+        // Flow map updates:
+        // 
+
+
         //std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
         //std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
 
@@ -314,6 +319,8 @@ int main()
         //RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
 
         //std::cout << "t: " << t << std::endl;
+
+        // RENDERING //
 
         renderer.RenderObstacles(createObstacleFBO.ID);
 
@@ -337,7 +344,7 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         
-        
+        // TODO: Update parameteres here!!
         renderer.DebugDraw(
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
