@@ -37,7 +37,8 @@ static const char* RenderPassList[]{
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
                                      "Wave Mesh",
-                                     "Obstacle Map" };
+                                     "Obstacle Pos Map",
+                                     "Obstacle Map"};
 
 ObstacleMesh obstacleMesh;
 
@@ -287,6 +288,7 @@ int main()
     FBO waveMesh{ window_width , window_height };
 
     FBO createObstacleFBO{ window_width , window_height };
+    FBO obstacleFBO{ window_width , window_height };
 
     glViewport(0, 0, window_width, window_height);
 
@@ -305,24 +307,23 @@ int main()
             if (t > 0) obstacleMesh.AddObstacle(camera.worldRayOrigin + camera.worldRayDir * t);
         }
 
-        //std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
-        //std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
 
-        //float t = -1;
-        
-
-        //RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
-
-        //std::cout << "t: " << t << std::endl;
-
+        // step 1:
+        // obstacle map creation
         renderer.RenderObstacles(createObstacleFBO.ID);
 
+        renderer.ObstacleBlur(createObstacleFBO.ColorBuffer1, obstacleFBO.ID);
+
+        // step 2:
+        // wave map creation
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
         renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
+        // step 3: 
+        // render wave mesh
         glEnable(GL_CULL_FACE);
 
         renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
@@ -343,7 +344,8 @@ int main()
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
             waveMesh.ColorBuffer1, 
-            createObstacleFBO.ColorBuffer1);
+            createObstacleFBO.ColorBuffer1,
+            obstacleFBO.ColorBuffer1);
             
 
 

@@ -31,7 +31,10 @@
     <Filter Include="Resource Files\Shaders\IBL">
       <UniqueIdentifier>{8230c101-1230-4b67-af49-8e23bf8fd3bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Obstacle">
+    <Filter Include="Resource Files\Shaders\ObstacleBlur">
+      <UniqueIdentifier>{0c857d86-2730-4967-b51b-f71ac941719f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\ObstacleCreation">
       <UniqueIdentifier>{a7af4024-2bb5-4e78-9ef7-f7f229364d23}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -167,10 +170,16 @@
       <Filter>Resource Files\Shaders\IBL</Filter>
     </None>
     <None Include="res\Shaders\CreateObstacle.vert">
-      <Filter>Resource Files\Shaders\Obstacle</Filter>
+      <Filter>Resource Files\Shaders\ObstacleCreation</Filter>
     </None>
     <None Include="res\Shaders\CreateObstacle.frag">
-      <Filter>Resource Files\Shaders\Obstacle</Filter>
+      <Filter>Resource Files\Shaders\ObstacleCreation</Filter>
+    </None>
+    <None Include="res\Shaders\ObstacleBlur_H.frag">
+      <Filter>Resource Files\Shaders\ObstacleBlur</Filter>
+    </None>
+    <None Include="res\Shaders\ObstacleBlur_V.frag">
+      <Filter>Resource Files\Shaders\ObstacleBlur</Filter>
     </None>
   </ItemGroup>
 </Project>

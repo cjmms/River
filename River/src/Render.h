@@ -2,6 +2,8 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+extern const int window_width;
+extern const int window_height;
 
 class FBO
 {
@@ -66,7 +68,12 @@ public:
 
 	Shader createObstacleShader{ "res/Shaders/CreateObstacle.vert", "res/Shaders/CreateObstacle.frag" };
 
+	Shader obstacleBlurHShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_H.frag" };
+	Shader obstacleBlurVShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_V.frag" };
+
 	unsigned int quadVAO, quadVBO, quadPatchVAO;
+
+	FBO obstacleBlurFBO{ window_width , window_height };
 
 public:
 	Render();
@@ -83,12 +90,16 @@ public:
 
 	void DrawQuad(unsigned int inputTexture);
 
+	// Blur obstacle position
+	void ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo);
+
 	void DebugDraw( unsigned int particleMap, 
 					unsigned int f123, 
 					unsigned int f45v, 
 					unsigned int deviation,
 					unsigned int gradient,
-					unsigned int waveMesh,	
+					unsigned int waveMesh,
+					unsigned int obstaclePosMap,
 					unsigned int obstacleMap);
 
 	

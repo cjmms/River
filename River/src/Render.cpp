@@ -14,6 +14,8 @@ const unsigned int NUM_PATCH_PTS = 4;
 
 extern ObstacleMesh obstacleMesh;
 
+
+
 // model matrix for plane
 glm::mat4 model(1.0f);
 
@@ -149,6 +151,8 @@ Render::Render()
     // model matrix for river plane
     model = glm::scale(model, glm::vec3(2.0f));
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+
+
 }
 
 
@@ -177,6 +181,45 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 
     // set point size to default
     glPointSize(1);
+}
+
+
+
+void Render::ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo)
+{
+    // horizontal blur
+    glBindFramebuffer(GL_FRAMEBUFFER, obstacleBlurFBO.ID);
+
+    // clear buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    obstacleBlurHShader.setTexture("obstaclePosMap", ObstaclePosMap);
+
+    obstacleBlurHShader.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    obstacleBlurHShader.unBind();
+
+    // vertical blur
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // clear buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // pass horizontal blured result
+    obstacleBlurVShader.setTexture("horiBlurMap", obstacleBlurFBO.ColorBuffer1);
+
+    obstacleBlurVShader.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    obstacleBlurVShader.unBind();
+
+    // vertical blur
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -357,6 +400,7 @@ void Render::DebugDraw(
     unsigned int deviation,
     unsigned int gradient,
     unsigned int waveMesh,
+    unsigned int obstaclePosMap,
     unsigned int obstacleMap)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -373,7 +417,8 @@ void Render::DebugDraw(
     quadShader.setTexture("deviation", deviation);
     quadShader.setTexture("gradient", gradient);
     quadShader.setTexture("waveMesh", waveMesh);
-    quadShader.setTexture("ObstacleMap", obstacleMap);
+    quadShader.setTexture("obstaclePosMap", obstaclePosMap);
+    quadShader.setTexture("obstacleMap", obstacleMap);
 
     quadShader.Bind();
 
