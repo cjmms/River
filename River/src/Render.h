@@ -13,6 +13,26 @@ public:
 	unsigned int ID, DepthBuffer, ColorBuffer1, ColorBuffer2;
 };
 
+class PingPong
+{
+public:
+	PingPong(FBO* first, FBO* second) : ping{first}, pong{second}
+	{}
+	~PingPong()
+	{
+		if (ping) delete ping;
+		if (pong) delete pong;
+	}
+	FBO* ping = nullptr;
+	FBO* pong = nullptr;
+
+	void Swap()
+	{
+		FBO* temp = ping;
+		pong = ping;
+		ping = temp;
+	}
+};
 
 struct Setting
 {
@@ -99,7 +119,7 @@ public:
 		glUniform1i(2, fboVeloctiyPressure.ColorBuffer2); // pressure
 	}
 
-	void UpdateFlowMap(unsigned int fbo);
+	void UpdateFlowMap();
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
