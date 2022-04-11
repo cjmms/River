@@ -40,6 +40,9 @@
     <Filter Include="Resource Files\Shaders\RenderObstacles">
       <UniqueIdentifier>{dcdbb735-3ad0-4abe-a6b3-8c652ed9b6da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\FlowMap">
+      <UniqueIdentifier>{f2c1bdb5-170d-4e8a-bce4-4419bd2efdda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -190,16 +193,16 @@
     <None Include="res\Shaders\RenderObstacle.frag">
       <Filter>Resource Files\Shaders\RenderObstacles</Filter>
     </None>
-    <None Include="res\Shaders\FlowMap\jacobi.frag">
-      <Filter>Resource Files\Shaders\FlowMap</Filter>
-    </None>
-    <None Include="res\Shaders\FlowMap\subtractGradient.frag">
-      <Filter>Resource Files\Shaders\FlowMap</Filter>
-    </None>
     <None Include="res\Shaders\FlowMap\advect.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
     <None Include="res\Shaders\FlowMap\computeDivergence.frag">
+      <Filter>Resource Files\Shaders\FlowMap</Filter>
+    </None>
+    <None Include="res\Shaders\FlowMap\jacobi.frag">
+      <Filter>Resource Files\Shaders\FlowMap</Filter>
+    </None>
+    <None Include="res\Shaders\FlowMap\subtractGradient.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
     <None Include="res\Shaders\FlowMap\vorticity.frag">
