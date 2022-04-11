@@ -360,24 +360,29 @@ void Render::RenderObstacles(unsigned int fbo)
     // check if obstacle exists
     if (obstacleMesh.size() == 0) return;
 
-    // set VBO and VAO
-    obstacleMesh.Bind();
-
-    glPointSize(setting.obstacleParticleSize);
-
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    createObstacleShader.setMat4("inverseModel", glm::inverse(model));
+    for (Obstacle& obstacle : obstacleMesh.obstacleList)
+    {
+        glm::vec4 translation = glm::inverse(model) * glm::vec4(obstacle.pos, 1);
 
-    createObstacleShader.Bind();
+        glm::mat4 transformationMat = glm::translate(glm::mat4(1.0), glm::vec3(translation));  // translation
+        transformationMat = glm::scale(transformationMat, glm::vec3(0.01 * setting.brushSize));       // scale
 
-    glBindVertexArray(obstacleMesh.VAO);
-    glDrawArrays(GL_POINTS, 0, obstacleMesh.size());
+        createObstacleShader.setMat4("transformationMatrix", transformationMat);
 
-    createObstacleShader.unBind();
+
+        createObstacleShader.Bind();
+
+        glBindVertexArray(quadVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+        createObstacleShader.unBind();
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

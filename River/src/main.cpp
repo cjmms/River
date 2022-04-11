@@ -105,6 +105,7 @@ void RenderUI()
     if (ImGui::TreeNode("Obstacle Creatation"))
     {
         ImGui::SliderInt("Obstacle Particle Size", &setting.obstacleParticleSize, 1, 10);
+        ImGui::SliderFloat("Brush Size", &setting.brushSize, 1, 10.0);
         ImGui::TreePop();
     }
 

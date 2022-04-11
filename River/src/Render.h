@@ -39,6 +39,8 @@ struct Setting
 	bool enableNormalMap = false;
 
 	int obstacleParticleSize = 3;
+
+	float brushSize = 1;
 };
 
 
