@@ -214,6 +214,24 @@ void Render::SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void Render::ComputeDivergenceHelper(FBO* velPres, FBO* obstacles, FBO* dst)
+{
+    // Note: Velocity is the first color attachment in velPres.
+
+    const float HALFINVCELLSIZE = 0.5f/cellSize;
+
+    flowComputeDivergence.setFloat("uHalfInvCellSize", HALFINVCELLSIZE);
+
+    // ...
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 #pragma endregion
 
