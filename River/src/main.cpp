@@ -286,7 +286,9 @@ int main()
 
 
     constexpr glm::ivec2 flowMapScale = { 512, 512 };
-    
+    renderer.fluidGridScale = flowMapScale;
+    renderer.fluidInvScale = {1.0f/(float)flowMapScale.x, 1.0f/(float)flowMapScale.y};
+
     //FBO* fboVelPress1 = new FBO(flowMapScale.x, flowMapScale.y);
     //fboVelPress1->AddTarget(flowMapScale.x, flowMapScale.y);
     PingPong flowVelocityPressure(flowMapScale.x, flowMapScale.y );

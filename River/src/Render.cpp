@@ -148,23 +148,48 @@ Render::Render()
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
 }
 
+// Note: Bind the advect shader first.
+void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
+{
+    // Note: Velocity is the first color attachment in velPres.
+    
+    constexpr float DELTATIME = 0.1f; // TODO!
+
+    // TODO: Some of these could potentially be prebound.
+    flowAdvect.setVec2("uInverseSize", fluidInvScale);
+    flowAdvect.setFloat("uDeltaTime", DELTATIME);
+    flowAdvect.setFloat("uDissipation", dissipation);
+
+    // The source texture.
+    //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
+    flowAdvect.setTexture("uSourceTexture", src->ColorBuffer1);
+
+    glBindVertexArray(dst->ID);
+
+    //this->DrawQuad(); // TODO: Draw!
+
+    glBindVertexArray(0);
+}
+
 void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // TODO: Where do I put vorticity step?
 
-    // STEP 1: ADVECTION STEP
-    flowAdvect.Bind();
+    // STEP 1: ADVECTION STEP //
+
     // Perform advection on the velocity:
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    flowAdvect.Bind();
+
+
 
 
     // Perform advection on the density:
 
 
 
-    // STEP 2: PRESSURE ADVECTION
+    // STEP 2: PRESSURE ADVECTION //
 
     // ...
 

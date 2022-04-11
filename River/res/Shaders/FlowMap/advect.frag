@@ -26,7 +26,6 @@ layout(location = 1) uniform sampler2D uVelocity;
 
 uniform sampler2D uSoureTexture; // Advection is a generalized step ran on each parameter, so this is a generalized uniform location.
 
-
 uniform vec2 uInverseSize;
 uniform float uDeltaTime;
 uniform float uDissipation;
