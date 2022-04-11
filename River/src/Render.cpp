@@ -235,39 +235,47 @@ void Render::ComputeDivergenceHelper(FBO* velPres, FBO* obstacles, FBO* dst)
 
 #pragma endregion
 
-void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
+void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
 {
+    glDisable(GL_DEPTH_TEST);
+
+    constexpr float DISSIPATION_VELOCITY = 1.0f;
+    
     // TODO: Where do I put vorticity step?
+    // TODO: Swap surfaces equivalent.
 
     // STEP 1: ADVECTION STEP //
 
     // Perform advection on the velocity:
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     flowAdvect.Bind();
+    AdvectHelper(velocityPressure.ping, obstacleFBO, velocityPressure.ping, velocityPressure.pong, DISSIPATION_VELOCITY);
 
-
-
+    // Advection would be performed on density here if it was relevant to water.
+    // ...
 
     // Perform advection on the density:
 
-
-
-    // STEP 2: PRESSURE ADVECTION //
-
+    // STEP 2: FORCE APPLICATION //
+    // Not yet implemented.
     // ...
 
-    // ...
+    // STEP 3: COMPUTE DIVERGENCE //
+    ComputeDivergenceHelper(velocityPressure.ping, obstacleFBO, divergence.ping); // TODO: Divergence might not need to pingpong
+    // TODO: A clearing step needed here.
 
-    // STEP X: PERFORM JACOBI ITERATIONS
+    // STEP 4: PERFORM JACOBI ITERATIONS //
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        // ...
-
+        JacobiHelper(velocityPressure.ping, divergence.ping, obstacleFBO, velocityPressure.pong);
+        // TODO: SWAP PRESSURE
     }
 
+    // STEP 5: GRADIENT SUBTRACTION //
+    SubtractGradientHelper(velocityPressure.ping, obstacleFBO, velocityPressure.pong);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glEnable(GL_DEPTH_TEST);
 }
 
 

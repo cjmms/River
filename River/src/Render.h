@@ -128,7 +128,7 @@ public:
 	Render();
 	~Render();
 
-	void UpdateFlowMap(FBO&, PingPong&, PingPong&);
+	void UpdateFlowMap(FBO*, PingPong&, PingPong&);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
