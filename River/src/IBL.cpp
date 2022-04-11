@@ -83,8 +83,10 @@ void Skybox::GenerateCubemap(unsigned int textureID)
 }
 
 
-void Skybox::Render()
+void Skybox::Render(unsigned int fbo)
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
     SkyboxShader.setMat4("view", camera.getViewMatrix());
     SkyboxShader.setMat4("projection", camera.getProjectionMatrix());
 
@@ -98,6 +100,7 @@ void Skybox::Render()
     renderCube();
 
     SkyboxShader.unBind();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 

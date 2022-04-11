@@ -41,6 +41,7 @@ struct Setting
 	int obstacleParticleSize = 3;
 
 	float brushSize = 1;
+	float obstacleHeightFactor = 1;
 };
 
 
@@ -73,6 +74,11 @@ public:
 	Shader obstacleBlurHShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_H.frag" };
 	Shader obstacleBlurVShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_V.frag" };
 
+	Shader renderObstacleShader {	"res/Shaders/wave.vert",
+									"res/Shaders/wave.tesc",
+									"res/Shaders/RenderObstacle.tese",
+									"res/Shaders/RenderObstacle.frag" };
+
 	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 	FBO obstacleBlurFBO{ window_width , window_height };
@@ -88,7 +94,9 @@ public:
 
 	void RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
-	void RenderObstacles(unsigned int fbo);
+	void RenderObstacleHeightMap(unsigned int fbo);
+
+	void RenderObstacles(unsigned int heightMap, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
 

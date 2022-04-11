@@ -9,10 +9,12 @@ extern Camera camera;
 Setting setting;
 
 extern unsigned int checkerBoardTexture;
+extern unsigned int waveTexture;
 
 const unsigned int NUM_PATCH_PTS = 4;
 
 extern ObstacleMesh obstacleMesh;
+
 
 
 
@@ -315,9 +317,6 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // also draw the lamp object
     waveMeshShader.setMat4("projection", camera.getProjectionMatrix());
     waveMeshShader.setMat4("view", camera.getViewMatrix());
@@ -355,7 +354,7 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
 
 
-void Render::RenderObstacles(unsigned int fbo)
+void Render::RenderObstacleHeightMap(unsigned int fbo)
 {
     // check if obstacle exists
     if (obstacleMesh.size() == 0) return;
@@ -365,15 +364,17 @@ void Render::RenderObstacles(unsigned int fbo)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    createObstacleShader.setTexture("checkerboard", checkerBoardTexture);
+    createObstacleShader.setTexture("roundObstacle", waveTexture);
+
     for (Obstacle& obstacle : obstacleMesh.obstacleList)
     {
         glm::vec4 translation = glm::inverse(model) * glm::vec4(obstacle.pos, 1);
 
         glm::mat4 transformationMat = glm::translate(glm::mat4(1.0), glm::vec3(translation));  // translation
-        transformationMat = glm::scale(transformationMat, glm::vec3(0.01 * setting.brushSize));       // scale
+        transformationMat = glm::scale(transformationMat, glm::vec3(0.1 * setting.brushSize));       // scale
 
         createObstacleShader.setMat4("transformationMatrix", transformationMat);
-
 
         createObstacleShader.Bind();
 
@@ -383,6 +384,38 @@ void Render::RenderObstacles(unsigned int fbo)
 
         createObstacleShader.unBind();
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
+
+void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    renderObstacleShader.setMat4("projection", camera.getProjectionMatrix());
+    renderObstacleShader.setMat4("view", camera.getViewMatrix());
+    renderObstacleShader.setMat4("model", model);
+
+    renderObstacleShader.setInt("tessellationFactor", setting.tessellationFactor);
+    renderObstacleShader.setVec3("ViewPos", camera.getCameraPos());
+
+    renderObstacleShader.setTexture("ObstacleHeightMap", heightMap);
+    renderObstacleShader.setFloat("obstacleHeightFactor", setting.obstacleHeightFactor * 0.2f);
+
+    renderObstacleShader.Bind();
+    glBindVertexArray(quadPatchVAO);
+    glDrawArrays(GL_PATCHES, 0, 4);
+    glBindVertexArray(0);
+    renderObstacleShader.unBind();
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

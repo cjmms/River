@@ -37,6 +37,9 @@
     <Filter Include="Resource Files\Shaders\ObstacleCreation">
       <UniqueIdentifier>{a7af4024-2bb5-4e78-9ef7-f7f229364d23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\RenderObstacles">
+      <UniqueIdentifier>{dcdbb735-3ad0-4abe-a6b3-8c652ed9b6da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -180,6 +183,12 @@
     </None>
     <None Include="res\Shaders\ObstacleBlur_V.frag">
       <Filter>Resource Files\Shaders\ObstacleBlur</Filter>
+    </None>
+    <None Include="res\Shaders\RenderObstacle.tese">
+      <Filter>Resource Files\Shaders\RenderObstacles</Filter>
+    </None>
+    <None Include="res\Shaders\RenderObstacle.frag">
+      <Filter>Resource Files\Shaders\RenderObstacles</Filter>
     </None>
   </ItemGroup>
 </Project>
