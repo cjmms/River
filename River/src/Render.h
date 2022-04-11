@@ -121,6 +121,7 @@ public:
 
 	glm::ivec2 fluidGridScale = {512, 512};
 	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
+	float cellSize = 1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
 
 public:
 	Render();
@@ -177,6 +178,7 @@ public:
 
 private:
 	// (Velocity and pressure are two color attachments on the same fbo)
+	// TODO: Some of these parameters are prebound and can be factored out.
 	void AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, float dissipation);	// Needs velocity
 	void JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* dst);				// Needs pressure
 	void SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst);					// Needs both

@@ -154,6 +154,8 @@ Render::Render()
 
 }
 
+#pragma region fluid helpers
+
 // Note: Bind the advect shader first.
 void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
@@ -178,6 +180,27 @@ void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, floa
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+void Render::JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* dst)
+{
+    // Note: Velocity is the first color attachment in velPres.
+    
+    const float ALPHA = -cellSize*cellSize;
+    constexpr float INVBETA = 0.25f; 
+
+    flowJacobi.setFloat("uAlpha", ALPHA);
+    flowJacobi.setFloat("uInverseBeta", INVBETA);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+#pragma endregion
 
 void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
 {
