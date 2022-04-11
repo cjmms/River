@@ -19,7 +19,7 @@ public:
 
 	void GenerateCubemap(unsigned int textureID);
 
-	void Render();
+	void Render(unsigned int fbo);
 
 	inline unsigned int ID() const { return envCubemap; }
 

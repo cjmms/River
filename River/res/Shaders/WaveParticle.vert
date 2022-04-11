@@ -40,7 +40,6 @@ void main()
             offset.y = int(posI.y - 1) % 2 + posF.y;
             pos.y = sign(pos.y) * offset.y + sign(pos.y) * -1;
         }
-
 	}
 
 

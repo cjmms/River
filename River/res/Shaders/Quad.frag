@@ -6,6 +6,7 @@ uniform sampler2D f45v;
 uniform sampler2D deviation;
 uniform sampler2D gradient;
 uniform sampler2D waveMesh;
+uniform sampler2D obstaclePosMap;
 uniform sampler2D ObstacleMap;
 uniform sampler2D flowVelocity;
 uniform sampler2D flowPressure;
@@ -44,7 +45,11 @@ void main()
     }
     else if (selectedRenderPass == 6)
     {
-        FragColor = texture(ObstacleMap, TexCoords);
+        FragColor = texture(obstaclePosMap, TexCoords);
+    }
+    else if (selectedRenderPass == 7)
+    {
+        FragColor = texture(obstacleMap, TexCoords);
     }
     else if (selectedRenderPass == 7) // Velocity flow-field.
     {

@@ -26,6 +26,7 @@ const int window_width = 1280;
 const int window_height = 960;
 
 unsigned int checkerBoardTexture;
+unsigned int waveTexture;
 
 
 extern Setting setting;
@@ -37,6 +38,7 @@ static const char* RenderPassList[]{
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
                                      "Wave Mesh",
+                                     "Obstacle Pos Map",
                                      "Obstacle Map",
                                      "Flow Velocity",
                                      "Flow Pressure"};
@@ -106,6 +108,7 @@ void RenderUI()
     if (ImGui::TreeNode("Obstacle Creatation"))
     {
         ImGui::SliderInt("Obstacle Particle Size", &setting.obstacleParticleSize, 1, 10);
+        ImGui::SliderFloat("Brush Size", &setting.brushSize, 1, 10.0);
         ImGui::TreePop();
     }
 
@@ -175,14 +178,10 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
     if (button == GLFW_MOUSE_BUTTON_RIGHT)
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-            if (GLFW_PRESS == action)
-                rightMouseClick = true;
-            else if (GLFW_RELEASE == action)
-                rightMouseClick = false;
+            if      (GLFW_PRESS   == action) rightMouseClick = true;
+            else if (GLFW_RELEASE == action) rightMouseClick = false;
         }
-    }
-
-    
+    }  
 }
 
 
@@ -247,15 +246,15 @@ int main()
     
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
-    /*
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    */
+
     ////////////////////////////////////////////////////////////
     // imgui setup
 
     setupGUI(window);
 
     checkerBoardTexture = loadTexture("res/checkerboard.jpg", false);
+
+    waveTexture = loadTexture("res/wave.jpg", false);
 
     Skybox skybox;
     skybox.GenerateCubemap(LoadHDR("res/Arches_E_PineTree/Arches_E_PineTree_3k.hdr"));
@@ -283,7 +282,7 @@ int main()
     FBO waveMesh{ window_width , window_height };
 
     FBO createObstacleFBO{ window_width , window_height };  // I'm using this as the obstacles fbo right now, no idea if that's right. --jarred
-
+    FBO obstacleFBO{ window_width , window_height };
 
     constexpr glm::ivec2 flowMapScale = { 512, 512 };
     renderer.fluidGridScale = flowMapScale;
@@ -318,30 +317,36 @@ int main()
         }
 
         // Flow map updates:
-        // 
-
-
-        //std::cout << "Ray Dir: " << camera.worldRayDir.x << ", " << camera.worldRayDir.y << ", " << camera.worldRayDir.z << std::endl;
-        //std::cout << "start pos: " << camera.worldRayOrigin.x << ", " << camera.worldRayOrigin.y << ", " << camera.worldRayOrigin.z << std::endl;
-
-        //float t = -1;
+        // ...
         
 
-        //RayPlaneIntersection(glm::vec3(0, 1, 0), glm::vec3(0), camera.worldRayDir, camera.worldRayOrigin, t);
+        // step 1:
+        // obstacle map creation
+        renderer.RenderObstacleHeightMap(createObstacleFBO.ID);
 
         //std::cout << "t: " << t << std::endl;
 
         // RENDERING //
 
         renderer.RenderObstacles(createObstacleFBO.ID);
+        
+        renderer.ObstacleBlur(createObstacleFBO.ColorBuffer1, obstacleFBO.ID);
 
+        // step 2:
+        // wave map creation
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
         renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
 
         renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
+        // step 3:
+        // render obstacles
         glEnable(GL_CULL_FACE);
+        renderer.RenderObstacles(obstacleFBO.ColorBuffer1, waveMesh.ID);
+
+        // step 4: 
+        // render wave mesh
 
         renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
@@ -349,34 +354,26 @@ int main()
         glDisable(GL_CULL_FACE);
 
         // render skybox into the same FBO contains wave mesh
-        glBindFramebuffer(GL_FRAMEBUFFER, waveMesh.ID);
-        skybox.Render();
-        //irradianceMap.Render();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        skybox.Render(waveMesh.ID);
 
+     
         
-        // TODO: Update parameteres here!!
         renderer.DebugDraw(
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
             waveMesh.ColorBuffer1, 
-            createObstacleFBO.ColorBuffer1);
+            createObstacleFBO.ColorBuffer1,
+            obstacleFBO.ColorBuffer1);
             
-
 
         ////////////////////////////////////////////////////
         RenderUI();
 
-        /////////////////////////////////////////////////////
-
-         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
-        /* Poll for and process events */
-        glfwPollEvents();
+        glfwPollEvents();   /* Poll for and process events */
     }
-
 
     destroyGUI();
 

@@ -2,6 +2,8 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+extern const int window_width;
+extern const int window_height;
 
 class FBO
 {
@@ -67,6 +69,9 @@ struct Setting
 	bool enableNormalMap = false;
 
 	int obstacleParticleSize = 3;
+
+	float brushSize = 1;
+	float obstacleHeightFactor = 1;
 };
 
 
@@ -96,12 +101,23 @@ public:
 
 	Shader createObstacleShader{ "res/Shaders/CreateObstacle.vert", "res/Shaders/CreateObstacle.frag" };
 
+	Shader obstacleBlurHShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_H.frag" };
+	Shader obstacleBlurVShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_V.frag" };
+
+	Shader renderObstacleShader {	"res/Shaders/wave.vert",
+									"res/Shaders/wave.tesc",
+									"res/Shaders/RenderObstacle.tese",
+									"res/Shaders/RenderObstacle.frag" };
+
+	unsigned int quadVAO, quadVBO, quadPatchVAO;
+
+	FBO obstacleBlurFBO{ window_width , window_height };
+	
+	
 	Shader flowAdvect			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/advect.frag"};
 	Shader flowComputeDivergence{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/computeDivergence.frag"};
 	Shader flowJacobi			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/jacobi.frag"};
 	Shader flowSubtractGradient {"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag"};
-
-	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 	glm::ivec2 fluidGridScale = {512, 512};
 	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
@@ -141,16 +157,22 @@ public:
 
 	void RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
-	void RenderObstacles(unsigned int fbo);
+	void RenderObstacleHeightMap(unsigned int fbo);
+
+	void RenderObstacles(unsigned int heightMap, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
+
+	// Blur obstacle position
+	void ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo);
 
 	void DebugDraw( unsigned int particleMap, 
 					unsigned int f123, 
 					unsigned int f45v, 
 					unsigned int deviation,
 					unsigned int gradient,
-					unsigned int waveMesh,	
+					unsigned int waveMesh,
+					unsigned int obstaclePosMap,
 					unsigned int obstacleMap,
 					unsigned int flowVelocity,
 					unsigned int flowPressure);

@@ -9,10 +9,14 @@ extern Camera camera;
 Setting setting;
 
 extern unsigned int checkerBoardTexture;
+extern unsigned int waveTexture;
 
 const unsigned int NUM_PATCH_PTS = 4;
 
 extern ObstacleMesh obstacleMesh;
+
+
+
 
 // model matrix for plane
 glm::mat4 model(1.0f);
@@ -146,6 +150,8 @@ Render::Render()
     // model matrix for river plane
     model = glm::scale(model, glm::vec3(2.0f));
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+
+
 }
 
 // Note: Bind the advect shader first.
@@ -231,6 +237,45 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 
     // set point size to default
     glPointSize(1);
+}
+
+
+
+void Render::ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo)
+{
+    // horizontal blur
+    glBindFramebuffer(GL_FRAMEBUFFER, obstacleBlurFBO.ID);
+
+    // clear buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    obstacleBlurHShader.setTexture("obstaclePosMap", ObstaclePosMap);
+
+    obstacleBlurHShader.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    obstacleBlurHShader.unBind();
+
+    // vertical blur
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // clear buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // pass horizontal blured result
+    obstacleBlurVShader.setTexture("horiBlurMap", obstacleBlurFBO.ColorBuffer1);
+
+    obstacleBlurVShader.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    obstacleBlurVShader.unBind();
+
+    // vertical blur
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
@@ -326,9 +371,6 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // also draw the lamp object
     waveMeshShader.setMat4("projection", camera.getProjectionMatrix());
     waveMeshShader.setMat4("view", camera.getViewMatrix());
@@ -366,29 +408,70 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
 
 
-void Render::RenderObstacles(unsigned int fbo)
+void Render::RenderObstacleHeightMap(unsigned int fbo)
 {
     // check if obstacle exists
     if (obstacleMesh.size() == 0) return;
-
-    // set VBO and VAO
-    obstacleMesh.Bind();
-
-    glPointSize(setting.obstacleParticleSize);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    createObstacleShader.setMat4("inverseModel", glm::inverse(model));
+    createObstacleShader.setTexture("checkerboard", checkerBoardTexture);
+    createObstacleShader.setTexture("roundObstacle", waveTexture);
 
-    createObstacleShader.Bind();
+    for (Obstacle& obstacle : obstacleMesh.obstacleList)
+    {
+        glm::vec4 translation = glm::inverse(model) * glm::vec4(obstacle.pos, 1);
 
-    glBindVertexArray(obstacleMesh.VAO);
-    glDrawArrays(GL_POINTS, 0, obstacleMesh.size());
+        glm::mat4 transformationMat = glm::translate(glm::mat4(1.0), glm::vec3(translation));  // translation
+        transformationMat = glm::scale(transformationMat, glm::vec3(0.1 * setting.brushSize));       // scale
 
-    createObstacleShader.unBind();
+        createObstacleShader.setMat4("transformationMatrix", transformationMat);
+
+        createObstacleShader.Bind();
+
+        glBindVertexArray(quadVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+        createObstacleShader.unBind();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+
+
+void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    renderObstacleShader.setMat4("projection", camera.getProjectionMatrix());
+    renderObstacleShader.setMat4("view", camera.getViewMatrix());
+    renderObstacleShader.setMat4("model", model);
+
+    renderObstacleShader.setInt("tessellationFactor", setting.tessellationFactor);
+    renderObstacleShader.setVec3("ViewPos", camera.getCameraPos());
+
+    renderObstacleShader.setTexture("ObstacleHeightMap", heightMap);
+    renderObstacleShader.setFloat("obstacleHeightFactor", setting.obstacleHeightFactor * 0.2f);
+
+    //waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
+
+    renderObstacleShader.Bind();
+    glBindVertexArray(quadPatchVAO);
+    glDrawArrays(GL_PATCHES, 0, 4);
+    glBindVertexArray(0);
+    renderObstacleShader.unBind();
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -411,6 +494,7 @@ void Render::DebugDraw(
     unsigned int deviation,
     unsigned int gradient,
     unsigned int waveMesh,
+    unsigned int obstaclePosMap,
     unsigned int obstacleMap,
     unsigned int flowVelocity,  // ...
     unsigned int flowPressure)  // ...
@@ -429,7 +513,8 @@ void Render::DebugDraw(
     quadShader.setTexture("deviation", deviation);
     quadShader.setTexture("gradient", gradient);
     quadShader.setTexture("waveMesh", waveMesh);
-    quadShader.setTexture("ObstacleMap", obstacleMap);
+    quadShader.setTexture("obstaclePosMap", obstaclePosMap);
+    quadShader.setTexture("obstacleMap", obstacleMap);
 
     quadShader.Bind();
 

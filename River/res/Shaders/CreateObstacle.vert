@@ -1,17 +1,16 @@
 #version 450 core
-layout (location = 0) in vec3 aPos;
+layout(Location = 0) in vec2 aPos;
+layout(Location = 1) in vec2 aTextureCoord;
 
+uniform mat4 transformationMatrix;
 
-uniform mat4 inverseModel;
+out vec2 texCoord;
 
 void main()
 {
-	// input pos is the world space intersection between ray(mouse clicking) and plane(river)
-	// 1. apply inverse of plane model matrix, transfrom vertices into [-1, 1], local space of plane. 
-	vec4 localSpacePos = inverseModel * vec4(aPos, 1);
+	vec4 outputPos = transformationMatrix * vec4(aPos, 0, 1);
 
-	// 2. transform pos from plane local space [-1, 1] into screen space [0, 1]
-	vec2 screenSpace = localSpacePos.xy;
+	gl_Position = vec4(outputPos.x, outputPos.y, 0.0, 1);
 
-	gl_Position = vec4(screenSpace.x, -screenSpace.y, 0.0, 1);
+	texCoord = aTextureCoord;
 }

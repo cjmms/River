@@ -31,11 +31,14 @@
     <Filter Include="Resource Files\Shaders\IBL">
       <UniqueIdentifier>{8230c101-1230-4b67-af49-8e23bf8fd3bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Obstacle">
+    <Filter Include="Resource Files\Shaders\ObstacleBlur">
+      <UniqueIdentifier>{0c857d86-2730-4967-b51b-f71ac941719f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\ObstacleCreation">
       <UniqueIdentifier>{a7af4024-2bb5-4e78-9ef7-f7f229364d23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\FlowMap">
-      <UniqueIdentifier>{2746f702-b809-466d-9dc7-182cb51db3a9}</UniqueIdentifier>
+    <Filter Include="Resource Files\Shaders\RenderObstacles">
+      <UniqueIdentifier>{dcdbb735-3ad0-4abe-a6b3-8c652ed9b6da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -170,10 +173,22 @@
       <Filter>Resource Files\Shaders\IBL</Filter>
     </None>
     <None Include="res\Shaders\CreateObstacle.vert">
-      <Filter>Resource Files\Shaders\Obstacle</Filter>
+      <Filter>Resource Files\Shaders\ObstacleCreation</Filter>
     </None>
     <None Include="res\Shaders\CreateObstacle.frag">
-      <Filter>Resource Files\Shaders\Obstacle</Filter>
+      <Filter>Resource Files\Shaders\ObstacleCreation</Filter>
+    </None>
+    <None Include="res\Shaders\ObstacleBlur_H.frag">
+      <Filter>Resource Files\Shaders\ObstacleBlur</Filter>
+    </None>
+    <None Include="res\Shaders\ObstacleBlur_V.frag">
+      <Filter>Resource Files\Shaders\ObstacleBlur</Filter>
+    </None>
+    <None Include="res\Shaders\RenderObstacle.tese">
+      <Filter>Resource Files\Shaders\RenderObstacles</Filter>
+    </None>
+    <None Include="res\Shaders\RenderObstacle.frag">
+      <Filter>Resource Files\Shaders\RenderObstacles</Filter>
     </None>
     <None Include="res\Shaders\FlowMap\jacobi.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
