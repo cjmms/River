@@ -286,10 +286,14 @@ int main()
 
 
     constexpr glm::ivec2 flowMapScale = { 512, 512 };
-    FBO flowFBOVelocityPressure(flowMapScale.x, flowMapScale.y);
-    flowFBOVelocityPressure.AddTarget(flowMapScale.x, flowMapScale.y);
-    FBO flowFBODivergence(flowMapScale.x, flowMapScale.y);
-    renderer.InitFlowMapBindings(flowFBOVelocityPressure, createObstacleFBO, flowFBODivergence);
+    
+    //FBO* fboVelPress1 = new FBO(flowMapScale.x, flowMapScale.y);
+    //fboVelPress1->AddTarget(flowMapScale.x, flowMapScale.y);
+    PingPong flowVelocityPressure(flowMapScale.x, flowMapScale.y );
+    flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
+    PingPong flowDivergence(flowMapScale.x, flowMapScale.y);
+
+    renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
 
 
     glViewport(0, 0, window_width, window_height);

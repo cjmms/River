@@ -148,7 +148,7 @@ Render::Render()
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
 }
 
-void Render::UpdateFlowMap(const FBO& fboVeloctiyPressure, const FBO& fboObstacle, const FBO& fboDivergence)
+void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

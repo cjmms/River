@@ -18,6 +18,11 @@ class PingPong
 public:
 	PingPong(FBO* first, FBO* second) : ping{first}, pong{second}
 	{}
+	PingPong(int width, int height)
+	{
+		ping = new FBO(width, height);
+		pong = new FBO(width, height);
+	}
 	~PingPong()
 	{
 		if (ping) delete ping;
@@ -31,6 +36,11 @@ public:
 		FBO* temp = ping;
 		pong = ping;
 		ping = temp;
+	}
+	void AddTargetToBoth(int width, int height)
+	{
+		ping->AddTarget(width, height);
+		pong->AddTarget(width, height);
 	}
 };
 
@@ -119,7 +129,7 @@ public:
 		glUniform1i(2, fboVeloctiyPressure.ColorBuffer2); // pressure
 	}
 
-	void UpdateFlowMap();
+	void UpdateFlowMap(FBO&, PingPong&, PingPong&);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
