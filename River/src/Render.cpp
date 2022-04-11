@@ -408,6 +408,8 @@ void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
     renderObstacleShader.setTexture("ObstacleHeightMap", heightMap);
     renderObstacleShader.setFloat("obstacleHeightFactor", setting.obstacleHeightFactor * 0.2f);
 
+    //waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
+
     renderObstacleShader.Bind();
     glBindVertexArray(quadPatchVAO);
     glDrawArrays(GL_PATCHES, 0, 4);
