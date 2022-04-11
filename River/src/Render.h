@@ -173,9 +173,7 @@ public:
 					unsigned int gradient,
 					unsigned int waveMesh,
 					unsigned int obstaclePosMap,
-					unsigned int obstacleMap,
-					unsigned int flowVelocity,
-					unsigned int flowPressure);
+					unsigned int obstacleMap);
 
 private:
 	// (Velocity and pressure are two color attachments on the same fbo)

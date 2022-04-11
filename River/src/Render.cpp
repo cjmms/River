@@ -184,7 +184,7 @@ void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPon
     // STEP 1: ADVECTION STEP //
 
     // Perform advection on the velocity:
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     flowAdvect.Bind();
 
@@ -495,9 +495,7 @@ void Render::DebugDraw(
     unsigned int gradient,
     unsigned int waveMesh,
     unsigned int obstaclePosMap,
-    unsigned int obstacleMap,
-    unsigned int flowVelocity,  // ...
-    unsigned int flowPressure)  // ...
+    unsigned int obstacleMap)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

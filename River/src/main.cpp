@@ -294,7 +294,7 @@ int main()
     flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
     PingPong flowDivergence(flowMapScale.x, flowMapScale.y);
 
-    renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
+    // renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
 
 
     glViewport(0, 0, window_width, window_height);
