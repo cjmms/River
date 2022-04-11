@@ -180,7 +180,6 @@ void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, floa
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
 void Render::JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* dst)
 {
     // Note: Velocity is the first color attachment in velPres.
@@ -190,6 +189,22 @@ void Render::JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* ds
 
     flowJacobi.setFloat("uAlpha", ALPHA);
     flowJacobi.setFloat("uInverseBeta", INVBETA);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+void Render::SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst)
+{
+    // Note: Velocity is the first color attachment in velPres.
+
+    flowSubtractGradient.setFloat("uGradientScale", gradientScale);
+
+    // ...
 
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 

@@ -122,6 +122,7 @@ public:
 	glm::ivec2 fluidGridScale = {512, 512};
 	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
 	float cellSize = 1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
+	float gradientScale = 1.125 / cellSize;
 
 public:
 	Render();
