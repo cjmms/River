@@ -170,11 +170,13 @@ void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, floa
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
     flowAdvect.setTexture("uSourceTexture", src->ColorBuffer1);
 
-    glBindVertexArray(dst->ID);
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
-    //this->DrawQuad(); // TODO: Draw!
-
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Render::UpdateFlowMap(FBO& obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
