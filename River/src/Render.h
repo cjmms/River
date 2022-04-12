@@ -30,8 +30,8 @@ public:
 	}
 	~PingPong()
 	{
-		if (ping) delete ping;
-		if (pong) delete pong;
+		//if (ping) delete ping;
+		//if (pong) delete pong;
 	}
 	FBO* ping = nullptr;
 	FBO* pong = nullptr;
