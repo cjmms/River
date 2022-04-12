@@ -11,7 +11,7 @@ Setting setting;
 extern unsigned int checkerBoardTexture;
 extern unsigned int waveTexture;
 
-const unsigned int NUM_PATCH_PTS = 4;
+
 
 extern ObstacleMesh obstacleMesh;
 
@@ -104,6 +104,17 @@ void FBO::AddTarget(unsigned int width, unsigned int height)
 
 Render::Render()
 {
+    initQuadMesh();
+
+    // model matrix for river plane
+    model = glm::scale(model, glm::vec3(2.0f));
+    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
+}
+
+
+
+void Render::initQuadMesh()
+{
     // init quad
     float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // positions   // texCoords
@@ -130,42 +141,10 @@ Render::Render()
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
-
-
-    // init quad patch
-    float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords    
-        -1.0f, -1.0f,     0.0f, 0.0f,  
-        1.0f, -1.0f,     1.0f, 0.0f,
-        -1.0f,  1.0f,     0.0f, 1.0f,    
-         1.0f,  1.0f,     1.0f, 1.0f
-    };
-
-    unsigned int quadPatchVBO;
-
-    glGenBuffers(1, &quadPatchVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadPatchVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &quadPatchVAO);
-    glBindVertexArray(quadPatchVAO);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
-
-    glBindVertexArray(0);
-
-    // model matrix for river plane
-    model = glm::scale(model, glm::vec3(2.0f));
-    model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
-
-
 }
+
+
+
 
 #pragma region fluid helpers
 
@@ -459,7 +438,7 @@ void Render::DrawQuad(unsigned int inputTexture)
 
 
 
-void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -492,7 +471,7 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 
     waveMeshShader.Bind();
-    glBindVertexArray(quadPatchVAO);
+    glBindVertexArray(waterMesh.VAO);
     glDrawArrays(GL_PATCHES, 0, 4);
     glBindVertexArray(0);
     waveMeshShader.unBind();
@@ -540,7 +519,7 @@ void Render::RenderObstacleHeightMap(unsigned int fbo)
 
 
 
-void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
+void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -560,7 +539,7 @@ void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
     //waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
 
     renderObstacleShader.Bind();
-    glBindVertexArray(quadPatchVAO);
+    glBindVertexArray(waterMesh.VAO);
     glDrawArrays(GL_PATCHES, 0, 4);
     glBindVertexArray(0);
     renderObstacleShader.unBind();

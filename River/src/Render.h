@@ -112,7 +112,7 @@ public:
 									"res/Shaders/RenderObstacle.tese",
 									"res/Shaders/RenderObstacle.frag" };
 
-	unsigned int quadVAO, quadVBO, quadPatchVAO;
+	unsigned int quadVAO, quadVBO;
 
 	FBO obstacleBlurFBO{ window_width , window_height };
 	
@@ -138,11 +138,11 @@ public:
 	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
 	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
 
-	void RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
+	void RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void RenderObstacleHeightMap(unsigned int fbo);
 
-	void RenderObstacles(unsigned int heightMap, unsigned int fbo);
+	void RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo);
 
 	void DrawQuad(unsigned int inputTexture);
 
@@ -172,6 +172,7 @@ public:
 	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
 	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
 
+	void initQuadMesh();
 };
 
 // normal: normal of plane

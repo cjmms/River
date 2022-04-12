@@ -15,6 +15,7 @@
 #include "Render.h"
 #include "IBL.h"
 
+
 // These 2 lines should only be defined in this file
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -45,6 +46,8 @@ static const char* RenderPassList[]{
                                      "Flow Pressure"};
 
 ObstacleMesh obstacleMesh;
+
+
 
 bool rightMouseClick = false;
 
@@ -275,7 +278,7 @@ int main()
     Render renderer;
 
     WaveParticleMesh waveParticleMesh{ 600 };
-
+    WaterMesh waterMesh{ 64 };
 
     // FBO's:
 
@@ -359,11 +362,11 @@ int main()
         // step 3:
         // render obstacles
         glEnable(GL_CULL_FACE);
-        renderer.RenderObstacles(blurredObstacleMapFBO.ColorBuffer1, waveMesh.ID);
+        renderer.RenderObstacles(waterMesh, blurredObstacleMapFBO.ColorBuffer1, waveMesh.ID);
 
         // step 4: 
         // render wave mesh
-        renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
+        renderer.RenderWaveMesh(waterMesh, irradianceMap.ID(), skybox.ID(),
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         glDisable(GL_CULL_FACE);

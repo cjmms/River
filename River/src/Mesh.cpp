@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 
+const unsigned int NUM_PATCH_PTS = 4;
 
 WaveParticleMesh::WaveParticleMesh(int numberOfParticles)
 	: size(numberOfParticles)
@@ -74,4 +75,34 @@ void ObstacleMesh::Bind()
 	// position attribute
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Obstacle), (void*)0);
+}
+
+
+
+WaterMesh::WaterMesh(unsigned int size)
+{
+	float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		// positions   // texCoords    
+		-1.0f, -1.0f,     0.0f, 0.0f,
+		1.0f, -1.0f,     1.0f, 0.0f,
+		-1.0f,  1.0f,     0.0f, 1.0f,
+		 1.0f,  1.0f,     1.0f, 1.0f
+	};
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
+
+	glBindVertexArray(0);
 }

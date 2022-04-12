@@ -54,3 +54,14 @@ public:
 	// no index buffer, simply because I'm lazy
 	unsigned int VBO, VAO;
 };
+
+
+
+class WaterMesh
+{
+public:
+	WaterMesh(unsigned int size);
+
+	// no index buffer, simply because I'm lazy
+	unsigned int VBO, VAO;
+};
