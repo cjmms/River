@@ -319,11 +319,7 @@ void Render::ObstacleBlur(Quad& quad, unsigned int ObstaclePosMap, unsigned int 
 
     obstacleBlurHShader.setTexture("obstaclePosMap", ObstaclePosMap);
 
-    obstacleBlurHShader.Bind();
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    obstacleBlurHShader.unBind();
+    quad.Draw(obstacleBlurHShader);
 
     // vertical blur
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -335,13 +331,8 @@ void Render::ObstacleBlur(Quad& quad, unsigned int ObstaclePosMap, unsigned int 
     // pass horizontal blured result
     obstacleBlurVShader.setTexture("horiBlurMap", obstacleBlurFBO.ColorBuffer1);
 
-    obstacleBlurVShader.Bind();
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    obstacleBlurVShader.unBind();
+    quad.Draw(obstacleBlurVShader);
 
-    // vertical blur
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -360,15 +351,7 @@ void Render::HorizontalBlur(Quad& quad, unsigned int inputTexture, unsigned int 
     // blur radius
     horozontalBlur.setInt("blurRadius", setting.blurSize);
 
-    // bind shader
-    horozontalBlur.Bind();
-
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
-    // unbind shader
-    horozontalBlur.unBind();
+    quad.Draw(horozontalBlur);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -394,39 +377,10 @@ void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsi
 
     verticalBlur.setFloat("heightFactor", setting.heightFactor);
 
-    verticalBlur.Bind();
-
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    verticalBlur.unBind();
+    quad.Draw(verticalBlur);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-
-
-void Render::DrawQuad(Quad& quad, unsigned int inputTexture)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // pass input texture
-    verticalBlur.setTexture("tex", inputTexture);
-
-    verticalBlur.Bind();
-
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    verticalBlur.unBind();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-
 
 
 
@@ -463,11 +417,7 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, un
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 
-    waveMeshShader.Bind();
-    glBindVertexArray(waterMesh.VAO);
-    glDrawArrays(GL_PATCHES, 0, 4);
-    glBindVertexArray(0);
-    waveMeshShader.unBind();
+    waterMesh.Draw(waveMeshShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -497,13 +447,7 @@ void Render::RenderObstacleHeightMap(Quad& quad, unsigned int fbo)
 
         createObstacleShader.setMat4("transformationMatrix", transformationMat);
 
-        createObstacleShader.Bind();
-
-        glBindVertexArray(quad.VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
-
-        createObstacleShader.unBind();
+        quad.Draw(createObstacleShader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -531,11 +475,7 @@ void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsig
 
     //waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
 
-    renderObstacleShader.Bind();
-    glBindVertexArray(waterMesh.VAO);
-    glDrawArrays(GL_PATCHES, 0, 4);
-    glBindVertexArray(0);
-    renderObstacleShader.unBind();
+    waterMesh.Draw(renderObstacleShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -578,16 +518,9 @@ void Render::DebugDraw(
     quadShader.setTexture("flowVelocity", flowVelocity);
     quadShader.setTexture("flowPressure", flowPressure);
 
-    quadShader.Bind();
-
-    glBindVertexArray(quad.VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    quadShader.unBind();
+    quad.Draw(quadShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
 }
 
 

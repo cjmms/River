@@ -112,8 +112,6 @@ public:
 									"res/Shaders/RenderObstacle.tese",
 									"res/Shaders/RenderObstacle.frag" };
 
-	//unsigned int quadVAO, quadVBO;
-
 	FBO obstacleBlurFBO{ window_width , window_height };
 	unsigned int impulseMapTexture = -1;
 
@@ -145,8 +143,6 @@ public:
 	void RenderObstacleHeightMap(Quad& quad, unsigned int fbo);
 
 	void RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo);
-
-	void DrawQuad(Quad& quad, unsigned int inputTexture);
 
 	// Blur obstacle position
 	void ObstacleBlur(Quad& quad, unsigned int ObstaclePosMap, unsigned int fbo);
