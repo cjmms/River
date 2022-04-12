@@ -279,6 +279,7 @@ int main()
 
     WaveParticleMesh waveParticleMesh{ 600 };
     WaterMesh waterMesh{ 64 };
+    Quad quad;
 
     // FBO's:
 
@@ -334,16 +335,16 @@ int main()
 
         // step 1:
         // obstacle map creation
-        renderer.RenderObstacleHeightMap(obstacleMapFBO.ID);
+        renderer.RenderObstacleHeightMap(quad, obstacleMapFBO.ID);
         
         // blur the obstacle map, may not be necessay
         // Both createObstacleFBO.ColorBuffer1 and obstacleFBO.ColorBuffer1 can be used as flow map
         // no big difference
-        renderer.ObstacleBlur(obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
+        renderer.ObstacleBlur(quad, obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
 
         //---------------------------------------------------------------------
         // Flow map updates:
-        renderer.UpdateFlowMap(&obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
+        renderer.UpdateFlowMap(quad, &obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
 
         //velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY;
         //renderer.AdvectHelper(flowVelocity.ping, &obstacleMapFBO, flowVelocity.ping, flowVelocity.pong, 0.99f);
@@ -357,9 +358,9 @@ int main()
         // wave map creation
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
-        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
+        renderer.HorizontalBlur(quad, waveParticleFBO.ColorBuffer1, f12345v.ID);
 
-        renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
+        renderer.VerticalBlur(quad, f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
         // step 3:
         // render obstacles
@@ -377,7 +378,7 @@ int main()
         skybox.Render(waveMesh.ID);
 
      
-        renderer.DebugDraw(
+        renderer.DebugDraw(quad,
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,

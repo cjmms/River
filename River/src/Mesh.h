@@ -65,3 +65,13 @@ public:
 	// no index buffer, simply because I'm lazy
 	unsigned int VBO, VAO;
 };
+
+
+class Quad
+{
+public:
+	Quad();
+
+	// no index buffer, simply because I'm lazy
+	unsigned int VBO, VAO;
+};

@@ -112,7 +112,7 @@ public:
 									"res/Shaders/RenderObstacle.tese",
 									"res/Shaders/RenderObstacle.frag" };
 
-	unsigned int quadVAO, quadVBO;
+	//unsigned int quadVAO, quadVBO;
 
 	FBO obstacleBlurFBO{ window_width , window_height };
 	unsigned int impulseMapTexture = -1;
@@ -131,27 +131,28 @@ public:
 
 public: 
 	Render();
-	~Render();
 
-	void UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence);
+
+	void UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
-	void HorizontalBlur(unsigned int inputTexture, unsigned int fbo);
-	void VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo);
+	void HorizontalBlur(Quad& quad, unsigned int inputTexture, unsigned int fbo);
+	void VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsigned int fbo);
 
 	void RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
-	void RenderObstacleHeightMap(unsigned int fbo);
+	void RenderObstacleHeightMap(Quad& quad, unsigned int fbo);
 
 	void RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo);
 
-	void DrawQuad(unsigned int inputTexture);
+	void DrawQuad(Quad& quad, unsigned int inputTexture);
 
 	// Blur obstacle position
-	void ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo);
+	void ObstacleBlur(Quad& quad, unsigned int ObstaclePosMap, unsigned int fbo);
 
-	void DebugDraw( unsigned int particleMap, 
+	void DebugDraw(Quad& quad,
+					unsigned int particleMap, 
 					unsigned int f123, 
 					unsigned int f45v, 
 					unsigned int deviation,
@@ -169,13 +170,11 @@ public:
 public:
 //private:
 	// (Velocity and pressure are two color attachments on the same fbo)
-	void AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation);
-	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
-	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
-	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
-	void ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multiplier);
-
-	void initQuadMesh();
+	void AdvectHelper(Quad& quad, FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation);
+	void JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
+	void SubtractGradientHelper(Quad& quad, FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
+	void ComputeDivergenceHelper(Quad& quad, FBO* velocity, FBO* obstacles, FBO* dst);
+	void ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, float multiplier);
 };
 
 // normal: normal of plane
