@@ -40,6 +40,7 @@ static const char* RenderPassList[]{
                                      "Wave Mesh",
                                      "Obstacle Map",
                                      "Blurred Obstacle Map",
+                                     "Flow Divergence",
                                      "Flow Velocity",
                                      "Flow Pressure"};
 
