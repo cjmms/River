@@ -46,4 +46,5 @@ void main()
 	const vec2 coord = uInverseSize * (gl_FragCoord.xy - (uDeltaTime * u));
 
 	fragColor = uDissipation * texture(uSoureTexture, coord);
+	fragColor = vec4(1, 0, 0, 1);
 }

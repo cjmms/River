@@ -336,9 +336,17 @@ int main()
         // no big difference
         renderer.ObstacleBlur(obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
 
+        //---------------------------------------------------------------------
         // Flow map updates:
-        renderer.UpdateFlowMap(&obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
+        //renderer.UpdateFlowMap(&obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
 
+        //velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY;
+        renderer.AdvectHelper(flowVelocity.ping, &obstacleMapFBO, flowVelocity.ping, flowVelocity.pong, 0.99f);
+
+
+        //---------------------------------------------------------------------
+
+        
 
         // step 2:
         // wave map creation
@@ -372,7 +380,7 @@ int main()
             obstacleMapFBO.ColorBuffer1,
             blurredObstacleMapFBO.ColorBuffer1,
             flowDivergence.ColorBuffer1,
-            flowVelocity.ping->ColorBuffer1,
+            flowVelocity.pong->ColorBuffer1,
             flowPressure.ping->ColorBuffer1
             );
             

@@ -118,6 +118,7 @@
     <None Include="res\Shaders\FlowMap\advect.frag" />
     <None Include="res\Shaders\FlowMap\computeDivergence.frag" />
     <None Include="res\Shaders\FlowMap\jacobi.frag" />
+    <None Include="res\Shaders\FlowMap\simple.vert" />
     <None Include="res\Shaders\FlowMap\subtractGradient.frag" />
     <None Include="res\Shaders\FlowMap\vorticity.frag" />
     <None Include="res\Shaders\GenerateCubemap.frag" />

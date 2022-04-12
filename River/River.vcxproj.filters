@@ -208,5 +208,8 @@
     <None Include="res\Shaders\FlowMap\vorticity.frag">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
+    <None Include="res\Shaders\FlowMap\simple.vert">
+      <Filter>Resource Files\Shaders\FlowMap</Filter>
+    </None>
   </ItemGroup>
 </Project>

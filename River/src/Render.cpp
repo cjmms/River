@@ -172,6 +172,11 @@ Render::Render()
 // Note: Bind the advect shader first.
 void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // Note: Velocity is the first color attachment in velPres.
     
     constexpr float DELTATIME = 0.1f; // TODO! !!!!
@@ -180,20 +185,23 @@ void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, flo
     flowAdvect.setFloat("uDeltaTime", DELTATIME);
     flowAdvect.setFloat("uDissipation", dissipation);
 
-    // Since I'm using the layout qualifier for these, set directly.
-    glUniform1i(0, obstacles->ColorBuffer1);
-    glUniform1i(1, velocity->ColorBuffer1);
 
     // The source texture.
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
     flowAdvect.setTexture("uSourceTexture", src->ColorBuffer1);
 
+    flowAdvect.Bind();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+    // Since I'm using the layout qualifier for these, set directly.
+    glUniform1i(0, obstacles->ColorBuffer1);
+    glUniform1i(1, velocity->ColorBuffer1);
+
 
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+
+    flowAdvect.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -272,7 +280,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // STEP 1: ADVECTION STEP //
 
     // Perform advection on the velocity:
-    flowAdvect.Bind();
+    //flowAdvect.Bind();
     AdvectHelper(velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY);
     velocity.Swap();
 

@@ -162,7 +162,10 @@ public:
 					unsigned int flowPressure
 	);
 
-private:
+	
+// changed to public for debuging purposes, change it to private when everythings work
+public:
+//private:
 	// (Velocity and pressure are two color attachments on the same fbo)
 	// TODO: Some of these parameters are prebound and can be factored out.
 	void AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation);
