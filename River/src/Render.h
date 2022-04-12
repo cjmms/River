@@ -115,12 +115,14 @@ public:
 	unsigned int quadVAO, quadVBO, quadPatchVAO;
 
 	FBO obstacleBlurFBO{ window_width , window_height };
-	
+	unsigned int impulseMapTexture = -1;
+
 	
 	Shader flowAdvect			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/advect.frag"};
 	Shader flowComputeDivergence{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/computeDivergence.frag"};
 	Shader flowJacobi			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/jacobi.frag"};
 	Shader flowSubtractGradient {"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag"};
+	Shader flowAdder			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/addTextures.frag"};
 
 	glm::ivec2 fluidGridScale = {512, 512};
 	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
@@ -171,6 +173,7 @@ public:
 	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
 	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
 	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
+	void ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multiplier);
 
 };
 
