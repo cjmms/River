@@ -309,7 +309,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     if (impulseMapTexture > 0)
     {
         // Apply impulse.
-        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.8f );
+        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.01f );
     }
 
 
