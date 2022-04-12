@@ -265,7 +265,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
 {
     glDisable(GL_DEPTH_TEST);
 
-    constexpr float DISSIPATION_VELOCITY = 1.0f;
+    constexpr float DISSIPATION_VELOCITY = 0.99f;
     
     // TODO: Where do I put vorticity step?
 
