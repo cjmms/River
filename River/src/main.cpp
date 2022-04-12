@@ -299,8 +299,9 @@ int main()
 
     //FBO* fboVelPress1 = new FBO(flowMapScale.x, flowMapScale.y);
     //fboVelPress1->AddTarget(flowMapScale.x, flowMapScale.y);
-    PingPong flowVelocityPressure(flowMapScale.x, flowMapScale.y );
-    flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
+    PingPong flowVelocity(flowMapScale.x, flowMapScale.y );
+    PingPong flowPressure(flowMapScale.x, flowMapScale.y );
+    //flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
     PingPong flowDivergence(flowMapScale.x, flowMapScale.y);
 
     // renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);

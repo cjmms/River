@@ -161,10 +161,10 @@ public:
 private:
 	// (Velocity and pressure are two color attachments on the same fbo)
 	// TODO: Some of these parameters are prebound and can be factored out.
-	void AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, float dissipation);	// Needs velocity
-	void JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* dst);				// Needs pressure
-	void SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst);					// Needs both
-	void ComputeDivergenceHelper(FBO* velPres, FBO* obstacles, FBO* dst);					// Needs velocity
+	void AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation);
+	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
+	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
+	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
 
 };
 

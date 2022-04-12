@@ -170,16 +170,18 @@ Render::Render()
 #pragma region fluid helpers
 
 // Note: Bind the advect shader first.
-void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
+void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
     // Note: Velocity is the first color attachment in velPres.
     
     constexpr float DELTATIME = 0.1f; // TODO!
 
-    // TODO: Some of these could potentially be prebound.
     flowAdvect.setVec2("uInverseSize", fluidInvScale);
     flowAdvect.setFloat("uDeltaTime", DELTATIME);
     flowAdvect.setFloat("uDissipation", dissipation);
+
+    flowAdvect.setTexture();
+
 
     // The source texture.
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
@@ -193,7 +195,7 @@ void Render::AdvectHelper(FBO* velPres, FBO* obstacles, FBO* src, FBO* dst, floa
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* dst)
+void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst)
 {
     // Note: Velocity is the first color attachment in velPres.
     
@@ -211,7 +213,7 @@ void Render::JacobiHelper(FBO* velPres, FBO* divergence, FBO* obstacles, FBO* ds
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst)
+void Render::SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst)
 {
     // Note: Velocity is the first color attachment in velPres.
 
@@ -227,7 +229,7 @@ void Render::SubtractGradientHelper(FBO* velPres, FBO* obstacles, FBO* dst)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::ComputeDivergenceHelper(FBO* velPres, FBO* obstacles, FBO* dst)
+void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 {
     // Note: Velocity is the first color attachment in velPres.
 
@@ -255,13 +257,13 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocityPressure, PingPon
     constexpr float DISSIPATION_VELOCITY = 1.0f;
     
     // TODO: Where do I put vorticity step?
-    // TODO: Swap surfaces equivalent.
 
     // STEP 1: ADVECTION STEP //
 
     // Perform advection on the velocity:
     flowAdvect.Bind();
     AdvectHelper(velocityPressure.ping, obstacleFBO, velocityPressure.ping, velocityPressure.pong, DISSIPATION_VELOCITY);
+    // swap vel?
 
     // Advection would be performed on density here if it was relevant to water.
     // ...
