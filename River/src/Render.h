@@ -131,7 +131,7 @@ public:
 	Render();
 	~Render();
 
-	void UpdateFlowMap(FBO*, PingPong&, PingPong&);
+	void UpdateFlowMap(FBO*, PingPong&, PingPong&, FBO*);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 
@@ -165,6 +165,7 @@ private:
 	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
 	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
 	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
+	void ClearFBO(FBO*);
 
 };
 

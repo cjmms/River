@@ -180,12 +180,14 @@ void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, flo
     flowAdvect.setFloat("uDeltaTime", DELTATIME);
     flowAdvect.setFloat("uDissipation", dissipation);
 
-    flowAdvect.setTexture();
-
+    // Since I'm using the layout qualifier for these, set directly.
+    glUniform1i(0, obstacles->ColorBuffer1);
+    glUniform1i(1, velocity->ColorBuffer1);
 
     // The source texture.
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
     flowAdvect.setTexture("uSourceTexture", src->ColorBuffer1);
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
@@ -205,6 +207,11 @@ void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* d
     flowJacobi.setFloat("uAlpha", ALPHA);
     flowJacobi.setFloat("uInverseBeta", INVBETA);
 
+    glUniform1i(0, obstacles->ColorBuffer1);
+    glUniform1i(2, pressure->ColorBuffer1);
+    glUniform1i(3, divergence->ColorBuffer1);
+
+
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
     glBindVertexArray(quadVAO);
@@ -219,7 +226,9 @@ void Render::SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles
 
     flowSubtractGradient.setFloat("uGradientScale", gradientScale);
 
-    // ...
+    glUniform1i(0, obstacles->ColorBuffer1);
+    glUniform1i(1, velocity->ColorBuffer1);
+    glUniform1i(2, pressure->ColorBuffer1);
 
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
@@ -237,7 +246,9 @@ void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 
     flowComputeDivergence.setFloat("uHalfInvCellSize", HALFINVCELLSIZE);
 
-    // ...
+    glUniform1i(0, obstacles->ColorBuffer1);
+    glUniform1i(1, velocity->ColorBuffer1);
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
@@ -247,10 +258,16 @@ void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void Render::ClearFBO(FBO* fbo)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 #pragma endregion
 
-void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocityPressure, PingPong& divergence)
+void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence)
 {
     glDisable(GL_DEPTH_TEST);
 
@@ -262,8 +279,8 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocityPressure, PingPon
 
     // Perform advection on the velocity:
     flowAdvect.Bind();
-    AdvectHelper(velocityPressure.ping, obstacleFBO, velocityPressure.ping, velocityPressure.pong, DISSIPATION_VELOCITY);
-    // swap vel?
+    AdvectHelper(velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY);
+    velocity.Swap();
 
     // Advection would be performed on density here if it was relevant to water.
     // ...
@@ -275,19 +292,21 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocityPressure, PingPon
     // ...
 
     // STEP 3: COMPUTE DIVERGENCE //
-    ComputeDivergenceHelper(velocityPressure.ping, obstacleFBO, divergence.ping); // TODO: Divergence might not need to pingpong
-    // TODO: A clearing step needed here.
+    ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
+    // Clear the pressure reading fbo, don't need to clear the writing one.
+    ClearFBO(pressure.ping);
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        JacobiHelper(velocityPressure.ping, divergence.ping, obstacleFBO, velocityPressure.pong);
-        // TODO: SWAP PRESSURE
+        JacobiHelper(pressure.ping, divergence, obstacleFBO, pressure.pong);
+        pressure.Swap();
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    SubtractGradientHelper(velocityPressure.ping, obstacleFBO, velocityPressure.pong);
+    SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
+    velocity.Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
