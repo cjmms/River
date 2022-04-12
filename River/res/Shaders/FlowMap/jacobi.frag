@@ -17,10 +17,10 @@
 out vec4 fragColor; // TODO: Can this be reduced for better efficiency?
 
 // uniforms
-layout(location = 0) uniform sampler2D uObstacleMap;
+uniform sampler2D uObstacleMap;
 // layout(location = 1) uniform sampler2D uVelocity;
-layout(location = 2) uniform sampler2D uPressure;
-layout(location = 3) uniform sampler2D uDivergence;
+uniform sampler2D uPressure;
+uniform sampler2D uDivergence;
 
 uniform float uAlpha, uInverseBeta;
 

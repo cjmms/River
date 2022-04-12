@@ -173,12 +173,9 @@ Render::Render()
 void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Note: Velocity is the first color attachment in velPres.
-    
     constexpr float DELTATIME = 0.1f; // TODO! !!!!
 
     flowAdvect.setVec2("uInverseSize", fluidInvScale);
@@ -190,24 +187,22 @@ void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, flo
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
     flowAdvect.setTexture("uSourceTexture", src->ColorBuffer1);
 
+    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
+
     flowAdvect.Bind();
-
-    // Since I'm using the layout qualifier for these, set directly.
-    glUniform1i(0, obstacles->ColorBuffer1);
-    glUniform1i(1, velocity->ColorBuffer1);
-
-
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
-
     flowAdvect.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst)
 {
-    // Note: Velocity is the first color attachment in velPres.
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     const float ALPHA = -cellSize*cellSize;
     constexpr float INVBETA = 0.25f; 
@@ -215,54 +210,52 @@ void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* d
     flowJacobi.setFloat("uAlpha", ALPHA);
     flowJacobi.setFloat("uInverseBeta", INVBETA);
 
-    glUniform1i(0, obstacles->ColorBuffer1);
-    glUniform1i(2, pressure->ColorBuffer1);
-    glUniform1i(3, divergence->ColorBuffer1);
+    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowAdvect.setTexture("uPressure", pressure->ColorBuffer1);
+    flowAdvect.setTexture("uDivergence", divergence->ColorBuffer1);
 
-
-    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-
+    flowJacobi.Bind();
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    flowJacobi.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void Render::SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst)
 {
-    // Note: Velocity is the first color attachment in velPres.
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
     flowSubtractGradient.setFloat("uGradientScale", gradientScale);
 
-    glUniform1i(0, obstacles->ColorBuffer1);
-    glUniform1i(1, velocity->ColorBuffer1);
-    glUniform1i(2, pressure->ColorBuffer1);
+    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
+    flowAdvect.setTexture("uPressure", pressure->ColorBuffer1);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-
+    flowSubtractGradient.Bind();
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    flowSubtractGradient.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 {
-    // Note: Velocity is the first color attachment in velPres.
+    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
     const float HALFINVCELLSIZE = 0.5f/cellSize;
 
     flowComputeDivergence.setFloat("uHalfInvCellSize", HALFINVCELLSIZE);
 
-    glUniform1i(0, obstacles->ColorBuffer1);
-    glUniform1i(1, velocity->ColorBuffer1);
+    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
 
-
-    glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-
+    flowComputeDivergence.Bind();
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+    flowComputeDivergence.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -294,13 +287,11 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // ...
 
     // STEP 3: COMPUTE DIVERGENCE //
-    flowComputeDivergence.Bind();
     ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
     // Clear the pressure reading fbo, don't need to clear the writing one.
     pressure.ping->Clear();
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
-    flowJacobi.Bind();
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
@@ -309,7 +300,6 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    flowSubtractGradient.Bind();
     SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
     velocity.Swap();
 

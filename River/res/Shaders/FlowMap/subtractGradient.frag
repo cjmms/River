@@ -7,9 +7,9 @@
 out vec2 fragColor; // Vec2. TODO: Is this right?
 
 // uniforms
-layout(location = 0) uniform sampler2D uObstacleMap;
-layout(location = 1) uniform sampler2D uVelocity;
-layout(location = 2) uniform sampler2D uPressure;
+uniform sampler2D uObstacleMap;
+uniform sampler2D uVelocity;
+uniform sampler2D uPressure;
 //layout(location = 3) uniform sampler2D uDivergence;
 
 uniform float uGradientScale;

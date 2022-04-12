@@ -127,7 +127,7 @@ public:
 	float cellSize = 1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
 	float gradientScale = 1.125 / cellSize;
 
-public:
+public: 
 	Render();
 	~Render();
 
@@ -167,7 +167,6 @@ public:
 public:
 //private:
 	// (Velocity and pressure are two color attachments on the same fbo)
-	// TODO: Some of these parameters are prebound and can be factored out.
 	void AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation);
 	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
 	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
