@@ -617,6 +617,9 @@ void Render::DebugDraw(
     quadShader.setTexture("waveMesh", waveMesh); 
     quadShader.setTexture("obstacleMap", obstacleMap);
     quadShader.setTexture("blurredObstacleMap", blurredObstacleMap);
+    quadShader.setTexture("flowDivergence", flowDivergence);
+    quadShader.setTexture("flowVelocity", flowVelocity);
+    quadShader.setTexture("flowPressure", flowPressure);
 
     quadShader.Bind();
 
