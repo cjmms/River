@@ -238,6 +238,27 @@ void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void Render::ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multiplier)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, velocity->ID);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    constexpr float DELTATIME = 0.1f; // TODO!!
+    multiplier *= DELTATIME;
+
+    flowAdder.setTexture("uSrc", srcTex);
+    flowAdder.setFloat("uMultiplier", multiplier);
+
+    flowAdder.Bind();
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+    flowAdder.unBind();
+
+    glDisable(GL_BLEND);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 #pragma endregion
 
@@ -264,6 +285,12 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // STEP 2: FORCE APPLICATION //
     // Not yet implemented.
     // ...
+    if (impulseMapTexture > 0)
+    {
+        // Apply impulse.
+        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.01f );
+    }
+
 
     // STEP 3: COMPUTE DIVERGENCE //
     ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 

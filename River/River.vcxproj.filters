@@ -211,5 +211,8 @@
     <None Include="res\Shaders\FlowMap\simple.vert">
       <Filter>Resource Files\Shaders\FlowMap</Filter>
     </None>
+    <None Include="res\Shaders\FlowMap\addTextures.frag">
+      <Filter>Resource Files\Shaders\FlowMap</Filter>
+    </None>
   </ItemGroup>
 </Project>
