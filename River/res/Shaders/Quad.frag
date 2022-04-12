@@ -9,6 +9,7 @@ uniform sampler2D waveMesh;
 uniform sampler2D obstacleMap;
 uniform sampler2D blurredObstacleMap;
 
+uniform sampler2D flowDivergence;
 uniform sampler2D flowVelocity;
 uniform sampler2D flowPressure;
 
@@ -52,11 +53,15 @@ void main()
     {
         FragColor = texture(blurredObstacleMap, TexCoords);
     }
-    else if (selectedRenderPass == 7) // Velocity flow-field.
+    else if (selectedRenderPass == 8) // Flow divergence
+    {
+        FragColor= texture(flowDivergence, TexCoords);
+    }
+    else if (selectedRenderPass == 9) // Flow velocity
     {
         FragColor = texture(flowVelocity, TexCoords);
     }
-    else if (selectedRenderPass == 8) // Pressure field
+    else if (selectedRenderPass == 10) // Flow pressure
     {
         FragColor = texture(flowPressure, TexCoords);
     }
