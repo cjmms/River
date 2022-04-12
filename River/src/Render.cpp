@@ -286,11 +286,13 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // ...
 
     // STEP 3: COMPUTE DIVERGENCE //
+    flowComputeDivergence.Bind();
     ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
     // Clear the pressure reading fbo, don't need to clear the writing one.
     pressure.ping->Clear();
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
+    flowJacobi.Bind();
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
@@ -299,6 +301,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
+    flowSubtractGradient.Bind();
     SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
     velocity.Swap();
 
