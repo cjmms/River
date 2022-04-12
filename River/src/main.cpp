@@ -305,6 +305,8 @@ int main()
     //flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
     FBO flowDivergence(flowMapScale.x, flowMapScale.y);
 
+    renderer.impulseMapTexture = loadTexture("res/velocitySourceMap.png", false);
+
     // renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
 
 

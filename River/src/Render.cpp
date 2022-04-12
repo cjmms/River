@@ -306,7 +306,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // STEP 2: FORCE APPLICATION //
     // Not yet implemented.
     // ...
-    if (impulseMapTexture < 0)
+    if (impulseMapTexture > 0)
     {
         // Apply impulse.
         ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.8f );
