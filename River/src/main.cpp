@@ -302,7 +302,7 @@ int main()
     PingPong flowVelocity(flowMapScale.x, flowMapScale.y );
     PingPong flowPressure(flowMapScale.x, flowMapScale.y );
     //flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
-    PingPong flowDivergence(flowMapScale.x, flowMapScale.y);
+    FBO flowDivergence(flowMapScale.x, flowMapScale.y);
 
     // renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
 
@@ -326,10 +326,6 @@ int main()
             if (t > 0) obstacleMesh.AddObstacle(camera.worldRayOrigin + camera.worldRayDir * t);
         }
 
-        // Flow map updates:
-        // ...
-        
-
         // step 1:
         // obstacle map creation
         renderer.RenderObstacleHeightMap(obstacleMapFBO.ID);
@@ -338,6 +334,10 @@ int main()
         // Both createObstacleFBO.ColorBuffer1 and obstacleFBO.ColorBuffer1 can be used as flow map
         // no big difference
         renderer.ObstacleBlur(obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
+
+        // Flow map updates:
+        renderer.UpdateFlowMap(&obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
+
 
         // step 2:
         // wave map creation
