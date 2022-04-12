@@ -43,6 +43,8 @@ public:
 
 	void AddObstacle(glm::vec3 pos);
 
+	inline void Clear() { obstacleList.clear(); }
+
 	void Bind();
 
 	inline int size() const { return obstacleList.size(); }

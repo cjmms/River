@@ -38,8 +38,8 @@ static const char* RenderPassList[]{
                                      "Wave Height Map(Deviation)",
                                      "Wave Height Map(Gradient)",
                                      "Wave Mesh",
-                                     "Obstacle Pos Map",
                                      "Obstacle Map",
+                                     "Blurred Obstacle Map",
                                      "Flow Velocity",
                                      "Flow Pressure"};
 
@@ -96,7 +96,7 @@ unsigned int loadTexture(char const* path, bool gamma)
 }
 
 
-void RenderUI()
+void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
 {
     // UI
     ImGui_ImplOpenGL3_NewFrame();
@@ -109,6 +109,15 @@ void RenderUI()
     {
         ImGui::SliderInt("Obstacle Particle Size", &setting.obstacleParticleSize, 1, 10);
         ImGui::SliderFloat("Brush Size", &setting.brushSize, 1, 10.0);
+        ImGui::SliderFloat("Obstacle Height", &setting.obstacleHeightFactor, 1, 5);
+        if (ImGui::Button("Clear Obstacles"))
+        {
+            obstacleMesh.Clear();
+
+            // clear frame buffer
+            obstacleFBO.Clear();
+            blurredObstacleFBO.Clear();
+        }
         ImGui::TreePop();
     }
 
@@ -281,8 +290,8 @@ int main()
 
     FBO waveMesh{ window_width , window_height };
 
-    FBO createObstacleFBO{ window_width , window_height };  // I'm using this as the obstacles fbo right now, no idea if that's right. --jarred
-    FBO obstacleFBO{ window_width , window_height };
+    FBO obstacleMapFBO{ window_width , window_height };  // I'm using this as the obstacles fbo right now, no idea if that's right. --jarred
+    FBO blurredObstacleMapFBO{ window_width , window_height };
 
     constexpr glm::ivec2 flowMapScale = { 512, 512 };
     renderer.fluidGridScale = flowMapScale;
@@ -322,16 +331,12 @@ int main()
 
         // step 1:
         // obstacle map creation
-        renderer.RenderObstacleHeightMap(createObstacleFBO.ID);
-
-        //std::cout << "t: " << t << std::endl;
-
-        // RENDERING //
-
-        // !!Something got messued up here in a merge. Please help!! -J
-        //renderer.RenderObstacles(createObstacleFBO.ID, );
+        renderer.RenderObstacleHeightMap(obstacleMapFBO.ID);
         
-        renderer.ObstacleBlur(createObstacleFBO.ColorBuffer1, obstacleFBO.ID);
+        // blur the obstacle map, may not be necessay
+        // Both createObstacleFBO.ColorBuffer1 and obstacleFBO.ColorBuffer1 can be used as flow map
+        // no big difference
+        renderer.ObstacleBlur(obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
 
         // step 2:
         // wave map creation
@@ -344,11 +349,10 @@ int main()
         // step 3:
         // render obstacles
         glEnable(GL_CULL_FACE);
-        renderer.RenderObstacles(obstacleFBO.ColorBuffer1, waveMesh.ID);
+        renderer.RenderObstacles(blurredObstacleMapFBO.ColorBuffer1, waveMesh.ID);
 
         // step 4: 
         // render wave mesh
-
         renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
@@ -364,12 +368,12 @@ int main()
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
             waveMesh.ColorBuffer1, 
-            createObstacleFBO.ColorBuffer1,
-            obstacleFBO.ColorBuffer1);
+            obstacleMapFBO.ColorBuffer1,
+            blurredObstacleMapFBO.ColorBuffer1);
             
 
         ////////////////////////////////////////////////////
-        RenderUI();
+        RenderUI(obstacleMapFBO, blurredObstacleMapFBO);
 
         glfwSwapBuffers(window);
 

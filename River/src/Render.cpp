@@ -63,6 +63,19 @@ FBO::FBO(unsigned int width, unsigned int height)
 }
 
 
+
+void FBO::Clear()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, ID);
+
+    // clear buffer
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 void FBO::AddTarget(unsigned int width, unsigned int height)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -560,8 +573,8 @@ void Render::DebugDraw(
     unsigned int deviation,
     unsigned int gradient,
     unsigned int waveMesh,
-    unsigned int obstaclePosMap,
-    unsigned int obstacleMap)
+    unsigned int obstacleMap,
+    unsigned int blurredObstacleMap)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -576,9 +589,9 @@ void Render::DebugDraw(
     quadShader.setTexture("f45v", f45v);
     quadShader.setTexture("deviation", deviation);
     quadShader.setTexture("gradient", gradient);
-    quadShader.setTexture("waveMesh", waveMesh);
-    quadShader.setTexture("obstaclePosMap", obstaclePosMap);
+    quadShader.setTexture("waveMesh", waveMesh); 
     quadShader.setTexture("obstacleMap", obstacleMap);
+    quadShader.setTexture("blurredObstacleMap", blurredObstacleMap);
 
     quadShader.Bind();
 

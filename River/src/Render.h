@@ -10,6 +10,9 @@ class FBO
 public:
 	FBO(unsigned int width, unsigned int height);
 
+	// clear both color buffer and depth buffer
+	void Clear();
+
 	void AddTarget(unsigned int width, unsigned int height);
 
 	unsigned int ID, DepthBuffer, ColorBuffer1, ColorBuffer2;
