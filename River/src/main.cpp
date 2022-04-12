@@ -329,7 +329,7 @@ int main()
         // RENDERING //
 
         // !!Something got messued up here in a merge. Please help!! -J
-        renderer.RenderObstacles(createObstacleFBO.ID);
+        //renderer.RenderObstacles(createObstacleFBO.ID, );
         
         renderer.ObstacleBlur(createObstacleFBO.ColorBuffer1, obstacleFBO.ID);
 

@@ -7,7 +7,7 @@ uniform sampler2D deviation;
 uniform sampler2D gradient;
 uniform sampler2D waveMesh;
 uniform sampler2D obstaclePosMap;
-uniform sampler2D ObstacleMap;
+uniform sampler2D obstacleMap;
 uniform sampler2D flowVelocity;
 uniform sampler2D flowPressure;
 

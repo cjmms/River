@@ -110,6 +110,8 @@ Shader::~Shader()
 
 void Shader::ReadShaderFile(const std::string& filePath, std::string& code)
 {
+    std::cout << "Processing shader: " << filePath << std::endl;
+
     std::ifstream shaderFile;
 
     // ensure ifstream objects can throw exceptions:
