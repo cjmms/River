@@ -370,7 +370,11 @@ int main()
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,
             waveMesh.ColorBuffer1, 
             obstacleMapFBO.ColorBuffer1,
-            blurredObstacleMapFBO.ColorBuffer1);
+            blurredObstacleMapFBO.ColorBuffer1,
+            flowDivergence.ColorBuffer1,
+            flowVelocity.ping->ColorBuffer1,
+            flowPressure.ping->ColorBuffer1
+            );
             
 
         ////////////////////////////////////////////////////

@@ -595,7 +595,11 @@ void Render::DebugDraw(
     unsigned int gradient,
     unsigned int waveMesh,
     unsigned int obstacleMap,
-    unsigned int blurredObstacleMap)
+    unsigned int blurredObstacleMap,
+    unsigned int flowDivergence,
+    unsigned int flowVelocity,
+    unsigned int flowPressure
+)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
