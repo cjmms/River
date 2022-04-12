@@ -258,12 +258,6 @@ void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::ClearFBO(FBO* fbo)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo->ID);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 #pragma endregion
 
@@ -294,7 +288,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     // STEP 3: COMPUTE DIVERGENCE //
     ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
     // Clear the pressure reading fbo, don't need to clear the writing one.
-    ClearFBO(pressure.ping);
+    pressure.ping->Clear();
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
     constexpr int ITR = 40;

@@ -169,7 +169,6 @@ private:
 	void JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst);
 	void SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst);
 	void ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst);
-	void ClearFBO(FBO*);
 
 };
 

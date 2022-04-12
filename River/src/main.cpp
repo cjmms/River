@@ -364,7 +364,6 @@ int main()
         skybox.Render(waveMesh.ID);
 
      
-        
         renderer.DebugDraw(
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
