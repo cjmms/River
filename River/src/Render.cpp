@@ -387,8 +387,6 @@ void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsi
 }
 
 
-
-
 void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -427,8 +425,6 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, un
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-
-
 void Render::RenderObstacleHeightMap(Quad& quad, unsigned int fbo)
 {
     // check if obstacle exists
@@ -457,9 +453,6 @@ void Render::RenderObstacleHeightMap(Quad& quad, unsigned int fbo)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-
-
 void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -483,9 +476,6 @@ void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsig
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-
-
 
 void Render::DebugDraw(
     Quad& quad,
