@@ -12,10 +12,12 @@ uniform float time;
 uniform float timeScale;
 uniform float heightScale;
 
+uniform vec2 uFlowDir = vec2(1.0f, 0.0f);
+
 void main()
 {
 
-	vec2 direction = normalize(aDir + vec2(10.0, 0.0f)); // <-- hacky way to do this!
+	vec2 direction = normalize(aDir + (uFlowDir * 10.0f)); 
 	//vec3 velocity = texture(flowMap, );
 	vec2 pos = aPos + aSpeed * float(time) * float(timeScale) * direction;	// update position base on wave particle velocity
 

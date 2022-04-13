@@ -22,7 +22,7 @@ uniform mat4 projection;
 
 uniform sampler2D obstacleMap;
 
-uniform sampler2D flowMap;
+//uniform sampler2D flowMap;
 
 // sample 4 near texels
 // generate two tangents
@@ -71,9 +71,9 @@ void main()
     // apply height map
     worldPos = gl_Position.xyz + texture(deviationMap, TexCoord).xyz;
 
-    vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.01;
+    //vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.01;
 
-    worldPos += texture(deviationMap, TexCoord - velocity).xyz;
+    worldPos += texture(deviationMap, TexCoord).xyz;
 
 
 	gl_Position = projection * view * vec4(worldPos, 1);   

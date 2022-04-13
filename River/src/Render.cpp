@@ -287,12 +287,13 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    // waveParticleShader.setTexture("flowMap", flowMap);
+    waveParticleShader.setVec2("uFlowDir", flowDirection);
 
     waveParticleShader.setFloat("time", glfwGetTime());
     waveParticleShader.setFloat("timeScale", setting.timeScale);
     waveParticleShader.setFloat("heightScale", setting.heightFactor);
-
-    waveParticleShader.setTexture("flowMap", flowMap);
 
 	waveParticleShader.Bind();
 
@@ -412,7 +413,7 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned
 
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
-    waveMeshShader.setTexture("flowMap", flowMap);
+    //waveMeshShader.setTexture("flowMap", flowMap);
 
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
     waveMeshShader.setTexture("skybox", skybox, GL_TEXTURE_CUBE_MAP);

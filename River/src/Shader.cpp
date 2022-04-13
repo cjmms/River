@@ -216,8 +216,10 @@ void Shader::setVec3(const std::string& name, glm::vec3 vec)
 
 void Shader::setVec2(const char* name, glm::vec2 vec)
 {
+    this->Bind();
     unsigned int location = getUniformLocation(name);
     glUniform2fv(location, 1, glm::value_ptr(vec));
+    this->unBind();
 }
 
 

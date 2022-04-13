@@ -82,7 +82,7 @@ class Render
 {
 public:
 	// wave particle visialization, only dots
-    Shader waveParticleShader{ "res/Shaders/WaveParticle.vert", "res/Shaders/WaveParticle.frag"};
+	Shader waveParticleShader{ "res/Shaders/WaveParticle.vert", "res/Shaders/WaveParticle.frag" };
 
 	// horizontal blur, used to generate height map base on wave particles
 	// technically, it is blurring.
@@ -96,7 +96,7 @@ public:
 
 	Shader quadShader{ "res/Shaders/Blur.vert", "res/Shaders/Quad.frag" };
 
-	Shader waveMeshShader{  "res/Shaders/wave.vert",
+	Shader waveMeshShader{ "res/Shaders/wave.vert",
 							"res/Shaders/wave.tesc",
 							"res/Shaders/wave.tese",
 							"res/Shaders/wave.frag" };
@@ -106,7 +106,7 @@ public:
 	Shader obstacleBlurHShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_H.frag" };
 	Shader obstacleBlurVShader{ "res/Shaders/Blur.vert", "res/Shaders/ObstacleBlur_V.frag" };
 
-	Shader renderObstacleShader {	"res/Shaders/wave.vert",
+	Shader renderObstacleShader{ "res/Shaders/wave.vert",
 									"res/Shaders/wave.tesc",
 									"res/Shaders/RenderObstacle.tese",
 									"res/Shaders/RenderObstacle.frag" };
@@ -114,18 +114,21 @@ public:
 	FBO obstacleBlurFBO{ window_width , window_height };
 	unsigned int impulseMapTexture = -1;
 
-	
-	Shader flowAdvect			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/advect.frag"};
-	Shader flowComputeDivergence{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/computeDivergence.frag"};
-	Shader flowJacobi			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/jacobi.frag"};
-	Shader flowSubtractGradient {"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag"};
-	Shader flowAdder			{"res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/addTextures.frag"};
 
-	glm::ivec2 fluidGridScale = {512, 512};
-	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
+	Shader flowAdvect{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/advect.frag" };
+	Shader flowComputeDivergence{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/computeDivergence.frag" };
+	Shader flowJacobi{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/jacobi.frag" };
+	Shader flowSubtractGradient{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag" };
+	Shader flowAdder{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/addTextures.frag" };
+
+	glm::ivec2 fluidGridScale = { 512, 512 };
+	glm::vec2 fluidInvScale = { 1.f / 512.f, 1.f / 512.f };
 	float cellSize = 1.1;//1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
 	float gradientScale = 1.125 / cellSize;
 	bool impulseFieldEnabled = true;
+
+	glm::vec2 flowDirection = {1.0f, 0.0f};
+	float flowMultiplier = 1.0f;
 
 public: 
 	Render();

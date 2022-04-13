@@ -30,6 +30,8 @@ unsigned int checkerBoardTexture;
 unsigned int waveTexture;
 
 bool enableImpulseField = true;
+float flowAngle = 0.0f;
+glm::vec2 flowDir = {1.0f, 0.0f};
 
 extern Setting setting;
 
@@ -167,6 +169,12 @@ void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
     if (ImGui::Button("toggle impulse field"))
     {
         enableImpulseField = !enableImpulseField;
+    }
+
+    if (ImGui::SliderFloat("Flow Angle", &flowAngle, 0.0f, 360.0f, 0, 1))
+    {
+        const float radians = glm::radians(flowAngle);
+        flowDir = {sin(radians), cos(radians)};
     }
 
     // Rendering UI
@@ -341,6 +349,8 @@ int main()
 
             if (t > 0) obstacleMesh.AddObstacle(camera.worldRayOrigin + camera.worldRayDir * t);
         }
+
+        renderer.flowDirection = flowDir; // Used by both steps.
 
         // step 1:
         // obstacle map creation
