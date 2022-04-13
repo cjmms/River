@@ -173,8 +173,8 @@ Render::Render()
 void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     constexpr float DELTATIME = 0.1f; // TODO! !!!!
 
@@ -270,6 +270,7 @@ void Render::ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multipl
 
     flowAdder.setTexture("uSrc", srcTex);
     flowAdder.setFloat("uMultiplier", multiplier);
+    flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
 
     flowAdder.Bind();
     glBindVertexArray(quadVAO);
@@ -309,26 +310,26 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     if (impulseMapTexture > 0)
     {
         // Apply impulse.
-        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.01f );
+        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.1f );
     }
 
 
     // STEP 3: COMPUTE DIVERGENCE //
     ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
     // Clear the pressure reading fbo, don't need to clear the writing one.
-    pressure.ping->Clear();
+    //pressure.ping->Clear();
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        JacobiHelper(pressure.ping, divergence, obstacleFBO, pressure.pong);
-        pressure.Swap();
+        //JacobiHelper(pressure.ping, divergence, obstacleFBO, pressure.pong);
+        //pressure.Swap();
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
-    velocity.Swap();
+    //SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
+    //velocity.Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
