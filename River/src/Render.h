@@ -139,7 +139,7 @@ public:
 	void VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsigned int fbo);
 
 	void RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int divergenceMap,
-		unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
+		unsigned int irradianceMap, unsigned int obstacleMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo);
 
 	void RenderObstacleHeightMap(Quad& quad, unsigned int fbo);
 

@@ -22,6 +22,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform sampler2D obstacleMap;
+
 // sample 4 near texels
 // generate two tangents
 // the cross product is the normal
@@ -63,14 +65,11 @@ void main()
 
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
-    vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.05;
-    //velocity = vec2(2.0, 0.1);
+    worldPos = gl_Position.xyz;
 
-    // apply height map
-    worldPos = gl_Position.xyz + texture(deviationMap, TexCoord - velocity).xyz;
+    vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.01;
 
-    vec2 newPos = worldPos.xz;
-
+    worldPos += texture(deviationMap, TexCoord - velocity).xyz;
 
 
 	gl_Position = projection * view * vec4(worldPos, 1);   
