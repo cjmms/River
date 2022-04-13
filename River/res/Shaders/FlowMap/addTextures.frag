@@ -17,6 +17,9 @@ uniform vec2 uDstScale = vec2(512);
 void main()
 {
 	vec2 uv = gl_FragCoord.xy/uDstScale;
-	fragColor = texture(uSrc, uv)*uMultiplier;
+	//fragColor = texture(uSrc, uv)*uMultiplier;
+	
+	// Updated to a version which maps the color range (0, 1) to (-1, 1)
+	fragColor = (texture(uSrc, uv)-vec4(0.5f))*2.0f*uMultiplier;
 	//fragColor = vec4(TexCoords,0, 1);
 }
