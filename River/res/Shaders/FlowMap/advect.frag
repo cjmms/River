@@ -31,7 +31,6 @@ uniform float uDeltaTime;
 uniform float uDissipation;
 
 uniform vec2 uDstScale = vec2(512);
-uniform vec2 uInvObstacleScale;
 
 void main()
 {
