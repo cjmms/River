@@ -16,6 +16,7 @@ uniform float FoamTurbulance;
 uniform samplerCube  IrradianceMap;
 uniform samplerCube  skybox;
 uniform vec3 ViewPos;
+uniform sampler2D divergenceMap;
 
 
 // Exponential Integral
@@ -62,8 +63,10 @@ void main()
   
     vec3 RiverBedPos = vec3(worldPos.x, waterDepth, worldPos.z);
 
+    float foam = texture(divergenceMap, TexCoord).x * 0.5;
+
     // for now, let's choose mid point as _Position
-    vec3 HalfPoint = mix(RiverBedPos, worldPos, 0.5f + float(FoamTurbulance));
+    vec3 HalfPoint = mix(RiverBedPos, worldPos, 0.55f - foam*0.2);
 
     vec3 IsotropicLightBottom = sunLight * waterBedColor * exp((HalfPoint.y - worldPos.y) * extinctionCoeff) * dot(sunDir, vec3(0, 1, 0));
     vec3 IsotropicLightTop = sunLight * waterColor * dot(sunDir, vec3(0, 1, 0));
@@ -89,4 +92,6 @@ void main()
     {
         FragColor = vec4(abs(Normal), 1);
     }
+
+    //FragColor =  texture(divergenceMap, TexCoord);
 }

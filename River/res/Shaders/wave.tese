@@ -64,9 +64,10 @@ void main()
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
     vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.05;
+    //velocity = vec2(2.0, 0.1);
 
     // apply height map
-    worldPos = gl_Position.xyz + texture(deviationMap, abs(TexCoord - velocity)).xyz;
+    worldPos = gl_Position.xyz + texture(deviationMap, TexCoord - velocity).xyz;
 
     vec2 newPos = worldPos.xz;
 

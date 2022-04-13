@@ -271,8 +271,8 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
-    velocity->Swap();
+    //SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
+    //velocity->Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
@@ -384,7 +384,8 @@ void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsi
 }
 
 
-void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int divergenceMap,
+    unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -415,6 +416,8 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned
 
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
     waveMeshShader.setTexture("skybox", skybox, GL_TEXTURE_CUBE_MAP);
+
+    waveMeshShader.setTexture("divergenceMap", divergenceMap);
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 

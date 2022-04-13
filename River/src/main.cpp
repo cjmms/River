@@ -377,7 +377,7 @@ int main()
 
         // step 4: 
         // render wave mesh
-        renderer.RenderWaveMesh(waterMesh, flowVelocity.ping->ColorBuffer1, irradianceMap.ID(), skybox.ID(),
+        renderer.RenderWaveMesh(waterMesh, flowVelocity.ping->ColorBuffer1, flowDivergence.ColorBuffer1, irradianceMap.ID(), skybox.ID(),
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         glDisable(GL_CULL_FACE);
