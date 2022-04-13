@@ -285,7 +285,7 @@ int main()
     Render renderer;
 
     WaveParticleMesh waveParticleMesh{ 600 };
-    WaterMesh waterMesh{ 20 };
+    WaterMesh waterMesh{ 32 };
     Quad quad;
 
     // FBO's:

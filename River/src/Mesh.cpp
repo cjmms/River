@@ -100,31 +100,32 @@ WaterMesh::WaterMesh(unsigned int res)
 	{
 		for (unsigned j = 0; j <= resolution - 1; j++)
 		{
-			vertices.push_back(-window_width / 2.0f + window_width * i / (float)resolution); // v.x
-			vertices.push_back(-window_height / 2.0f + window_height * j / (float)resolution); // v.z
-			vertices.push_back(i / (float)resolution); // u
-			vertices.push_back(j / (float)resolution); // v
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * i);	// v.x
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * j);	// v.z
+			vertices.push_back(0.0f + 1.0f / (float)resolution * i);	// u
+			vertices.push_back(0.0f + 1.0f / (float)resolution * j);	// v
 
-			vertices.push_back(-window_width / 2.0f + window_width * (i + 1) / (float)resolution); // v.x
-			vertices.push_back(-window_height / 2.0f + window_height * j / (float)resolution); // v.z
-			vertices.push_back((i + 1) / (float)resolution); // u
-			vertices.push_back(j / (float)resolution); // v
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * (i + 1));	// v.x
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * j);	// v.z
+			vertices.push_back(0.0f + 1.0f / (float)resolution * (i + 1));	// u
+			vertices.push_back(0.0f + 1.0f / (float)resolution * j);	// v
 
-			vertices.push_back(-window_width / 2.0f + window_width * i / (float)resolution); // v.x
-			vertices.push_back(-window_height / 2.0f + window_height * (j + 1) / (float)resolution); // v.z
-			vertices.push_back(i / (float)resolution); // u
-			vertices.push_back((j + 1) / (float)resolution); // v
 
-			vertices.push_back(-window_width / 2.0f + window_width * (i + 1) / (float)resolution); // v.x
-			vertices.push_back(-window_height / 2.0f + window_height * (j + 1) / (float)resolution); // v.z
-			vertices.push_back((i + 1) / (float)resolution); // u
-			vertices.push_back((j + 1) / (float)resolution); // v
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * i);	// v.x
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * (j + 1));	// v.z
+			vertices.push_back(0.0f + 1.0f / (float)resolution * i);	// u
+			vertices.push_back(0.0f + 1.0f / (float)resolution * (j + 1));	// v
+
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * (i + 1));	// v.x
+			vertices.push_back(-1.0f + 2.0f / (float)resolution * (j + 1));	// v.z
+			vertices.push_back(0.0f + 1.0f / (float)resolution * (i + 1));	// u
+			vertices.push_back(0.0f + 1.0f / (float)resolution * (j + 1));	// v
 		}
 	}
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -145,7 +146,7 @@ void WaterMesh::Draw(Shader &shader)
 {
 	shader.Bind();
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_PATCHES, 0, 4);
+	glDrawArrays(GL_PATCHES, 0, 4 * resolution * resolution);
 	glBindVertexArray(0);
 	shader.unBind();
 }
