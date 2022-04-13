@@ -21,6 +21,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 uniform sampler2D obstacleMap;
+uniform sampler2D pressureMap;
 
 //uniform sampler2D flowMap;
 
@@ -69,7 +70,8 @@ void main()
     //velocity = vec2(2.0, 0.1);
 
     // apply height map
-    worldPos = gl_Position.xyz + texture(deviationMap, TexCoord).xyz;
+    worldPos = gl_Position.xyz + texture(deviationMap, TexCoord).xyz + vec3(0, clamp(texture(pressureMap, TexCoord).r*0.01f, -0.01, 0.08), 0);
+    worldPos.y = max(0, worldPos.y);
 
     //vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.01;
 
