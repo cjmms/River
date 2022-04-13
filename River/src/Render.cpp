@@ -392,7 +392,7 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, un
     // also draw the lamp object
     waveMeshShader.setMat4("projection", camera.getProjectionMatrix());
     waveMeshShader.setMat4("view", camera.getViewMatrix());
-    waveMeshShader.setMat4("model", model);
+    waveMeshShader.setMat4("model", glm::translate(model, glm::vec3(0, 0, -0.01)));
     
 
     waveMeshShader.setInt("tessellationFactor", setting.tessellationFactor);
@@ -459,7 +459,7 @@ void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsig
     renderObstacleShader.setMat4("view", camera.getViewMatrix());
     renderObstacleShader.setMat4("model", model);
 
-    renderObstacleShader.setInt("tessellationFactor", setting.tessellationFactor);
+    renderObstacleShader.setInt("tessellationFactor", setting.obstacleTessellationFactor);
     renderObstacleShader.setVec3("ViewPos", camera.getCameraPos());
 
     renderObstacleShader.setTexture("ObstacleHeightMap", heightMap);

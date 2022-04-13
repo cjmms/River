@@ -112,8 +112,8 @@ void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
 
     if (ImGui::TreeNode("Obstacle Creatation"))
     {
-        ImGui::SliderInt("Obstacle Particle Size", &setting.obstacleParticleSize, 1, 10);
-        ImGui::SliderFloat("Brush Size", &setting.brushSize, 1, 10.0);
+        ImGui::SliderInt("Obstacle tessllation Factor", &setting.obstacleTessellationFactor, 5, 20);
+        ImGui::SliderFloat("Brush Size", &setting.brushSize, 0.5, 1.5);
         ImGui::SliderFloat("Obstacle Height", &setting.obstacleHeightFactor, 1, 5);
         if (ImGui::Button("Clear Obstacles"))
         {
@@ -146,7 +146,7 @@ void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
 
     if (ImGui::TreeNode("Tessellation"))
     {
-        ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 50);
+        ImGui::SliderInt("Tessellation Factor", &setting.tessellationFactor, 1, 5);
         ImGui::Checkbox("Wireframe Mode", &setting.enableWireframeMode);
         ImGui::TreePop();
     }
