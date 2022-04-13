@@ -156,6 +156,7 @@ void Render::JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obsta
     flowJacobi.setFloat("uInverseBeta", INVBETA);
 
     flowJacobi.setVec2("uGridScale", this->fluidGridScale);
+    flowJacobi.setVec2("uObstacleMapScale", glm::vec2(window_width, window_height));
 
     flowJacobi.setTexture("uObstacleMap", obstacles->ColorBuffer1);
     flowJacobi.setTexture("uPressure", pressure->ColorBuffer1);

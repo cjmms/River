@@ -25,6 +25,7 @@ uniform sampler2D uDivergence;
 uniform float uAlpha, uInverseBeta;
 
 uniform vec2 uGridScale = vec2(512);
+uniform vec2 uObstacleMapScale;
 
 void main()
 {
@@ -41,10 +42,11 @@ void main()
 	vec4 pCenter = texelFetch(uPressure, T, 0);
 		
 	// Fetch neighboring obstacle map pixels:
-	const bool oUp	   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0,  1)).x > 0;
-	const bool oDown   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0, -1)).x > 0;
-	const bool oRight  = texelFetchOffset(uObstacleMap, T, 0, ivec2( 1, 0)).x > 0;
-	const bool oLeft   = texelFetchOffset(uObstacleMap, T, 0, ivec2(-1, 0)).x > 0;
+	const ivec2 To = ivec2((T / uGridScale) * uObstacleMapScale);
+	const bool oUp	   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0,  1)).x > 0;
+	const bool oDown   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0, -1)).x > 0;
+	const bool oRight  = texelFetchOffset(uObstacleMap, To, 0, ivec2( 1, 0)).x > 0;
+	const bool oLeft   = texelFetchOffset(uObstacleMap, To, 0, ivec2(-1, 0)).x > 0;
 	const bool oCenter = texelFetch(uObstacleMap, T, 0).x > 0;
 
 	// Use center pressure for solid cells:
