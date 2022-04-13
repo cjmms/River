@@ -248,7 +248,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     if (impulseMapTexture > 0 && impulseFieldEnabled)
     {
         // Apply impulse.
-        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 0.3f);
+        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, flowIntensity * 0.5f);
     }
 
 
@@ -296,6 +296,7 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     // waveParticleShader.setTexture("flowMap", flowMap);
+
     waveParticleShader.setVec2("uFlowDir", flowDirection);
 
     waveParticleShader.setFloat("time", glfwGetTime());

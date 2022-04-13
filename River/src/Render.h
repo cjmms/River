@@ -129,6 +129,7 @@ public:
 
 	glm::vec2 flowDirection = {1.0f, 0.0f};
 	float flowMultiplier = 1.0f;
+	float flowIntensity = 1.0f;
 
 public: 
 	Render();

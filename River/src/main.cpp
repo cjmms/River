@@ -32,6 +32,7 @@ unsigned int waveTexture;
 bool enableImpulseField = true;
 float flowAngle = 0.0f;
 glm::vec2 flowDir = {1.0f, 0.0f};
+float flowIntensity = 1.0f;
 
 extern Setting setting;
 
@@ -176,6 +177,8 @@ void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
         const float radians = glm::radians(flowAngle);
         flowDir = {sin(radians), cos(radians)};
     }
+
+    ImGui::SliderFloat("Flow Intensity", &flowIntensity, 0.0f, 10, 0, 1);
 
     // Rendering UI
     ImGui::Render();
@@ -351,6 +354,7 @@ int main()
         }
 
         renderer.flowDirection = flowDir; // Used by both steps.
+        renderer.flowIntensity = flowIntensity;
 
         // step 1:
         // obstacle map creation
