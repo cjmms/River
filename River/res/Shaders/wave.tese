@@ -22,6 +22,8 @@ uniform mat4 projection;
 
 uniform sampler2D obstacleMap;
 
+uniform sampler2D flowMap;
+
 // sample 4 near texels
 // generate two tangents
 // the cross product is the normal
