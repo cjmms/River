@@ -14,6 +14,7 @@ uniform sampler2D uVelocity;
 
 uniform float uHalfInvCellSize; // This seems oddly specific
 
+uniform vec2 uGridSize = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
 
 void main()
 {
@@ -32,10 +33,16 @@ void main()
 	const bool oLeft   = texelFetchOffset(uObstacleMap, T, 0, ivec2(-1, 0)).x > 0;
 
 	// Obstacle velocities are not implemented, so use velocity of 0 for solid cells:
-	if (oUp)    vUp    = vec2(0.0f);
-	if (oDown)  vDown  = vec2(0.0f);
-	if (oRight) vRight = vec2(0.0f);
-	if (oLeft)  vLeft  = vec2(0.0f);
+	//if (oUp)    vUp    = vec2(0.0f);
+	//if (oDown)  vDown  = vec2(0.0f);
+	//if (oRight) vRight = vec2(0.0f);
+	//if (oLeft)  vLeft  = vec2(0.0f);
 
-	fragColor = uHalfInvCellSize * (vRight.x - vLeft.x + vUp.y - vDown.y);
+	if (oUp)    vUp    = -vUp;
+	if (oDown)  vDown  = -vDown;
+	if (oRight) vRight = -vRight;
+	if (oLeft)  vLeft  = -vLeft;
+
+
+	fragColor = (uHalfInvCellSize * vRight.x - vLeft.x + vUp.y - vDown.y);
 }
