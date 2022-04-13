@@ -121,10 +121,10 @@ void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, F
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    constexpr float DELTATIME = 0.1f; // TODO! !!!!
+    //constexpr float DELTATIME = 0.1f; // TODO! !!!!
 
-    flowAdvect.setVec2("uInverseSize", fluidInvScale);
-    flowAdvect.setFloat("uDeltaTime", DELTATIME);
+    //flowAdvect.setVec2("uInverseSize", fluidInvScale);
+    flowAdvect.setFloat("uDeltaTime", FIXED_DELTA_TIME);
     flowAdvect.setFloat("uDissipation", dissipation);
 
 
@@ -210,8 +210,8 @@ void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, f
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
 
-    constexpr float DELTATIME = 0.1f; // TODO!!
-    multiplier *= DELTATIME;
+    //constexpr float DELTATIME = 0.1f; // TODO!!
+    multiplier *= FIXED_DELTA_TIME;
 
     flowAdder.setTexture("uSrc", srcTex);
     flowAdder.setFloat("uMultiplier", multiplier);
@@ -233,7 +233,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
 {
     glDisable(GL_DEPTH_TEST);
 
-    constexpr float DISSIPATION_VELOCITY = 0.99f;
+    constexpr float DISSIPATION_VELOCITY = 0.999f;
     
     // TODO: Where do I put vorticity step?
 
@@ -255,12 +255,12 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
     if (impulseMapTexture > 0)
     {
         // Apply impulse.
-        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 0.04f );
+        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 20.0f );
     }
 
 
     // STEP 3: COMPUTE DIVERGENCE //
-    ComputeDivergenceHelper(quad, velocity.ping, obstacleFBO, divergence);
+    //ComputeDivergenceHelper(quad, velocity.ping, obstacleFBO, divergence);
     // Clear the pressure reading fbo, don't need to clear the writing one.
     //pressure.ping->Clear();
 

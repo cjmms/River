@@ -26,7 +26,7 @@ uniform sampler2D uVelocity;
 
 uniform sampler2D uSoureTexture; // Advection is a generalized step ran on each parameter, so this is a generalized uniform location.
 
-uniform vec2 uInverseSize;
+//uniform vec2 uInverseSize;
 uniform float uDeltaTime;
 uniform float uDissipation;
 
@@ -35,9 +35,10 @@ uniform vec2 uDstScale = vec2(512);
 
 void main()
 {
-	vec2 uv = gl_FragCoord.xy / uDstScale;
+	//vec2 uv = gl_FragCoord.xy / uDstScale;
 	// Check the solidity at this pixel:
-	const bool isSolid = texture(uObstacleMap, uv).x > 0;
+	vec2 uInverseSize = vec2(1.f/uDstScale.x, 1.f/uDstScale.y);					// UGLY HARDCODING!!!
+	const bool isSolid = texture(uObstacleMap, gl_FragCoord.xy*uInverseSize).x > 0;
 	if (isSolid)
 	{
 		fragColor = vec4(0.0f);
@@ -45,8 +46,9 @@ void main()
 	}
 
 	// Compute the advection at this pixel:
-	const vec2 u = texture(uVelocity, uInverseSize * uv).xy;
-	const vec2 coord = uInverseSize * (uv - (uDeltaTime * u));
+	const vec2 u = texture(uVelocity, uInverseSize * gl_FragCoord.xy).xy; // velocity at the current cell
+	const vec2 coord = uInverseSize * (gl_FragCoord.xy - uDeltaTime * u); // coordinate after moving based on velocity
 
-	fragColor = uDissipation * texture(uSoureTexture, coord);
+	//fragColor = uDissipation * texture(uSoureTexture, coord);
+	fragColor =  texture(uSoureTexture, coord);
 }

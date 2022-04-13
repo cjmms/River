@@ -5,6 +5,8 @@
 extern const int window_width;
 extern const int window_height;
 
+#define FIXED_DELTA_TIME 0.3f
+
 class FBO
 {
 public:
@@ -39,8 +41,8 @@ public:
 	void Swap()
 	{
 		FBO* temp = ping;
-		pong = ping;
-		ping = temp;
+		ping = pong;
+		pong = temp;
 	}
 	void AddTargetToBoth(int width, int height)
 	{
