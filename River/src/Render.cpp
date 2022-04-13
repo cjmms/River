@@ -393,7 +393,7 @@ void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsi
 }
 
 
-void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int divergenceMap,
+void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int divergenceMap, unsigned int pressureMap,
     unsigned int irradianceMap, unsigned int obstacleMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -427,6 +427,7 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned
     waveMeshShader.setTexture("skybox", skybox, GL_TEXTURE_CUBE_MAP);
 
     waveMeshShader.setTexture("divergenceMap", divergenceMap);
+    waveMeshShader.setTexture("pressureMap", pressureMap);
     waveMeshShader.setTexture("obstacleMap", obstacleMap);
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());

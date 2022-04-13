@@ -18,6 +18,7 @@ uniform samplerCube  skybox;
 uniform vec3 ViewPos;
 uniform sampler2D divergenceMap;
 uniform sampler2D flowMap;
+uniform sampler2D pressureMap;
 
 
 // Exponential Integral
@@ -94,8 +95,14 @@ void main()
         vec3 foamcol = texture(flowMap, TexCoord).xyz * foam * 0.1;
         foamVec = clamp(3.0 * foam, 0, 1) * 0.2;
     }
+    
+    vec3 pressureCol = vec3(  
+    clamp(
+        (texture(pressureMap, TexCoord).r )*-0.05f, -0.1f, 1.3f
+        )
+    );
 
-    FragColor = vec4(AmbientColor + IrradianceColor + Reflection + foamVec, 1);
+    FragColor = vec4(AmbientColor + IrradianceColor + Reflection + foamVec + pressureCol, 1);
 
     if (enableNormalMap)
     {
