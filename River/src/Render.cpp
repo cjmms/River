@@ -238,13 +238,16 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     
     // TODO: Where do I put vorticity step?
 
-    // STEP 1: ADVECTION STEP //
-
+    // FORCE APPLICATION //
     if (impulseMapTexture > 0 && impulseFieldEnabled)
     {
         // Apply impulse.
         ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 1.5f);
     }
+
+
+    // STEP 1: ADVECTION STEP //
+
 
     // Perform advection on the velocity:
     //flowAdvect.Bind();
@@ -256,23 +259,17 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
 
     // Perform advection on the density:
 
-    // STEP 2: FORCE APPLICATION //
-    // Not yet implemented.
-    // ...
-
-
-
     // STEP 3: COMPUTE DIVERGENCE //
-    //ComputeDivergenceHelper(quad, velocity.ping, obstacleFBO, divergence);
+    ComputeDivergenceHelper(quad, velocity->ping, obstacleFBO, divergence);
     // Clear the pressure reading fbo, don't need to clear the writing one.
-    //pressure.ping->Clear();
+    pressure->ping->Clear();
 
     // STEP 4: PERFORM JACOBI ITERATIONS //
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        //JacobiHelper(quad, pressure.ping, divergence, obstacleFBO, pressure.pong);
-        //pressure.Swap();
+        JacobiHelper(quad, pressure->ping, divergence, obstacleFBO, pressure->pong);
+        pressure->Swap();
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
