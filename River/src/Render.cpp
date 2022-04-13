@@ -147,8 +147,6 @@ void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, F
 void Render::JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     const float ALPHA = -cellSize*cellSize;
     constexpr float INVBETA = 0.25f; 
