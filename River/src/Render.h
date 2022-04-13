@@ -121,7 +121,7 @@ public:
 	Shader flowSubtractGradient{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/subtractGradient.frag" };
 	Shader flowAdder{ "res/Shaders/FlowMap/simple.vert", "res/Shaders/FlowMap/addTextures.frag" };
 
-	glm::ivec2 fluidGridScale = { 512, 512 };
+	glm::vec2 fluidGridScale = { 512.f, 512.f };
 	glm::vec2 fluidInvScale = { 1.f / 512.f, 1.f / 512.f };
 	float cellSize = 1.1;//1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
 	float gradientScale = 1.125 / cellSize;

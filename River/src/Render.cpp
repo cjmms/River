@@ -127,7 +127,7 @@ void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, F
     //flowAdvect.setVec2("uInverseSize", fluidInvScale);
     flowAdvect.setFloat("uDeltaTime", FIXED_DELTA_TIME);
     flowAdvect.setFloat("uDissipation", dissipation);
-
+    flowAdvect.setVec2("uDstScale", glm::vec2(fluidGridScale));
 
     // The source texture.
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
@@ -154,9 +154,11 @@ void Render::JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obsta
     flowJacobi.setFloat("uAlpha", ALPHA);
     flowJacobi.setFloat("uInverseBeta", INVBETA);
 
-    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
-    flowAdvect.setTexture("uPressure", pressure->ColorBuffer1);
-    flowAdvect.setTexture("uDivergence", divergence->ColorBuffer1);
+    flowJacobi.setVec2("uGridScale", this->fluidGridScale);
+
+    flowJacobi.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowJacobi.setTexture("uPressure", pressure->ColorBuffer1);
+    flowJacobi.setTexture("uDivergence", divergence->ColorBuffer1);
 
     flowJacobi.Bind();
     glBindVertexArray(quad.VAO);
@@ -172,6 +174,8 @@ void Render::SubtractGradientHelper(Quad& quad, FBO* velocity, FBO* pressure, FB
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
     flowSubtractGradient.setFloat("uGradientScale", gradientScale);
+
+    flowSubtractGradient.setVec2("uGridScale", fluidGridScale);
 
     flowSubtractGradient.setTexture("uObstacleMap", obstacles->ColorBuffer1);
     flowSubtractGradient.setTexture("uVelocity", velocity->ColorBuffer1);
@@ -215,7 +219,8 @@ void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, f
 
     flowAdder.setTexture("uSrc", srcTex);
     flowAdder.setFloat("uMultiplier", multiplier);
-    //flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
+
+    flowAdder.setVec2("uDstScale", fluidGridScale);
 
     flowAdder.setVec2("uDirection", flowDirection);
 
