@@ -14,7 +14,7 @@ uniform sampler2D uVelocity;
 
 uniform float uHalfInvCellSize; // This seems oddly specific
 
-uniform vec2 uGridSize = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
+uniform vec2 uGridScale = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
 
 void main()
 {
@@ -43,6 +43,11 @@ void main()
 	if (oRight) vRight = -vRight;
 	if (oLeft)  vLeft  = -vLeft;
 
+	// Boundry conditions:
+	if (T.x <= 0) vLeft.x = -vLeft.x;
+	if (T.x >= uGridScale.x) vRight.x = -vRight.x;
+	if (T.y <= 0) vDown.y = -vDown.y;
+	if (T.y >= uGridScale.y) vUp.y = -vUp.y;
 
 	fragColor = uHalfInvCellSize * (vRight.x - vLeft.x + vUp.y - vDown.y);
 }

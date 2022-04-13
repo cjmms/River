@@ -24,6 +24,7 @@ uniform sampler2D uDivergence;
 
 uniform float uAlpha, uInverseBeta;
 
+uniform vec2 uGridScale = vec2(512);
 
 void main()
 {
@@ -51,6 +52,13 @@ void main()
 	if (oDown)	pDown  = pCenter;
 	if (oRight)	pRight = pCenter;
 	if (oLeft)	pLeft  = pCenter;
+
+	// Boundry conditions:
+	if (T.x <= 0) pLeft = pCenter;
+	if (T.x >= uGridScale.x) pRight = pCenter;
+	if (T.y <= 0) pDown = pCenter;
+	if (T.y >= uGridScale.y) pUp = pCenter;
+
 
 	// Fetch the divergence for this pixel:
 	vec4 divergence = texelFetch(uDivergence, T, 0);

@@ -14,6 +14,8 @@ uniform sampler2D uPressure;
 
 uniform float uGradientScale;
 
+uniform vec2 uGridScale = vec2(512);
+
 void main()
 {
 	const ivec2 T = ivec2(gl_FragCoord.xy);
@@ -64,6 +66,12 @@ void main()
 		pLeft = pCenter;
 		vMask.x = 0;
 	}
+
+	// Boundry conditions:
+	if (T.x <= 0) pLeft = pCenter;
+	if (T.x >= uGridScale.x) pRight = pCenter;
+	if (T.y <= 0) pDown = pCenter;
+	if (T.y >= uGridScale.y) pUp = pCenter;
 
 	// Enforce free-slip boundry condition.
 	vec2 oldVelocity = texelFetch(uVelocity, T, 0).xy;

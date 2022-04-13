@@ -52,7 +52,13 @@ void main()
 
 	// Compute the advection at this pixel:
 	const vec2 u = texture(uVelocity, uInverseSize * fragCoord).xy; // velocity at the current cell
-	const vec2 coord = uInverseSize * (fragCoord - uDeltaTime * u); // coordinate after moving based on velocity
+	vec2 coord = uInverseSize * (fragCoord - uDeltaTime * u); // coordinate after moving based on velocity
+
+	// boundry condition:
+	if (coord.x > 1) coord.x = 1;
+	if (coord.x < 0) coord.x = 0;
+	if (coord.y > 1) coord.y = 1;
+	if (coord.y < 0) coord.y = 0;
 
 	fragColor =  uDissipation * vec4(texture(uSoureTexture, coord).rgb, 1);
 }
