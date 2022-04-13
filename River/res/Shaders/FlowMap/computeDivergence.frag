@@ -14,7 +14,7 @@ uniform sampler2D uVelocity;
 
 uniform float uHalfInvCellSize; // This seems oddly specific
 
-uniform vec2 uGridScale = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
+uniform vec2 uGridScale = vec2(1024); // TODO! Should be passed in! But ill keep it harcoded for now...
 
 void main()
 {

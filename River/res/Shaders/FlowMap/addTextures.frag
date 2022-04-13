@@ -12,7 +12,7 @@ out vec4 fragColor;
 uniform sampler2D uSrc;	// eg. velocity.ping
 uniform float uMultiplier;
 
-uniform vec2 uDstScale = vec2(512);
+uniform vec2 uDstScale = vec2(1024);
 
 void main()
 {

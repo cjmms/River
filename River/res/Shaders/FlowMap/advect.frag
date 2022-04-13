@@ -30,7 +30,7 @@ uniform sampler2D uSoureTexture; // Advection is a generalized step ran on each 
 uniform float uDeltaTime;
 uniform float uDissipation;
 
-uniform vec2 uDstScale = vec2(512);
+uniform vec2 uDstScale = vec2(1024);
 
 
 void main()

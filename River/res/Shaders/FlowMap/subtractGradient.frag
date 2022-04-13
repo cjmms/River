@@ -14,7 +14,7 @@ uniform sampler2D uPressure;
 
 uniform float uGradientScale;
 
-uniform vec2 uGridScale = vec2(512);
+uniform vec2 uGridScale = vec2(1024);
 
 void main()
 {

@@ -307,7 +307,7 @@ int main()
     FBO obstacleMapFBO{ window_width , window_height };  // I'm using this as the obstacles fbo right now, no idea if that's right. --jarred
     FBO blurredObstacleMapFBO{ window_width , window_height };
 
-    constexpr glm::ivec2 flowMapScale = { 512, 512 };
+    constexpr glm::ivec2 flowMapScale = { 1024, 1024 };
     renderer.fluidGridScale = flowMapScale;
     renderer.fluidInvScale = {1.0f/(float)flowMapScale.x, 1.0f/(float)flowMapScale.y};
 
