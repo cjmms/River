@@ -29,7 +29,7 @@ const int window_height = 960;
 unsigned int checkerBoardTexture;
 unsigned int waveTexture;
 
-bool enableImpulseField = false;
+bool enableImpulseField = true;
 
 extern Setting setting;
 
@@ -188,6 +188,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     //camera.updateCameraDirection((float)xpos, (float)ypos);
     camera.updataRayDir((float)xpos, (float)ypos, window_width, window_height);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera.updateCameraDirection(xpos, ypos);
 }
 
 

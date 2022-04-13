@@ -12,12 +12,10 @@ uniform float time;
 uniform float timeScale;
 uniform float heightScale;
 
-uniform sampler2D flowMap;
-
 void main()
 {
 
-	vec2 direction = normalize(aDir);
+	vec2 direction = normalize(aDir + vec2(10.0, 0.0f)); // <-- hacky way to do this!
 	//vec3 velocity = texture(flowMap, );
 	vec2 pos = aPos + aSpeed * float(time) * float(timeScale) * direction;	// update position base on wave particle velocity
 
