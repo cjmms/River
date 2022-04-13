@@ -168,13 +168,14 @@ void Render::JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obsta
 }
 void Render::SubtractGradientHelper(Quad& quad, FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst)
 {
+    dst->Clear();
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
     flowSubtractGradient.setFloat("uGradientScale", gradientScale);
 
-    flowAdvect.setTexture("uObstacleMap", obstacles->ColorBuffer1);
-    flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
-    flowAdvect.setTexture("uPressure", pressure->ColorBuffer1);
+    flowSubtractGradient.setTexture("uObstacleMap", obstacles->ColorBuffer1);
+    flowSubtractGradient.setTexture("uVelocity", velocity->ColorBuffer1);
+    flowSubtractGradient.setTexture("uPressure", pressure->ColorBuffer1);
 
     flowSubtractGradient.Bind();
     glBindVertexArray(quad.VAO);
@@ -246,7 +247,6 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
 
     // STEP 1: ADVECTION STEP //
 
-
     // Perform advection on the velocity:
     //flowAdvect.Bind();
     AdvectHelper(quad, velocity->ping, obstacleFBO, velocity->ping, velocity->pong, DISSIPATION_VELOCITY);
@@ -271,8 +271,8 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    //SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
-    //velocity->Swap();
+    SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
+    velocity->Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
