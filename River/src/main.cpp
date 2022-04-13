@@ -364,7 +364,7 @@ int main()
 
         // step 2:
         // wave map creation
-        renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
+        renderer.RenderWaveParticle(waveParticleMesh, flowVelocity.ping->ColorBuffer1,  waveParticleFBO.ID);
 
         renderer.HorizontalBlur(quad, waveParticleFBO.ColorBuffer1, f12345v.ID);
 
@@ -377,7 +377,7 @@ int main()
 
         // step 4: 
         // render wave mesh
-        renderer.RenderWaveMesh(waterMesh, irradianceMap.ID(), skybox.ID(),
+        renderer.RenderWaveMesh(waterMesh, flowVelocity.ping->ColorBuffer1, irradianceMap.ID(), skybox.ID(),
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         glDisable(GL_CULL_FACE);

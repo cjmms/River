@@ -279,7 +279,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
 }
 
 
-void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo)
+void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int flowMap, unsigned int fbo)
 {
 	glPointSize(setting.particleSize);
 
@@ -291,6 +291,8 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
     waveParticleShader.setFloat("time", glfwGetTime());
     waveParticleShader.setFloat("timeScale", setting.timeScale);
     waveParticleShader.setFloat("heightScale", setting.heightFactor);
+
+    waveParticleShader.setTexture("flowMap", flowMap);
 
 	waveParticleShader.Bind();
 
@@ -382,7 +384,7 @@ void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsi
 }
 
 
-void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int flowMap, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -409,10 +411,15 @@ void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, un
 
     waveMeshShader.setInt("enableNormalMap", setting.enableNormalMap);
 
+    waveMeshShader.setTexture("flowMap", flowMap);
+
     waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
     waveMeshShader.setTexture("skybox", skybox, GL_TEXTURE_CUBE_MAP);
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
+
+    waveMeshShader.setFloat("time", glfwGetTime());
+    waveMeshShader.setFloat("timeScale", setting.timeScale);
 
     waterMesh.Draw(waveMeshShader);
 

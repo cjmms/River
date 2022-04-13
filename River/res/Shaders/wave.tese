@@ -12,6 +12,11 @@ out vec3 Normal;
 uniform sampler2D gradientMap;
 uniform sampler2D deviationMap;
 
+uniform sampler2D flowMap;
+
+uniform float time;
+uniform float timeScale;
+
 
 uniform mat4 model;
 uniform mat4 view;
@@ -58,8 +63,14 @@ void main()
 
 	gl_Position =  model * vec4(pos.xyz, 1.0);
 
+    vec2 velocity = texture(flowMap, TexCoord).xy * timeScale * 0.05;
+
     // apply height map
-    worldPos = gl_Position.xyz + texture(deviationMap, TexCoord).xyz;
+    worldPos = gl_Position.xyz + texture(deviationMap, abs(TexCoord - velocity)).xyz;
+
+    vec2 newPos = worldPos.xz;
+
+
 
 	gl_Position = projection * view * vec4(worldPos, 1);   
 
