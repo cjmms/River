@@ -55,15 +55,15 @@ void main()
     }
     else if (selectedRenderPass == 8) // Flow divergence
     {
-        FragColor= texture(flowDivergence, TexCoords);
+        FragColor= abs(texture(flowDivergence, TexCoords));
     }
     else if (selectedRenderPass == 9) // Flow velocity
     {
-        FragColor = texture(flowVelocity, TexCoords);
+        FragColor = abs(texture(flowVelocity, TexCoords));
     }
     else if (selectedRenderPass == 10) // Flow pressure
     {
-        FragColor = texture(flowPressure, TexCoords);
+        FragColor = abs(texture(flowPressure, TexCoords));
     }
 
 }
