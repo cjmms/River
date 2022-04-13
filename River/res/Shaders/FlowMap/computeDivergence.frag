@@ -44,5 +44,5 @@ void main()
 	if (oLeft)  vLeft  = -vLeft;
 
 
-	fragColor = (uHalfInvCellSize * vRight.x - vLeft.x + vUp.y - vDown.y);
+	fragColor = uHalfInvCellSize * (vRight.x - vLeft.x + vUp.y - vDown.y);
 }
