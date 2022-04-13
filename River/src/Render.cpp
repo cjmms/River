@@ -215,7 +215,7 @@ void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, f
 
     flowAdder.setTexture("uSrc", srcTex);
     flowAdder.setFloat("uMultiplier", multiplier);
-    flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
+    //flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
 
     flowAdder.Bind();
     glBindVertexArray(quad.VAO);
@@ -255,7 +255,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
     if (impulseMapTexture > 0)
     {
         // Apply impulse.
-        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 0.01f );
+        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 0.04f );
     }
 
 
@@ -268,13 +268,13 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        JacobiHelper(quad, pressure.ping, divergence, obstacleFBO, pressure.pong);
-        pressure.Swap();
+        //JacobiHelper(quad, pressure.ping, divergence, obstacleFBO, pressure.pong);
+        //pressure.Swap();
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    SubtractGradientHelper(quad, velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
-    velocity.Swap();
+    //SubtractGradientHelper(quad, velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
+    //velocity.Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);

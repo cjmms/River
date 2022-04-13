@@ -3,7 +3,7 @@
 // Note: This one relies on blending to work.
 
 // inputs
-// ...
+in vec2 TexCoords;
 
 // outputs
 out vec4 fragColor;
@@ -18,5 +18,5 @@ void main()
 {
 	vec2 uv = gl_FragCoord.xy/uDstScale;
 	fragColor = texture(uSrc, uv)*uMultiplier;
-	//fragColor = vec4(uv,0, 1);
+	//fragColor = vec4(TexCoords,0, 1);
 }
