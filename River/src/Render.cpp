@@ -217,6 +217,8 @@ void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, f
     flowAdder.setFloat("uMultiplier", multiplier);
     //flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
 
+    flowAdder.setVec2("uDirection", flowDirection);
+
     flowAdder.Bind();
     glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
