@@ -15,12 +15,14 @@ uniform sampler2D uPressure;
 uniform float uGradientScale;
 
 uniform vec2 uGridScale = vec2(512);
+uniform vec2 uObstacleMapScale;
 
 void main()
 {
 	const ivec2 T = ivec2(gl_FragCoord.xy);
+	const ivec2 To = ivec2((T / uGridScale) * uObstacleMapScale);
 
-	const bool isSolid = texelFetch(uObstacleMap, T, 0).x > 0;
+	const bool isSolid = texelFetch(uObstacleMap, To, 0).x > 0;
 	if (isSolid)
 	{
 		fragColor = vec2(0); // Not doing obstacle veloctiy, so just set vel 0
@@ -37,10 +39,10 @@ void main()
 	// Some codebases have the yz of the obstacle maps encode a velocity for the obstacles.
 	// I chose not to do that.
 	// Fetch the solidity of neighboring pixels:
-	const bool oUp	   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0,  1)).x > 0;
-	const bool oDown   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0, -1)).x > 0;
-	const bool oRight  = texelFetchOffset(uObstacleMap, T, 0, ivec2( 1, 0)).x > 0;
-	const bool oLeft   = texelFetchOffset(uObstacleMap, T, 0, ivec2(-1, 0)).x > 0;
+	const bool oUp	   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0,  1)).x > 0;
+	const bool oDown   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0, -1)).x > 0;
+	const bool oRight  = texelFetchOffset(uObstacleMap, To, 0, ivec2( 1, 0)).x > 0;
+	const bool oLeft   = texelFetchOffset(uObstacleMap, To, 0, ivec2(-1, 0)).x > 0;
 	// const bool oCenter = texelFetch(uObstacleMap, T, 0).x > 0;
 
 	// const vec2 obstV = vec2(0); This is the obstacle velocity, which I'm not using.

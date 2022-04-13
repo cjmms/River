@@ -14,9 +14,9 @@ uniform sampler2D uVelocity;
 
 uniform float uHalfInvCellSize; // This seems oddly specific
 
-uniform vec2 uGridScale = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
+uniform vec2 uGridScale = vec2(512); 
 
-//uniform vec2 uInvObstacleScale;
+uniform vec2 uObstacleMapScale;
 
 void main()
 {
@@ -29,10 +29,11 @@ void main()
 	vec2 vLeft  = texelFetchOffset(uVelocity, T, 0, ivec2(-1, 0)).xy;
 	
 	// Fetch neighboring obstacles:
-	const bool oUp	   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0,  1)).x > 0;
-	const bool oDown   = texelFetchOffset(uObstacleMap, T, 0, ivec2(0, -1)).x > 0;
-	const bool oRight  = texelFetchOffset(uObstacleMap, T, 0, ivec2( 1, 0)).x > 0;
-	const bool oLeft   = texelFetchOffset(uObstacleMap, T, 0, ivec2(-1, 0)).x > 0;
+	const ivec2 To = ivec2((T / uGridScale) * uObstacleMapScale);
+	const bool oUp	   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0,  1)).x > 0;
+	const bool oDown   = texelFetchOffset(uObstacleMap, To, 0, ivec2(0, -1)).x > 0;
+	const bool oRight  = texelFetchOffset(uObstacleMap, To, 0, ivec2( 1, 0)).x > 0;
+	const bool oLeft   = texelFetchOffset(uObstacleMap, To, 0, ivec2(-1, 0)).x > 0;
 
 	// Obstacle velocities are not implemented, so use velocity of 0 for solid cells:
 	//if (oUp)    vUp    = vec2(0.0f);

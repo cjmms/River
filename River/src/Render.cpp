@@ -178,6 +178,8 @@ void Render::SubtractGradientHelper(Quad& quad, FBO* velocity, FBO* pressure, FB
 
     flowSubtractGradient.setVec2("uGridScale", fluidGridScale);
 
+    flowSubtractGradient.setVec2("uObstacleMapScale", glm::vec2(window_width, window_height));
+
     flowSubtractGradient.setTexture("uObstacleMap", obstacles->ColorBuffer1);
     flowSubtractGradient.setTexture("uVelocity", velocity->ColorBuffer1);
     flowSubtractGradient.setTexture("uPressure", pressure->ColorBuffer1);
@@ -200,6 +202,9 @@ void Render::ComputeDivergenceHelper(Quad& quad, FBO* velocity, FBO* obstacles, 
 
     flowComputeDivergence.setTexture("uObstacleMap", obstacles->ColorBuffer1);
     flowComputeDivergence.setTexture("uVelocity", velocity->ColorBuffer1);
+
+    flowComputeDivergence.setVec2("uGridScale", fluidGridScale);
+    flowComputeDivergence.setVec2("uObstacleMapScale", glm::vec2(window_width, window_height));
 
     flowComputeDivergence.Bind();
     glBindVertexArray(quad.VAO);
