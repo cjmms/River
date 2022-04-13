@@ -98,7 +98,7 @@ void main()
     
     vec3 pressureCol = vec3(  
     clamp(
-        (texture(pressureMap, TexCoord).r )*-0.05f, -0.1f, 1.3f
+        (texture(pressureMap, TexCoord).r )*-0.1f, -0.1f, 1.0f
         )
     );
 
