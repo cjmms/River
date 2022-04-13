@@ -105,7 +105,7 @@ void Camera::updataRayDir(float currentX, float currentY, float screenWidth, flo
 
 void Camera::setCameraKey(GLFWwindow* window)
 {
-	setCameraSpeed(15.5f);
+	setCameraSpeed(5.5f);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		cameraPos += cameraSpeed * cameraFront;
