@@ -15,6 +15,7 @@
 #include "Render.h"
 #include "IBL.h"
 
+
 // These 2 lines should only be defined in this file
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -45,6 +46,8 @@ static const char* RenderPassList[]{
                                      "Flow Pressure"};
 
 ObstacleMesh obstacleMesh;
+
+
 
 bool rightMouseClick = false;
 
@@ -275,7 +278,8 @@ int main()
     Render renderer;
 
     WaveParticleMesh waveParticleMesh{ 600 };
-
+    WaterMesh waterMesh{ 20 };
+    Quad quad;
 
     // FBO's:
 
@@ -331,16 +335,16 @@ int main()
 
         // step 1:
         // obstacle map creation
-        renderer.RenderObstacleHeightMap(obstacleMapFBO.ID);
+        renderer.RenderObstacleHeightMap(quad, obstacleMapFBO.ID);
         
         // blur the obstacle map, may not be necessay
         // Both createObstacleFBO.ColorBuffer1 and obstacleFBO.ColorBuffer1 can be used as flow map
         // no big difference
-        renderer.ObstacleBlur(obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
+        renderer.ObstacleBlur(quad, obstacleMapFBO.ColorBuffer1, blurredObstacleMapFBO.ID);
 
         //---------------------------------------------------------------------
         // Flow map updates:
-        renderer.UpdateFlowMap(&obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
+        renderer.UpdateFlowMap(quad, &obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
 
         //velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY;
         //renderer.AdvectHelper(flowVelocity.ping, &obstacleMapFBO, flowVelocity.ping, flowVelocity.pong, 0.99f);
@@ -354,18 +358,18 @@ int main()
         // wave map creation
         renderer.RenderWaveParticle(waveParticleMesh, waveParticleFBO.ID);
 
-        renderer.HorizontalBlur(waveParticleFBO.ColorBuffer1, f12345v.ID);
+        renderer.HorizontalBlur(quad, waveParticleFBO.ColorBuffer1, f12345v.ID);
 
-        renderer.VerticalBlur(f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
+        renderer.VerticalBlur(quad, f12345v.ColorBuffer1, f12345v.ColorBuffer2, deviationGradient.ID);
 
         // step 3:
         // render obstacles
         glEnable(GL_CULL_FACE);
-        renderer.RenderObstacles(blurredObstacleMapFBO.ColorBuffer1, waveMesh.ID);
+        renderer.RenderObstacles(waterMesh, blurredObstacleMapFBO.ColorBuffer1, waveMesh.ID);
 
         // step 4: 
         // render wave mesh
-        renderer.RenderWaveMesh(irradianceMap.ID(), skybox.ID(), 
+        renderer.RenderWaveMesh(waterMesh, irradianceMap.ID(), skybox.ID(),
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2, waveMesh.ID);
 
         glDisable(GL_CULL_FACE);
@@ -374,7 +378,7 @@ int main()
         skybox.Render(waveMesh.ID);
 
      
-        renderer.DebugDraw(
+        renderer.DebugDraw(quad,
             waveParticleFBO.ColorBuffer1,
             f12345v.ColorBuffer1, f12345v.ColorBuffer2, 
             deviationGradient.ColorBuffer1, deviationGradient.ColorBuffer2,

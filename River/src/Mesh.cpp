@@ -2,7 +2,12 @@
 #include <cstdlib>
 
 #include <GL/glew.h>
+#include "Shader.h"
 
+const unsigned int NUM_PATCH_PTS = 4;
+
+extern const int window_width;
+extern const int window_height;
 
 WaveParticleMesh::WaveParticleMesh(int numberOfParticles)
 	: size(numberOfParticles)
@@ -74,4 +79,116 @@ void ObstacleMesh::Bind()
 	// position attribute
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Obstacle), (void*)0);
+}
+
+
+
+WaterMesh::WaterMesh(unsigned int res)
+{
+	float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		// positions   // texCoords    
+		-1.0f, -1.0f,     0.0f, 0.0f,
+		1.0f, -1.0f,     1.0f, 0.0f,
+		-1.0f,  1.0f,     0.0f, 1.0f,
+		 1.0f,  1.0f,     1.0f, 1.0f
+	};
+
+	std::vector<float> vertices;
+
+	resolution = res;
+	for (unsigned i = 0; i <= resolution - 1; i++)
+	{
+		for (unsigned j = 0; j <= resolution - 1; j++)
+		{
+			vertices.push_back(-window_width / 2.0f + window_width * i / (float)resolution); // v.x
+			vertices.push_back(-window_height / 2.0f + window_height * j / (float)resolution); // v.z
+			vertices.push_back(i / (float)resolution); // u
+			vertices.push_back(j / (float)resolution); // v
+
+			vertices.push_back(-window_width / 2.0f + window_width * (i + 1) / (float)resolution); // v.x
+			vertices.push_back(-window_height / 2.0f + window_height * j / (float)resolution); // v.z
+			vertices.push_back((i + 1) / (float)resolution); // u
+			vertices.push_back(j / (float)resolution); // v
+
+			vertices.push_back(-window_width / 2.0f + window_width * i / (float)resolution); // v.x
+			vertices.push_back(-window_height / 2.0f + window_height * (j + 1) / (float)resolution); // v.z
+			vertices.push_back(i / (float)resolution); // u
+			vertices.push_back((j + 1) / (float)resolution); // v
+
+			vertices.push_back(-window_width / 2.0f + window_width * (i + 1) / (float)resolution); // v.x
+			vertices.push_back(-window_height / 2.0f + window_height * (j + 1) / (float)resolution); // v.z
+			vertices.push_back((i + 1) / (float)resolution); // u
+			vertices.push_back((j + 1) / (float)resolution); // v
+		}
+	}
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
+
+	glBindVertexArray(0);
+}
+
+
+void WaterMesh::Draw(Shader &shader)
+{
+	shader.Bind();
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_PATCHES, 0, 4);
+	glBindVertexArray(0);
+	shader.unBind();
+}
+
+
+Quad::Quad()
+{
+	// init quad
+	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+}
+
+
+void Quad::Draw(Shader& shader)
+{
+	shader.Bind();
+
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	shader.unBind();
 }

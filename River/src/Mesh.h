@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+class Shader;
+
 // wave particle is a random position inside a square from [0, 1]
 struct WaveParticle
 {
@@ -50,6 +52,31 @@ public:
 	inline int size() const { return obstacleList.size(); }
 
 	std::vector<Obstacle> obstacleList;
+
+	// no index buffer, simply because I'm lazy
+	unsigned int VBO, VAO;
+};
+
+
+
+class WaterMesh
+{
+public:
+	WaterMesh(unsigned int size);
+
+	void Draw(Shader& shader);
+
+	// no index buffer, simply because I'm lazy
+	unsigned int VBO, VAO, resolution;
+};
+
+
+class Quad
+{
+public:
+	Quad();
+
+	void Draw(Shader& shader);
 
 	// no index buffer, simply because I'm lazy
 	unsigned int VBO, VAO;

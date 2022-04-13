@@ -11,7 +11,7 @@ Setting setting;
 extern unsigned int checkerBoardTexture;
 extern unsigned int waveTexture;
 
-const unsigned int NUM_PATCH_PTS = 4;
+
 
 extern ObstacleMesh obstacleMesh;
 
@@ -104,73 +104,18 @@ void FBO::AddTarget(unsigned int width, unsigned int height)
 
 Render::Render()
 {
-    // init quad
-    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };
-
-    glGenBuffers(1, &quadVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &quadVAO);
-    glBindVertexArray(quadVAO);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindVertexArray(0);
-
-
-    // init quad patch
-    float quadPatchVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords    
-        -1.0f, -1.0f,     0.0f, 0.0f,  
-        1.0f, -1.0f,     1.0f, 0.0f,
-        -1.0f,  1.0f,     0.0f, 1.0f,    
-         1.0f,  1.0f,     1.0f, 1.0f
-    };
-
-    unsigned int quadPatchVBO;
-
-    glGenBuffers(1, &quadPatchVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadPatchVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadPatchVertices), &quadPatchVertices, GL_STATIC_DRAW);
-
-    glGenVertexArrays(1, &quadPatchVAO);
-    glBindVertexArray(quadPatchVAO);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
-
-    glBindVertexArray(0);
-
     // model matrix for river plane
     model = glm::scale(model, glm::vec3(2.0f));
     model = glm::rotate(model, glm::radians(90.f), glm::vec3(1, 0, 0));
-
-
 }
+
+
+
 
 #pragma region fluid helpers
 
 // Note: Bind the advect shader first.
-void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
+void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -191,14 +136,14 @@ void Render::AdvectHelper(FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, flo
     flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
 
     flowAdvect.Bind();
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     flowAdvect.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst)
+void Render::JacobiHelper(Quad& quad, FBO* pressure, FBO* divergence, FBO* obstacles, FBO* dst)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -215,14 +160,14 @@ void Render::JacobiHelper(FBO* pressure, FBO* divergence, FBO* obstacles, FBO* d
     flowAdvect.setTexture("uDivergence", divergence->ColorBuffer1);
 
     flowJacobi.Bind();
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     flowJacobi.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst)
+void Render::SubtractGradientHelper(Quad& quad, FBO* velocity, FBO* pressure, FBO* obstacles, FBO* dst)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
@@ -233,14 +178,14 @@ void Render::SubtractGradientHelper(FBO* velocity, FBO* pressure, FBO* obstacles
     flowAdvect.setTexture("uPressure", pressure->ColorBuffer1);
 
     flowSubtractGradient.Bind();
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     flowSubtractGradient.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
+void Render::ComputeDivergenceHelper(Quad& quad, FBO* velocity, FBO* obstacles, FBO* dst)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
 
@@ -252,14 +197,14 @@ void Render::ComputeDivergenceHelper(FBO* velocity, FBO* obstacles, FBO* dst)
     flowAdvect.setTexture("uVelocity", velocity->ColorBuffer1);
 
     flowComputeDivergence.Bind();
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     flowComputeDivergence.unBind();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-void Render::ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multiplier)
+void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, float multiplier)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, velocity->ID);
     glEnable(GL_BLEND);
@@ -273,7 +218,7 @@ void Render::ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multipl
     flowAdder.setVec2("uDstScale", glm::vec2(fluidGridScale.x, fluidGridScale.y));
 
     flowAdder.Bind();
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(quad.VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
     flowAdder.unBind();
@@ -284,7 +229,7 @@ void Render::ApplyExternalFlow(FBO* velocity, unsigned int srcTex, float multipl
 
 #pragma endregion
 
-void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence)
+void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence)
 {
     glDisable(GL_DEPTH_TEST);
 
@@ -296,7 +241,7 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
 
     // Perform advection on the velocity:
     //flowAdvect.Bind();
-    AdvectHelper(velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY);
+    AdvectHelper(quad, velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY);
     velocity.Swap();
 
     // Advection would be performed on density here if it was relevant to water.
@@ -310,12 +255,12 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     if (impulseMapTexture > 0)
     {
         // Apply impulse.
-        ApplyExternalFlow(velocity.ping, this->impulseMapTexture, 0.1f );
+        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 0.01f );
     }
 
 
     // STEP 3: COMPUTE DIVERGENCE //
-    ComputeDivergenceHelper(velocity.ping, obstacleFBO, divergence); 
+    ComputeDivergenceHelper(quad, velocity.ping, obstacleFBO, divergence);
     // Clear the pressure reading fbo, don't need to clear the writing one.
     //pressure.ping->Clear();
 
@@ -323,13 +268,13 @@ void Render::UpdateFlowMap(FBO* obstacleFBO, PingPong& velocity, PingPong& press
     constexpr int ITR = 40;
     for (int i = 0; i < ITR; ++i)
     {
-        //JacobiHelper(pressure.ping, divergence, obstacleFBO, pressure.pong);
-        //pressure.Swap();
+        JacobiHelper(quad, pressure.ping, divergence, obstacleFBO, pressure.pong);
+        pressure.Swap();
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    //SubtractGradientHelper(velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
-    //velocity.Swap();
+    SubtractGradientHelper(quad, velocity.ping, pressure.ping, obstacleFBO, velocity.pong);
+    velocity.Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
@@ -364,7 +309,7 @@ void Render::RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int
 
 
 
-void Render::ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo)
+void Render::ObstacleBlur(Quad& quad, unsigned int ObstaclePosMap, unsigned int fbo)
 {
     // horizontal blur
     glBindFramebuffer(GL_FRAMEBUFFER, obstacleBlurFBO.ID);
@@ -375,11 +320,7 @@ void Render::ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo)
 
     obstacleBlurHShader.setTexture("obstaclePosMap", ObstaclePosMap);
 
-    obstacleBlurHShader.Bind();
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    obstacleBlurHShader.unBind();
+    quad.Draw(obstacleBlurHShader);
 
     // vertical blur
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -391,19 +332,14 @@ void Render::ObstacleBlur(unsigned int ObstaclePosMap, unsigned int fbo)
     // pass horizontal blured result
     obstacleBlurVShader.setTexture("horiBlurMap", obstacleBlurFBO.ColorBuffer1);
 
-    obstacleBlurVShader.Bind();
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-    obstacleBlurVShader.unBind();
+    quad.Draw(obstacleBlurVShader);
 
-    // vertical blur
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
 
-void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
+void Render::HorizontalBlur(Quad& quad, unsigned int inputTexture, unsigned int fbo)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -416,22 +352,14 @@ void Render::HorizontalBlur(unsigned int inputTexture, unsigned int fbo)
     // blur radius
     horozontalBlur.setInt("blurRadius", setting.blurSize);
 
-    // bind shader
-    horozontalBlur.Bind();
-
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
-    // unbind shader
-    horozontalBlur.unBind();
+    quad.Draw(horozontalBlur);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
 
-void Render::VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo)
+void Render::VerticalBlur(Quad& quad, unsigned int f123, unsigned int f45v, unsigned int fbo)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -450,34 +378,7 @@ void Render::VerticalBlur(unsigned int f123, unsigned int f45v, unsigned int fbo
 
     verticalBlur.setFloat("heightFactor", setting.heightFactor);
 
-    verticalBlur.Bind();
-
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    verticalBlur.unBind();
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-
-
-void Render::DrawQuad(unsigned int inputTexture)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // pass input texture
-    verticalBlur.setTexture("tex", inputTexture);
-
-    verticalBlur.Bind();
-
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    verticalBlur.unBind();
+    quad.Draw(verticalBlur);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -485,9 +386,7 @@ void Render::DrawQuad(unsigned int inputTexture)
 
 
 
-
-
-void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
+void Render::RenderWaveMesh(WaterMesh& waterMesh, unsigned int irradianceMap, unsigned int skybox, unsigned int deviation, unsigned int gradient, unsigned int fbo)
 {
     if (setting.enableWireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -519,11 +418,7 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
     waveMeshShader.setVec3("ViewPos", camera.getCameraPos());
 
-    waveMeshShader.Bind();
-    glBindVertexArray(quadPatchVAO);
-    glDrawArrays(GL_PATCHES, 0, 4);
-    glBindVertexArray(0);
-    waveMeshShader.unBind();
+    waterMesh.Draw(waveMeshShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -531,7 +426,7 @@ void Render::RenderWaveMesh(unsigned int irradianceMap, unsigned int skybox, uns
 
 
 
-void Render::RenderObstacleHeightMap(unsigned int fbo)
+void Render::RenderObstacleHeightMap(Quad& quad, unsigned int fbo)
 {
     // check if obstacle exists
     if (obstacleMesh.size() == 0) return;
@@ -553,13 +448,7 @@ void Render::RenderObstacleHeightMap(unsigned int fbo)
 
         createObstacleShader.setMat4("transformationMatrix", transformationMat);
 
-        createObstacleShader.Bind();
-
-        glBindVertexArray(quadVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
-
-        createObstacleShader.unBind();
+        quad.Draw(createObstacleShader);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -568,7 +457,7 @@ void Render::RenderObstacleHeightMap(unsigned int fbo)
 
 
 
-void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
+void Render::RenderObstacles(WaterMesh& waterMesh, unsigned int heightMap, unsigned int fbo)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
@@ -587,14 +476,7 @@ void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
 
     //waveMeshShader.setTexture("IrradianceMap", irradianceMap, GL_TEXTURE_CUBE_MAP);
 
-    renderObstacleShader.Bind();
-    glBindVertexArray(quadPatchVAO);
-    glDrawArrays(GL_PATCHES, 0, 4);
-    glBindVertexArray(0);
-    renderObstacleShader.unBind();
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+    waterMesh.Draw(renderObstacleShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -602,15 +484,8 @@ void Render::RenderObstacles(unsigned int heightMap, unsigned int fbo)
 
 
 
-Render::~Render()
-{
-    // delete quad
-    glDeleteVertexArrays(1, &quadVAO);
-    glDeleteBuffers(1, &quadVBO);
-}
-
-
 void Render::DebugDraw(
+    Quad& quad,
     unsigned int particleMap,
     unsigned int f123,
     unsigned int f45v,
@@ -644,16 +519,9 @@ void Render::DebugDraw(
     quadShader.setTexture("flowVelocity", flowVelocity);
     quadShader.setTexture("flowPressure", flowPressure);
 
-    quadShader.Bind();
-
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    quadShader.unBind();
+    quad.Draw(quadShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
 }
 
 
