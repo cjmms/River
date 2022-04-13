@@ -24,7 +24,7 @@ uniform sampler2D uDivergence;
 
 uniform float uAlpha, uInverseBeta;
 
-uniform vec2 uGridScale = vec2(1024);
+uniform vec2 uGridScale = vec2(512);
 
 void main()
 {

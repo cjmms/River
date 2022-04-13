@@ -14,12 +14,14 @@ uniform sampler2D uVelocity;
 
 uniform float uHalfInvCellSize; // This seems oddly specific
 
-uniform vec2 uGridScale = vec2(1024); // TODO! Should be passed in! But ill keep it harcoded for now...
+uniform vec2 uGridScale = vec2(512); // TODO! Should be passed in! But ill keep it harcoded for now...
+
+//uniform vec2 uInvObstacleScale;
 
 void main()
 {
 	const ivec2 T = ivec2(gl_FragCoord.xy);
-
+	
 	// Fetch neighboring velocities:
 	vec2 vUp	= texelFetchOffset(uVelocity, T, 0, ivec2( 0, 1)).xy;
 	vec2 vDown  = texelFetchOffset(uVelocity, T, 0, ivec2( 0,-1)).xy;

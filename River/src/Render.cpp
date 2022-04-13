@@ -128,6 +128,7 @@ void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, F
     flowAdvect.setFloat("uDeltaTime", FIXED_DELTA_TIME);
     flowAdvect.setFloat("uDissipation", dissipation);
     flowAdvect.setVec2("uDstScale", glm::vec2(fluidGridScale));
+    flowAdvect.setVec2("uInvObstacleScale", glm::vec2(1.0f/(float)window_width, 1.0f/(float)window_height));
 
     // The source texture.
     //flowAdvect.setInt("uSoureTexture", src->ColorBuffer1);
