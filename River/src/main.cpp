@@ -29,7 +29,7 @@ const int window_height = 960;
 unsigned int checkerBoardTexture;
 unsigned int waveTexture;
 
-bool enableImpulseField = true;
+bool enableImpulseField = false;
 
 extern Setting setting;
 
@@ -316,7 +316,7 @@ int main()
     //flowVelocityPressure.AddTargetToBoth(flowMapScale.x, flowMapScale.y);
     FBO flowDivergence(flowMapScale.x, flowMapScale.y);
 
-    renderer.impulseMapTexture = loadTexture("res/velocitySourceMap.png", false);
+    renderer.impulseMapTexture = loadTexture("res/noisyVelocityField.png", false);
 
     // renderer.InitFlowMapBindings(createObstacleFBO, flowVelocityPressure, flowDivergence);
 

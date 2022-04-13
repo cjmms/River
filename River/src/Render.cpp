@@ -240,7 +240,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     if (impulseMapTexture > 0 && impulseFieldEnabled)
     {
         // Apply impulse.
-        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 1.5f);
+        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 1.0f);
     }
 
 
@@ -271,8 +271,8 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     }
 
     // STEP 5: GRADIENT SUBTRACTION //
-    SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
-    velocity->Swap();
+    //SubtractGradientHelper(quad, velocity->ping, pressure->ping, obstacleFBO, velocity->pong);
+    //velocity->Swap();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
