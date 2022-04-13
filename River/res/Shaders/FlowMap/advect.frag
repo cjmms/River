@@ -30,11 +30,14 @@ uniform vec2 uInverseSize;
 uniform float uDeltaTime;
 uniform float uDissipation;
 
+uniform vec2 uDstScale = vec2(512);
+
 
 void main()
 {
+	vec2 uv = gl_FragCoord.xy / uDstScale;
 	// Check the solidity at this pixel:
-	const bool isSolid = texture(uObstacleMap, gl_FragCoord.xy).x > 0;
+	const bool isSolid = texture(uObstacleMap, uv).x > 0;
 	if (isSolid)
 	{
 		fragColor = vec4(0.0f);
@@ -42,8 +45,8 @@ void main()
 	}
 
 	// Compute the advection at this pixel:
-	const vec2 u = texture(uVelocity, uInverseSize * gl_FragCoord.xy).xy;
-	const vec2 coord = uInverseSize * (gl_FragCoord.xy - (uDeltaTime * u));
+	const vec2 u = texture(uVelocity, uInverseSize * uv).xy;
+	const vec2 coord = uInverseSize * (uv - (uDeltaTime * u));
 
 	fragColor = uDissipation * texture(uSoureTexture, coord);
 }
