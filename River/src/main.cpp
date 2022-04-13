@@ -344,7 +344,7 @@ int main()
 
         //---------------------------------------------------------------------
         // Flow map updates:
-        renderer.UpdateFlowMap(quad, &obstacleMapFBO, flowVelocity, flowPressure, &flowDivergence);
+        renderer.UpdateFlowMap(quad, &obstacleMapFBO, &flowVelocity, &flowPressure, &flowDivergence);
 
         //velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY;
         //renderer.AdvectHelper(flowVelocity.ping, &obstacleMapFBO, flowVelocity.ping, flowVelocity.pong, 0.99f);

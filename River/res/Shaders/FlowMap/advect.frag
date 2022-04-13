@@ -35,20 +35,25 @@ uniform vec2 uDstScale = vec2(512);
 
 void main()
 {
+	const vec2 fragCoord = gl_FragCoord.xy;
 	//vec2 uv = gl_FragCoord.xy / uDstScale;
 	// Check the solidity at this pixel:
 	vec2 uInverseSize = vec2(1.f/uDstScale.x, 1.f/uDstScale.y);					// UGLY HARDCODING!!!
-	const bool isSolid = texture(uObstacleMap, gl_FragCoord.xy*uInverseSize).x > 0;
+	const bool isSolid = texture(uObstacleMap, fragCoord*uInverseSize).x > 0;
 	if (isSolid)
 	{
 		fragColor = vec4(0.0f);
 		return;
 	}
 
+	//const vec2 u = texelFetch(uVelocity, ivec2(gl_FragCoord.xy), 0).xy;
+	//const vec2 offset = uDeltaTime * u;
+	//fragColor = texelFetch(uSoureTexture, ivec2(gl_FragCoord.xy-offset), 0) + vec4(0.1, 0.1, 0.0, 1.0);
+
 	// Compute the advection at this pixel:
-	const vec2 u = texture(uVelocity, uInverseSize * gl_FragCoord.xy).xy; // velocity at the current cell
-	const vec2 coord = uInverseSize * (gl_FragCoord.xy - uDeltaTime * u); // coordinate after moving based on velocity
+	const vec2 u = texture(uVelocity, uInverseSize * fragCoord).xy; // velocity at the current cell
+	const vec2 coord = uInverseSize * (fragCoord - uDeltaTime * u); // coordinate after moving based on velocity
 
 	//fragColor = uDissipation * texture(uSoureTexture, coord);
-	fragColor =  texture(uSoureTexture, coord);
+	fragColor =  vec4(texture(uSoureTexture, coord).rgb, 1);
 }

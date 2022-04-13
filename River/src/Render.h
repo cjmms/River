@@ -5,7 +5,7 @@
 extern const int window_width;
 extern const int window_height;
 
-#define FIXED_DELTA_TIME 0.3f
+#define FIXED_DELTA_TIME 1.0f
 
 class FBO
 {
@@ -32,17 +32,15 @@ public:
 	}
 	~PingPong()
 	{
-		//if (ping) delete ping;
-		//if (pong) delete pong;
+		if (ping) delete ping;
+		if (pong) delete pong;
 	}
 	FBO* ping = nullptr;
 	FBO* pong = nullptr;
 
 	void Swap()
 	{
-		FBO* temp = ping;
-		ping = pong;
-		pong = temp;
+		std::swap(ping, pong);
 	}
 	void AddTargetToBoth(int width, int height)
 	{
@@ -128,12 +126,13 @@ public:
 	glm::vec2 fluidInvScale = {1.f / 512.f, 1.f / 512.f};
 	float cellSize = 1.25f; // Pretty much just a constant setting relating to the fluids' behavior.
 	float gradientScale = 1.125 / cellSize;
+	bool impulseFieldEnabled = true;
 
 public: 
 	Render();
 
 
-	void UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence);
+	void UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, PingPong* pressure, FBO* divergence);
 
 	void RenderWaveParticle(WaveParticleMesh& waveParticleMesh, unsigned int fbo);
 

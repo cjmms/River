@@ -117,6 +117,7 @@ Render::Render()
 // Note: Bind the advect shader first.
 void Render::AdvectHelper(Quad &quad, FBO* velocity, FBO* obstacles, FBO* src, FBO* dst, float dissipation)
 {
+    assert(src != dst);
     glBindFramebuffer(GL_FRAMEBUFFER, dst->ID);
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -229,7 +230,7 @@ void Render::ApplyExternalFlow(Quad& quad, FBO* velocity, unsigned int srcTex, f
 
 #pragma endregion
 
-void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, PingPong& pressure, FBO* divergence)
+void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, PingPong* pressure, FBO* divergence)
 {
     glDisable(GL_DEPTH_TEST);
 
@@ -239,10 +240,16 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
 
     // STEP 1: ADVECTION STEP //
 
+    if (impulseMapTexture > 0 && impulseFieldEnabled)
+    {
+        // Apply impulse.
+        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 1.5f);
+    }
+
     // Perform advection on the velocity:
     //flowAdvect.Bind();
-    AdvectHelper(quad, velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY);
-    velocity.Swap();
+    AdvectHelper(quad, velocity->ping, obstacleFBO, velocity->ping, velocity->pong, DISSIPATION_VELOCITY);
+    velocity->Swap();
 
     // Advection would be performed on density here if it was relevant to water.
     // ...
@@ -252,11 +259,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong& velocity, Pin
     // STEP 2: FORCE APPLICATION //
     // Not yet implemented.
     // ...
-    if (impulseMapTexture > 0)
-    {
-        // Apply impulse.
-        ApplyExternalFlow(quad, velocity.ping, this->impulseMapTexture, 20.0f );
-    }
+
 
 
     // STEP 3: COMPUTE DIVERGENCE //
