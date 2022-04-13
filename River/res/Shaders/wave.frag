@@ -92,13 +92,13 @@ void main()
 
     if (foam > 0)
     {
-        vec3 foamcol = texture(flowMap, TexCoord).xyz * foam * 0.04;
-        foamVec = clamp(3.0 * foam, 0, 1) * 0.2;
+        vec3 foamcol = texture(flowMap, TexCoord).xyz * foam * 0.1;
+        foamVec = clamp(3.0 * foam, 0, 1) * 0.3;
     }
     
     vec3 pressureCol = vec3(  
     clamp(
-        (texture(pressureMap, TexCoord).r )*-0.03f, -0.1f, 0.2f
+        (texture(pressureMap, TexCoord).r )*0.03f, -0.1f, 0.24f
         )
     );
 
