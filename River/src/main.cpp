@@ -29,6 +29,7 @@ const int window_height = 960;
 unsigned int checkerBoardTexture;
 unsigned int waveTexture;
 
+bool enableImpulseField = true;
 
 extern Setting setting;
 
@@ -161,6 +162,12 @@ void RenderUI(FBO& obstacleFBO, FBO& blurredObstacleFBO)
     }
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+    ImGui::Separator();
+    if (ImGui::Button("toggle impulse field"))
+    {
+        enableImpulseField = !enableImpulseField;
+    }
 
     // Rendering UI
     ImGui::Render();
@@ -344,6 +351,7 @@ int main()
 
         //---------------------------------------------------------------------
         // Flow map updates:
+        renderer.impulseFieldEnabled = enableImpulseField;
         renderer.UpdateFlowMap(quad, &obstacleMapFBO, &flowVelocity, &flowPressure, &flowDivergence);
 
         //velocity.ping, obstacleFBO, velocity.ping, velocity.pong, DISSIPATION_VELOCITY;
