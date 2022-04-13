@@ -54,6 +54,5 @@ void main()
 	const vec2 u = texture(uVelocity, uInverseSize * fragCoord).xy; // velocity at the current cell
 	const vec2 coord = uInverseSize * (fragCoord - uDeltaTime * u); // coordinate after moving based on velocity
 
-	//fragColor = uDissipation * texture(uSoureTexture, coord);
-	fragColor =  vec4(texture(uSoureTexture, coord).rgb, 1);
+	fragColor =  uDissipation * vec4(texture(uSoureTexture, coord).rgb, 1);
 }
