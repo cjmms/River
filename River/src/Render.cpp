@@ -240,7 +240,7 @@ void Render::UpdateFlowMap(Quad& quad, FBO* obstacleFBO, PingPong* velocity, Pin
     if (impulseMapTexture > 0 && impulseFieldEnabled)
     {
         // Apply impulse.
-        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 1.0f);
+        ApplyExternalFlow(quad, velocity->ping, this->impulseMapTexture, 0.3f);
     }
 
 
