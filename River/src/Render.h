@@ -58,7 +58,7 @@ struct Setting
 
 	int tessellationFactor = 3;
 	bool enableWireframeMode = false;
-	float heightFactor = 0.15f;
+	float heightFactor = 0.1f;
 
 	int seletectedRenderPass = 5;
 
@@ -71,8 +71,8 @@ struct Setting
 	float timeScale = 2;
 	bool enableNormalMap = false;
 
-	float brushSize = 0.5;
-	float obstacleHeightFactor = 1;
+	float brushSize = 1.0;
+	float obstacleHeightFactor = 2.0;
 	int obstacleTessellationFactor = 20;
 };
 
