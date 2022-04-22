@@ -77,7 +77,7 @@ void main()
 
 	// Enforce free-slip boundry condition.
 	vec2 oldVelocity = texelFetch(uVelocity, T, 0).xy;
-	vec2 gradient = vec2(pRight - pLeft, pUp - pDown) * 0.09f; //uGradientScale; // HARDCODED FOR TIME'S SAKE
+	vec2 gradient = vec2(pRight - pLeft, pUp - pDown) * (0.5f/uGridScale.x); // HARDCODED FOR TIME'S SAKE
 	vec2 newVelocity = oldVelocity - gradient;
 	
 	fragColor = (vMask * newVelocity); // Add obstacle velocity here too if we end up wanting it.
